@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Animated Two-Stack Expression Lab</title>
+<style>
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:Inter,Segoe UI,Arial,sans-serif;
+    background:#0f172a;
+    color:#e2e8f0;
+  }
+  .app{
+    max-width:1200px;
+    margin:0 auto;
+    padding:28px 18px 40px;
+  }
+  .hero{
+    display:flex;
+    justify-content:space-between;
+    gap:20px;
+    align-items:flex-end;
+    margin-bottom:22px;
+  }
+  .hero h1{
+    margin:0 0 8px;
+    font-size:32px;
+    letter-spacing:-.5px;
+  }
+  .hero p{margin:0;color:#94a3b8}
+  .badge{
+    padding:8px 12px;
+    border-radius:999px;
+    background:#1e293b;
+    border:1px solid #334155;
+    color:#cbd5e1;
+    font-size:13px;
+    white-space:nowrap;
+  }
+
+  .control-card,
+  .card{
+    background:#111827;
+    border:1px solid #263244;
+    border-radius:18px;
+    box-shadow:0 12px 30px rgba(0,0,0,.18);
+  }
+
+  .control-card{
+    padding:18px;
+    margin-bottom:18px;
+  }
+
+  .input-row{
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:12px;
+  }
+
+  input{
+    width:100%;
+    border:1px solid #334155;
+    border-radius:12px;
+    background:#0b1220;
+    color:#f8fafc;
+    padding:14px 16px;
+    font-size:20px;
+    outline:none;
+  }
+  input:focus{
+    border-color:#60a5fa;
+    box-shadow:0 0 0 3px rgba(96,165,250,.12);
+  }
+
+  button{
+    border:0;
+    border-radius:10px;
+    padding:11px 15px;
+    font-weight:700;
+    cursor:pointer;
+    background:#2563eb;
+    color:white;
+  }
+  button.secondary{
+    background:#1e293b;
+    color:#e2e8f0;
+    border:1px solid #334155;
+  }
+  button:disabled{opacity:.4;cursor:not-allowed}
+
+  .button-row{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-top:12px;
+  }
+
+  .progress-wrap{
+    margin-top:16px;
+  }
+  .progress-track{
+    height:8px;
+    border-radius:999px;
+    background:#1e293b;
+    overflow:hidden;
+  }
+  .progress-bar{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,#2563eb,#22c55e);
+    transition:width .35s ease;
+  }
+  .progress-text{
+    margin-top:6px;
+    color:#94a3b8;
+    font-size:13px;
+  }
+
+  .layout{
+    display:grid;
+    grid-template-columns:1.5fr .8fr;
+    gap:18px;
+  }
+
+  .card{
+    padding:18px;
+  }
+  .card h3{
+    margin:0 0 12px;
+    font-size:16px;
+    color:#cbd5e1;
+  }
+
+  .expression-strip{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    min-height:56px;
+    padding:12px;
+    border-radius:12px;
+    background:#0b1220;
+    border:1px solid #233047;
+    font-family:Consolas,monospace;
+    font-size:23px;
+  }
+  .token{
+    min-width:30px;
+    text-align:center;
+    padding:6px 8px;
+    border-radius:8px;
+    transition:.3s ease;
+  }
+  .token.done{
+    opacity:.28;
+    transform:scale(.94);
+  }
+  .token.current{
+    background:#2563eb;
+    color:white;
+    box-shadow:0 0 0 4px rgba(37,99,235,.15);
+    animation:pulse .8s ease-in-out infinite alternate;
+  }
+
+  .status{
+    margin-top:12px;
+    padding:12px 14px;
+    border-radius:12px;
+    background:#172554;
+    border:1px solid #1d4ed8;
+    color:#dbeafe;
+    min-height:48px;
+  }
+
+  .stacks-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+    margin-top:16px;
+  }
+
+  .stack-card{
+    background:#0b1220;
+    border:1px solid #233047;
+    border-radius:14px;
+    padding:14px;
+  }
+
+  .stack-title{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:10px;
+    color:#cbd5e1;
+    font-weight:700;
+  }
+
+  .stack{
+    min-height:260px;
+    display:flex;
+    flex-direction:column-reverse;
+    justify-content:flex-start;
+    gap:8px;
+    padding:12px;
+    border-radius:12px;
+    border:2px dashed #334155;
+    position:relative;
+    overflow:hidden;
+  }
+  .stack::after{
+    content:"TOP";
+    position:absolute;
+    top:8px;
+    right:10px;
+    color:#475569;
+    font-size:11px;
+    letter-spacing:1px;
+  }
+
+  .item{
+    padding:10px 12px;
+    border-radius:10px;
+    text-align:center;
+    font-family:Consolas,monospace;
+    font-weight:800;
+    animation:dropIn .38s ease;
+  }
+  .num{
+    background:#052e2b;
+    border:1px solid #0f766e;
+    color:#99f6e4;
+  }
+  .op{
+    background:#3b1d0c;
+    border:1px solid #c2410c;
+    color:#fed7aa;
+  }
+
+  .side{
+    display:grid;
+    gap:18px;
+  }
+
+  .operation{
+    min-height:115px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:16px;
+    border-radius:14px;
+    background:#020617;
+    border:1px solid #334155;
+    font-family:Consolas,monospace;
+    font-size:21px;
+    color:#f8fafc;
+    transition:.25s ease;
+  }
+  .operation.flash{
+    animation:flash .45s ease;
+  }
+
+  .result{
+    font-size:46px;
+    font-weight:900;
+    color:#f8fafc;
+  }
+  .result.finished{
+    color:#86efac;
+    animation:pop .5s ease;
+  }
+
+  .rules ol{
+    margin:0;
+    padding-left:20px;
+    color:#cbd5e1;
+    line-height:1.65;
+  }
+  code{
+    background:#0b1220;
+    color:#93c5fd;
+    padding:1px 5px;
+    border-radius:5px;
+  }
+
+  .step-log{
+    margin-top:18px;
+  }
+  .log-list{
+    display:grid;
+    gap:8px;
+    max-height:220px;
+    overflow:auto;
+  }
+  .log-entry{
+    padding:9px 10px;
+    border-radius:9px;
+    background:#0b1220;
+    border:1px solid #1f2937;
+    color:#94a3b8;
+    font-size:13px;
+  }
+  .log-entry.active{
+    border-color:#2563eb;
+    color:#dbeafe;
+    background:#172554;
+  }
+
+  @keyframes dropIn{
+    from{transform:translateY(-18px) scale(.96);opacity:0}
+    to{transform:translateY(0) scale(1);opacity:1}
+  }
+  @keyframes pulse{
+    from{transform:scale(1)}
+    to{transform:scale(1.08)}
+  }
+  @keyframes flash{
+    0%{transform:scale(.96);opacity:.45}
+    100%{transform:scale(1);opacity:1}
+  }
+  @keyframes pop{
+    0%{transform:scale(.72);opacity:0}
+    70%{transform:scale(1.08);opacity:1}
+    100%{transform:scale(1)}
+  }
+
+  @media(max-width:900px){
+    .layout{grid-template-columns:1fr}
+    .hero{align-items:flex-start;flex-direction:column}
+  }
+  @media(max-width:650px){
+    .input-row{grid-template-columns:1fr}
+    .stacks-grid{grid-template-columns:1fr}
+    .hero h1{font-size:26px}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="hero">
+    <div>
+      <h1>Animated Two-Stack Expression Lab</h1>
+      <p>Supports +, -, *, /, parentheses, and unary + / -.</p>
+    </div>
+    <div class="badge">Step-by-step stack visualization</div>
+  </div>
+
+  <div class="control-card">
+    <div class="input-row">
+      <input id="expr" value="-2 - 1" aria-label="Arithmetic expression">
+      <button id="load">Load Expression</button>
+    </div>
+
+    <div class="button-row">
+      <button id="prev" class="secondary">← Previous</button>
+      <button id="next">Next Step →</button>
+      <button id="play" class="secondary">▶ Play</button>
+      <button id="reset" class="secondary">Reset</button>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-track">
+        <div id="progressBar" class="progress-bar"></div>
+      </div>
+      <div id="progressText" class="progress-text">Step 0 of 0</div>
+    </div>
+  </div>
+
+  <div class="layout">
+    <div>
+      <div class="card">
+        <h3>Expression</h3>
+        <div id="exprView" class="expression-strip"></div>
+        <div id="status" class="status"></div>
+
+        <div class="stacks-grid">
+          <div class="stack-card">
+            <div class="stack-title">
+              <span>Numbers Stack</span>
+              <span id="numCount">0 items</span>
+            </div>
+            <div id="numbers" class="stack"></div>
+          </div>
+
+          <div class="stack-card">
+            <div class="stack-title">
+              <span>Operators Stack</span>
+              <span id="opCount">0 items</span>
+            </div>
+            <div id="operators" class="stack"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card step-log">
+        <h3>Step History</h3>
+        <div id="logList" class="log-list"></div>
+      </div>
+    </div>
+
+    <div class="side">
+      <div class="card">
+        <h3>Current Operation</h3>
+        <div id="operation" class="operation">No operation yet.</div>
+      </div>
+
+      <div class="card">
+        <h3>Result</h3>
+        <div id="result" class="result">Not finished</div>
+      </div>
+
+      <div class="card rules">
+        <h3>Rules</h3>
+        <ol>
+          <li>Push numbers onto the numbers stack.</li>
+          <li>Push <code>(</code> onto the operators stack.</li>
+          <li>If <code>+</code> or <code>-</code> appears where an operand is expected, treat it as a unary operator.</li>
+          <li>Unary <code>+</code> and unary <code>-</code> have higher precedence than <code>*</code> and <code>/</code>.</li>
+          <li>Before pushing a binary operator, apply operators of higher or equal precedence.</li>
+          <li>For <code>)</code>, apply operators until the matching <code>(</code> is reached.</li>
+          <li>At the end, apply all remaining operators.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+let tokens = [];
+let states = [];
+let index = 0;
+let timer = null;
+
+function precedence(op){
+  if(op === '+' || op === '-') return 1;
+  if(op === '*' || op === '/') return 2;
+  if(op === 'u+' || op === 'u-') return 3;
+  return 0;
+}
+
+function isUnary(op){
+  return op === 'u+' || op === 'u-';
+}
+
+function shown(op){
+  if(op === 'u-') return 'unary −';
+  if(op === 'u+') return 'unary +';
+  return op;
+}
+
+function tokenize(s){
+  const out = [];
+  let i = 0;
+  let expectOperand = true;
+
+  while(i < s.length){
+    const ch = s[i];
+
+    if(/\s/.test(ch)){
+      i++;
+      continue;
+    }
+
+    if(/\d|\./.test(ch)){
+      let start = i;
+      let dots = 0;
+
+      while(i < s.length && /[\d.]/.test(s[i])){
+        if(s[i] === '.') dots++;
+        i++;
+      }
+
+      const text = s.slice(start, i);
+
+      if(dots > 1 || text === '.'){
+        throw new Error('Invalid number: ' + text);
+      }
+
+      out.push({
+        type: 'number',
+        value: text,
+        display: text
+      });
+
+      expectOperand = false;
+      continue;
+    }
+
+    if(ch === '('){
+      out.push({type:'paren', value:'(', display:'('});
+      i++;
+      expectOperand = true;
+      continue;
+    }
+
+    if(ch === ')'){
+      out.push({type:'paren', value:')', display:')'});
+      i++;
+      expectOperand = false;
+      continue;
+    }
+
+    if('+-*/'.includes(ch)){
+      if(expectOperand && (ch === '+' || ch === '-')){
+        out.push({
+          type:'operator',
+          value: ch === '-' ? 'u-' : 'u+',
+          display: ch
+        });
+      } else {
+        out.push({
+          type:'operator',
+          value: ch,
+          display: ch
+        });
+      }
+
+      i++;
+      expectOperand = true;
+      continue;
+    }
+
+    throw new Error('Invalid character: ' + ch);
+  }
+
+  return out;
+}
+
+function format(n){
+  return Number.isInteger(n)
+    ? String(n)
+    : String(Number(n.toFixed(10)));
+}
+
+function binary(a, op, b){
+  if(op === '+') return a + b;
+  if(op === '-') return a - b;
+  if(op === '*') return a * b;
+
+  if(op === '/'){
+    if(b === 0) throw new Error('Division by zero');
+    return a / b;
+  }
+
+  throw new Error('Unknown operator');
+}
+
+function buildStates(tokens){
+  const nums = [];
+  const ops = [];
+  const S = [];
+
+  function snap(tokenIndex, message, operation, finished=false){
+    S.push({
+      tokenIndex,
+      numbers:[...nums],
+      operators:[...ops],
+      message,
+      operation,
+      finished,
+      result: finished ? nums[0] : null
+    });
+  }
+
+  function applyTop(tokenIndex, reason){
+    if(!ops.length) throw new Error('Missing operator');
+
+    const op = ops.pop();
+
+    if(isUnary(op)){
+      if(nums.length < 1){
+        throw new Error('Missing operand for unary operator');
+      }
+
+      const a = nums.pop();
+      const value = op === 'u-' ? -a : +a;
+
+      nums.push(value);
+
+      snap(
+        tokenIndex,
+        `${reason} Apply ${shown(op)} to ${format(a)}.`,
+        `${op === 'u-' ? '-' : '+'}${format(a)} = ${format(value)}`
+      );
+
+      return;
+    }
+
+    if(nums.length < 2){
+      throw new Error('Missing operand');
+    }
+
+    const b = nums.pop();
+    const a = nums.pop();
+    const value = binary(a, op, b);
+
+    nums.push(value);
+
+    snap(
+      tokenIndex,
+      `${reason} Apply ${format(a)} ${op} ${format(b)}.`,
+      `${format(a)} ${op} ${format(b)} = ${format(value)}`
+    );
+  }
+
+  snap(-1, 'Ready to scan from left to right.', 'No operation yet.');
+
+  for(let i=0; i<tokens.length; i++){
+    const t = tokens[i];
+
+    if(t.type === 'number'){
+      nums.push(Number(t.value));
+      snap(
+        i,
+        `Read ${t.value}: push it onto the numbers stack.`,
+        `push ${t.value}`
+      );
+      continue;
+    }
+
+    if(t.value === '('){
+      ops.push('(');
+      snap(
+        i,
+        'Read "(": push it onto the operators stack.',
+        'push ('
+      );
+      continue;
+    }
+
+    if(t.value === ')'){
+      snap(
+        i,
+        'Read ")": apply operators until "(".',
+        'process )'
+      );
+
+      let found = false;
+
+      while(ops.length){
+        if(ops[ops.length - 1] === '('){
+          ops.pop();
+          found = true;
+
+          snap(
+            i,
+            'Pop the matching "(".',
+            'pop ('
+          );
+
+          if(ops.length && isUnary(ops[ops.length - 1])){
+            applyTop(i, 'The parenthesized value is complete.');
+          }
+
+          break;
+        }
+
+        applyTop(i, 'Closing parenthesis:');
+      }
+
+      if(!found){
+        throw new Error('Mismatched parenthesis');
+      }
+
+      continue;
+    }
+
+    if(isUnary(t.value)){
+      ops.push(t.value);
+
+      snap(
+        i,
+        `Read ${t.display} as a unary operator because an operand is expected.`,
+        `push ${shown(t.value)}`
+      );
+
+      continue;
+    }
+
+    snap(
+      i,
+      `Read binary operator ${t.display}: compare precedence.`,
+      `consider ${t.display}`
+    );
+
+    while(
+      ops.length &&
+      ops[ops.length - 1] !== '(' &&
+      precedence(ops[ops.length - 1]) >= precedence(t.value)
+    ){
+      applyTop(
+        i,
+        `${shown(ops[ops.length - 1])} has higher or equal precedence.`
+      );
+    }
+
+    ops.push(t.value);
+
+    snap(
+      i,
+      `Push ${t.display} onto the operators stack.`,
+      `push ${t.display}`
+    );
+  }
+
+  snap(
+    tokens.length,
+    'End of input: apply all remaining operators.',
+    'end of input'
+  );
+
+  while(ops.length){
+    if(ops[ops.length - 1] === '('){
+      throw new Error('Mismatched parenthesis');
+    }
+
+    applyTop(tokens.length, 'End of input:');
+  }
+
+  if(nums.length !== 1){
+    throw new Error('Invalid expression');
+  }
+
+  snap(
+    tokens.length,
+    'Evaluation complete.',
+    `result = ${format(nums[0])}`,
+    true
+  );
+
+  return S;
+}
+
+function renderTokens(){
+  $('exprView').innerHTML = '';
+
+  tokens.forEach((t, i)=>{
+    const span = document.createElement('span');
+    span.className = 'token';
+    span.dataset.index = i;
+    span.textContent = t.display;
+    $('exprView').appendChild(span);
+  });
+}
+
+function renderStack(el, values, kind){
+  el.innerHTML = '';
+
+  values.forEach(v=>{
+    const item = document.createElement('div');
+    item.className = 'item ' + (kind === 'num' ? 'num' : 'op');
+    item.textContent = kind === 'num' ? format(v) : shown(v);
+    el.appendChild(item);
+  });
+}
+
+function renderLog(){
+  $('logList').innerHTML = '';
+
+  states.forEach((s, i)=>{
+    const row = document.createElement('div');
+    row.className = 'log-entry' + (i === index ? ' active' : '');
+    row.textContent = `Step ${i}: ${s.message}`;
+    $('logList').appendChild(row);
+  });
+
+  const active = $('logList').querySelector('.active');
+  if(active){
+    active.scrollIntoView({block:'nearest'});
+  }
+}
+
+function render(){
+  const s = states[index];
+
+  renderStack($('numbers'), s.numbers, 'num');
+  renderStack($('operators'), s.operators, 'op');
+
+  $('numCount').textContent =
+    `${s.numbers.length} item${s.numbers.length === 1 ? '' : 's'}`;
+
+  $('opCount').textContent =
+    `${s.operators.length} item${s.operators.length === 1 ? '' : 's'}`;
+
+  document.querySelectorAll('.token').forEach(el=>{
+    const i = Number(el.dataset.index);
+    el.classList.toggle(
+      'current',
+      i === s.tokenIndex && i < tokens.length
+    );
+    el.classList.toggle('done', i < s.tokenIndex);
+  });
+
+  $('status').textContent = s.message;
+
+  const operation = $('operation');
+  operation.classList.remove('flash');
+  void operation.offsetWidth;
+  operation.textContent = s.operation;
+  operation.classList.add('flash');
+
+  const result = $('result');
+  result.classList.remove('finished');
+  result.textContent = s.finished ? format(s.result) : 'Not finished';
+
+  if(s.finished){
+    void result.offsetWidth;
+    result.classList.add('finished');
+  }
+
+  const max = Math.max(states.length - 1, 1);
+  const pct = (index / max) * 100;
+
+  $('progressBar').style.width = pct + '%';
+  $('progressText').textContent =
+    `Step ${index} of ${states.length - 1}`;
+
+  $('prev').disabled = index === 0;
+  $('next').disabled = index === states.length - 1;
+  $('play').disabled = index === states.length - 1;
+
+  renderLog();
+}
+
+function stop(){
+  if(timer){
+    clearTimeout(timer);
+  }
+
+  timer = null;
+  $('play').textContent = '▶ Play';
+}
+
+function load(){
+  stop();
+
+  try{
+    tokens = tokenize($('expr').value);
+
+    if(!tokens.length){
+      throw new Error('Please enter an expression');
+    }
+
+    states = buildStates(tokens);
+    index = 0;
+
+    renderTokens();
+    render();
+  }
+  catch(e){
+    $('exprView').textContent = $('expr').value;
+    $('numbers').innerHTML = '';
+    $('operators').innerHTML = '';
+    $('status').textContent = 'Error: ' + e.message;
+    $('operation').textContent = 'Cannot evaluate expression.';
+    $('result').textContent = 'Invalid expression';
+    $('numCount').textContent = '0 items';
+    $('opCount').textContent = '0 items';
+    $('progressBar').style.width = '0%';
+    $('progressText').textContent = 'Step 0 of 0';
+    $('logList').innerHTML = '';
+  }
+}
+
+$('load').onclick = load;
+
+$('prev').onclick = ()=>{
+  stop();
+
+  if(index > 0){
+    index--;
+    render();
+  }
+};
+
+$('next').onclick = ()=>{
+  stop();
+
+  if(index < states.length - 1){
+    index++;
+    render();
+  }
+};
+
+$('reset').onclick = ()=>{
+  stop();
+  index = 0;
+  render();
+};
+
+$('play').onclick = ()=>{
+  if(timer){
+    stop();
+    return;
+  }
+
+  $('play').textContent = '⏸ Pause';
+
+  const step = ()=>{
+    if(index >= states.length - 1){
+      stop();
+      return;
+    }
+
+    index++;
+    render();
+    timer = setTimeout(step, 900);
+  };
+
+  step();
+};
+
+$('expr').addEventListener('keydown', e=>{
+  if(e.key === 'Enter'){
+    load();
+  }
+});
+
+load();
+</script>
+</body>
+</html>

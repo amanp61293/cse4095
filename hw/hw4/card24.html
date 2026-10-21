@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Card Game 24</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        .cards {
+            margin: 30px 0;
+        }
+
+        .card {
+            display: inline-block;
+            width: 70px;
+            height: 100px;
+            margin: 10px;
+            border: 2px solid black;
+            border-radius: 8px;
+            font-size: 32px;
+            line-height: 100px;
+            background-color: white;
+        }
+
+        input {
+            width: 300px;
+            padding: 10px;
+            font-size: 18px;
+        }
+
+        button {
+            padding: 10px 15px;
+            margin: 10px 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        #feedback {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+
+        #solution {
+            margin-top: 15px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Card Game 24</h1>
+
+    <p>Use all four card values exactly once to make 24.</p>
+
+    <div class="cards">
+        <div class="card" id="card1"></div>
+        <div class="card" id="card2"></div>
+        <div class="card" id="card3"></div>
+        <div class="card" id="card4"></div>
+    </div>
+
+    <div>
+        <input
+            type="text"
+            id="expression"
+            placeholder="Enter an expression"
+        >
+    </div>
+
+    <div>
+        <button id="checkButton">Check Answer</button>
+        <button id="newCardsButton">New Cards</button>
+        <button id="solutionButton">Show Solution</button>
+    </div>
+
+    <div id="feedback"></div>
+    <div id="solution"></div>
+
+
+    <script>
+        let cards = [];
+
+
+        function generateCards() {
+            cards = [];
+
+            for (let i = 0; i < 4; i++) {
+                let card = Math.floor(Math.random() * 13) + 1;
+                cards.push(card);
+            }
+
+            displayCards();
+        }
+
+
+        function displayCards() {
+            document.getElementById("card1").textContent = cards[0];
+            document.getElementById("card2").textContent = cards[1];
+            document.getElementById("card3").textContent = cards[2];
+            document.getElementById("card4").textContent = cards[3];
+        }
+
+
+        function tokenize(expression) {
+            let tokens = [];
+            let i = 0;
+
+            while (i < expression.length) {
+                let char = expression[i];
+
+                if (char === " ") {
+                    i++;
+                    continue;
+                }
+
+                if (char >= "0" && char <= "9") {
+                    let number = "";
+
+                    while (
+                        i < expression.length &&
+                        expression[i] >= "0" &&
+                        expression[i] <= "9"
+                    ) {
+                        number += expression[i];
+                        i++;
+                    }
+
+                    tokens.push(Number(number));
+                    continue;
+                }
+
+                if (
+                    char === "+" ||
+                    char === "-" ||
+                    char === "*" ||
+                    char === "/" ||
+                    char === "(" ||
+                    char === ")"
+                ) {
+                    tokens.push(char);
+                    i++;
+                    continue;
+                }
+
+                throw new Error("Invalid character");
+            }
+
+            return tokens;
+        }
+
+
+        function getExpressionNumbers(tokens) {
+            let numbers = [];
+
+            for (let token of tokens) {
+                if (typeof token === "number") {
+                    numbers.push(token);
+                }
+            }
+
+            return numbers;
+        }
+
+
+        function usesCorrectCards(numbers) {
+            if (numbers.length !== cards.length) {
+                return false;
+            }
+
+            let sortedNumbers = numbers.slice().sort(function(a, b) {
+                return a - b;
+            });
+
+            let sortedCards = cards.slice().sort(function(a, b) {
+                return a - b;
+            });
+
+            for (let i = 0; i < sortedCards.length; i++) {
+                if (sortedNumbers[i] !== sortedCards[i]) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+
+        function evaluateTokens(tokens) {
+            let position = 0;
+
+
+            function parseExpression() {
+                let value = parseTerm();
+
+                while (
+                    position < tokens.length &&
+                    (tokens[position] === "+" || tokens[position] === "-")
+                ) {
+                    let operator = tokens[position];
+                    position++;
+
+                    let right = parseTerm();
+
+                    if (operator === "+") {
+                        value = value + right;
+                    } else {
+                        value = value - right;
+                    }
+                }
+
+                return value;
+            }
+
+
+            function parseTerm() {
+                let value = parseFactor();
+
+                while (
+                    position < tokens.length &&
+                    (tokens[position] === "*" || tokens[position] === "/")
+                ) {
+                    let operator = tokens[position];
+                    position++;
+
+                    let right = parseFactor();
+
+                    if (operator === "*") {
+                        value = value * right;
+                    } else {
+                        if (right === 0) {
+                            throw new Error("Division by zero");
+                        }
+
+                        value = value / right;
+                    }
+                }
+
+                return value;
+            }
+
+
+            function parseFactor() {
+                if (position >= tokens.length) {
+                    throw new Error("Invalid expression");
+                }
+
+                let token = tokens[position];
+
+                if (typeof token === "number") {
+                    position++;
+                    return token;
+                }
+
+                if (token === "(") {
+                    position++;
+
+                    let value = parseExpression();
+
+                    if (
+                        position >= tokens.length ||
+                        tokens[position] !== ")"
+                    ) {
+                        throw new Error("Invalid expression");
+                    }
+
+                    position++;
+                    return value;
+                }
+
+                throw new Error("Invalid expression");
+            }
+
+
+            let result = parseExpression();
+
+            if (position !== tokens.length) {
+                throw new Error("Invalid expression");
+            }
+
+            return result;
+        }
+
+
+        function checkAnswer() {
+            let expression = document.getElementById("expression").value;
+            let feedback = document.getElementById("feedback");
+
+            if (expression.trim() === "") {
+                feedback.textContent = "Please enter an expression.";
+                return;
+            }
+
+            let tokens;
+
+            try {
+                tokens = tokenize(expression);
+            } catch (error) {
+                feedback.textContent =
+                    "Invalid expression. Use only numbers, +, -, *, /, and parentheses.";
+                return;
+            }
+
+            let numbers = getExpressionNumbers(tokens);
+
+            if (!usesCorrectCards(numbers)) {
+                feedback.textContent =
+                    "You must use each displayed card exactly once.";
+                return;
+            }
+
+            let result;
+
+            try {
+                result = evaluateTokens(tokens);
+            } catch (error) {
+                if (error.message === "Division by zero") {
+                    feedback.textContent =
+                        "Invalid expression: division by zero.";
+                } else {
+                    feedback.textContent =
+                        "Invalid expression. Use only numbers, +, -, *, /, and parentheses.";
+                }
+
+                return;
+            }
+
+            if (Math.abs(result - 24) < 0.000001) {
+                feedback.textContent =
+                    "Correct! Your expression equals 24.";
+            } else {
+                feedback.textContent =
+                    "Incorrect. Your expression equals " + result + ".";
+            }
+        }
+
+
+        function findSolution(items) {
+            if (items.length === 1) {
+                let value = items[0].value;
+                let expression = items[0].expression;
+
+                if (Math.abs(value - 24) < 0.000001) {
+                    return expression;
+                } else {
+                    return null;
+                }
+            }
+
+            for (let i = 0; i < items.length; i++) {
+                for (let j = i + 1; j < items.length; j++) {
+
+                    let item1 = items[i];
+                    let item2 = items[j];
+
+                    let remaining = [];
+
+                    for (let k = 0; k < items.length; k++) {
+                        if (k !== i && k !== j) {
+                            remaining.push(items[k]);
+                        }
+                    }
+
+                    let possibilities = [];
+
+                    possibilities.push({
+                        value: item1.value + item2.value,
+                        expression:
+                            "(" + item1.expression + " + " +
+                            item2.expression + ")"
+                    });
+
+                    possibilities.push({
+                        value: item1.value - item2.value,
+                        expression:
+                            "(" + item1.expression + " - " +
+                            item2.expression + ")"
+                    });
+
+                    possibilities.push({
+                        value: item2.value - item1.value,
+                        expression:
+                            "(" + item2.expression + " - " +
+                            item1.expression + ")"
+                    });
+
+                    possibilities.push({
+                        value: item1.value * item2.value,
+                        expression:
+                            "(" + item1.expression + " * " +
+                            item2.expression + ")"
+                    });
+
+                    if (item2.value !== 0) {
+                        possibilities.push({
+                            value: item1.value / item2.value,
+                            expression:
+                                "(" + item1.expression + " / " +
+                                item2.expression + ")"
+                        });
+                    }
+
+                    if (item1.value !== 0) {
+                        possibilities.push({
+                            value: item2.value / item1.value,
+                            expression:
+                                "(" + item2.expression + " / " +
+                                item1.expression + ")"
+                        });
+                    }
+
+                    for (let possibility of possibilities) {
+                        let newItems = remaining.slice();
+
+                        newItems.push(possibility);
+
+                        let solution = findSolution(newItems);
+
+                        if (solution !== null) {
+                            return solution;
+                        }
+                    }
+                }
+            }
+
+            return null;
+        }
+
+
+        function solveCards() {
+            let items = [];
+
+            for (let card of cards) {
+                items.push({
+                    value: card,
+                    expression: String(card)
+                });
+            }
+
+            return findSolution(items);
+        }
+
+
+        function showSolution() {
+            let solutionArea = document.getElementById("solution");
+
+            let solution = solveCards();
+
+            if (solution !== null) {
+                solutionArea.textContent =
+                    "Solution: " + solution + " = 24";
+            } else {
+                solutionArea.textContent =
+                    "There is no solution for these cards.";
+            }
+        }
+
+
+        function newCards() {
+            generateCards();
+
+            document.getElementById("expression").value = "";
+            document.getElementById("feedback").textContent = "";
+            document.getElementById("solution").textContent = "";
+        }
+
+
+        document.getElementById("checkButton").addEventListener(
+            "click",
+            checkAnswer
+        );
+
+        document.getElementById("newCardsButton").addEventListener(
+            "click",
+            newCards
+        );
+
+        document.getElementById("solutionButton").addEventListener(
+            "click",
+            showSolution
+        );
+
+
+        generateCards();
+    </script>
+
+</body>
+</html>

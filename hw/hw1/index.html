@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Recursive Checker Swap</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f6f8;
+            color: #222;
+        }
+
+        .container {
+            width: 95%;
+            max-width: 1200px;
+            margin: 25px auto;
+        }
+
+        h1 {
+            font-size: 22px;
+            margin-bottom: 8px;
+        }
+
+        .description {
+            margin-bottom: 18px;
+            color: #444;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid #d9dde3;
+            border-radius: 10px;
+            padding: 18px;
+            margin-bottom: 18px;
+
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input[type="number"] {
+            width: 65px;
+            padding: 7px;
+        }
+
+        button {
+            padding: 7px 14px;
+            border: 1px solid #c5cbd3;
+            background: #ffffff;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #eeeeee;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: default;
+        }
+
+        .speed-section {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info {
+            display: flex;
+            gap: 25px;
+            flex-wrap: wrap;
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .checkers {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+            min-height: 65px;
+        }
+
+        .checker {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            color: white;
+            font-weight: bold;
+
+            border: 3px solid rgba(0,0,0,0.2);
+
+            box-shadow:
+                inset 0 2px 4px rgba(255,255,255,0.4),
+                0 3px 5px rgba(0,0,0,0.25);
+
+            transition: transform 0.35s ease;
+        }
+
+        .red {
+            background: #e52d32;
+        }
+
+        .black {
+            background: #252a31;
+        }
+
+        .array-display {
+            margin-top: 15px;
+            font-family: Consolas, monospace;
+            font-size: 15px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .panel {
+            background: white;
+            border: 1px solid #d9dde3;
+            border-radius: 10px;
+            padding: 18px;
+        }
+
+        .panel h2,
+        .card h2 {
+            font-size: 17px;
+            margin-top: 0;
+        }
+
+        pre {
+            background: #f5f6f8;
+            border: 1px solid #e0e3e7;
+            padding: 15px;
+            border-radius: 6px;
+
+            overflow-x: auto;
+
+            font-family: Consolas, monospace;
+            line-height: 1.5;
+        }
+
+        .trace-line,
+        .swap-line {
+            font-family: Consolas, monospace;
+            padding: 6px 8px;
+            border-radius: 4px;
+        }
+
+        .active {
+            background: #fff1ad;
+            font-weight: bold;
+        }
+
+        .indent-0 {
+            margin-left: 0px;
+        }
+
+        .indent-1 {
+            margin-left: 25px;
+        }
+
+        .indent-2 {
+            margin-left: 50px;
+        }
+
+        .indent-3 {
+            margin-left: 75px;
+        }
+
+        .indent-4 {
+            margin-left: 100px;
+        }
+
+        .success {
+            color: #15803d;
+            font-weight: bold;
+        }
+
+        @media (max-width: 800px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .speed-section {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Recursive Checker Swap Animation</h1>
+
+    <div class="description">
+        Rearrange <b>n red checkers</b> followed by <b>n black checkers</b>
+        into an alternating pattern using only adjacent swaps.
+    </div>
+
+
+    <!-- CONTROLS -->
+    <div class="card">
+
+        <div class="controls">
+
+            <label for="nInput">n</label>
+
+            <input
+                id="nInput"
+                type="number"
+                min="1"
+                max="10"
+                value="4"
+            >
+
+            <button onclick="startAnimation()">Start</button>
+
+            <button id="previousButton"
+                    onclick="previousStep()">
+                Previous
+            </button>
+
+            <button id="playButton"
+                    onclick="togglePlay()">
+                Play
+            </button>
+
+            <button id="nextButton"
+                    onclick="nextStep()">
+                Next
+            </button>
+
+            <button onclick="resetAnimation()">
+                Reset
+            </button>
+
+
+            <div class="speed-section">
+
+                <label>Speed</label>
+
+                <input
+                    id="speedSlider"
+                    type="range"
+                    min="200"
+                    max="1500"
+                    value="800"
+                    step="100"
+                >
+
+                <span id="speedValue">
+                    800 ms
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- CHECKER DISPLAY -->
+    <div class="card">
+
+        <div class="info">
+
+            <span>
+                Current step:
+                <span id="currentStep">0</span>
+                of
+                <span id="totalSteps">0</span>
+            </span>
+
+            <span>
+                Total swaps:
+                <span id="totalSwaps">0</span>
+            </span>
+
+            <span>
+                Recursive target:
+                <span id="recursiveTarget">-</span>
+            </span>
+
+        </div>
+
+
+        <div
+            id="checkerContainer"
+            class="checkers">
+        </div>
+
+
+        <div
+            id="arrayDisplay"
+            class="array-display">
+        </div>
+
+    </div>
+
+
+
+    <!-- TRACE AND SWAPS -->
+
+    <div class="grid">
+
+        <div class="panel">
+
+            <h2>Recursive Call Trace</h2>
+
+            <div id="traceContainer"></div>
+
+        </div>
+
+
+        <div class="panel">
+
+            <h2>Generated Swaps</h2>
+
+            <div id="swapContainer"></div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- RECURSIVE IDEA -->
+
+    <div class="card" style="margin-top:18px;">
+
+        <h2>Recursive Idea</h2>
+
+        <p>
+            Every black checker must eventually occupy an odd-numbered
+            position: 1, 3, 5, and so on.
+        </p>
+
+        <p>
+            The recursive function finds the next black checker,
+            moves it left using adjacent swaps, and then recursively
+            solves the next target position.
+        </p>
+
+<pre>
+def checker_swap(checkers, target_index=1):
+
+    # Base case
+    if target_index >= len(checkers):
+        return
+
+    # Find the next black checker
+    black_index = target_index
+
+    while (black_index < len(checkers)
+           and checkers[black_index] != 1):
+
+        black_index += 1
+
+    # Move it left using adjacent swaps
+    while black_index > target_index:
+
+        checkers[black_index], checkers[black_index - 1] = \
+            checkers[black_index - 1], checkers[black_index]
+
+        black_index -= 1
+
+    # Recursive call
+    checker_swap(checkers, target_index + 2)
+</pre>
+
+    </div>
+
+</div>
+
+
+
+<script>
+
+    /*
+        =======================================================
+        GLOBAL VARIABLES
+        =======================================================
+    */
+
+    let states = [];
+
+    let swaps = [];
+
+    let traces = [];
+
+    let currentStep = 0;
+
+    let playTimer = null;
+
+    let n = 4;
+
+
+
+    /*
+        =======================================================
+        GENERATE RECURSIVE SOLUTION
+        =======================================================
+    */
+
+    function generateSolution(checkers, targetIndex, depth = 0) {
+
+        // Record recursive call.
+
+        traces.push({
+            target: targetIndex,
+            depth: depth
+        });
+
+
+        /*
+            BASE CASE
+        */
+
+        if (targetIndex >= checkers.length) {
+
+            return;
+        }
+
+
+        /*
+            Find the first black checker at or after
+            targetIndex.
+        */
+
+        let blackIndex = targetIndex;
+
+
+        while (
+            blackIndex < checkers.length &&
+            checkers[blackIndex] !== 1
+        ) {
+
+            blackIndex++;
+
+        }
+
+
+        /*
+            Move the black checker left until it reaches
+            its desired position.
+
+            EVERY SWAP IS BETWEEN ADJACENT POSITIONS.
+        */
+
+        while (blackIndex > targetIndex) {
+
+            let left = blackIndex - 1;
+
+            let right = blackIndex;
+
+
+            // Perform adjacent swap.
+
+            let temporary = checkers[left];
+
+            checkers[left] = checkers[right];
+
+            checkers[right] = temporary;
+
+
+            // Save swap.
+
+            swaps.push({
+                left: left,
+                right: right,
+                target: targetIndex,
+                depth: depth
+            });
+
+
+            // Save the resulting state.
+
+            states.push({
+                arrangement: [...checkers],
+                target: targetIndex,
+                swapNumber: swaps.length
+            });
+
+
+            blackIndex--;
+
+        }
+
+
+        /*
+            RECURSIVE CALL
+
+            Move to the next odd position.
+        */
+
+        generateSolution(
+            checkers,
+            targetIndex + 2,
+            depth + 1
+        );
+
+    }
+
+
+
+    /*
+        =======================================================
+        START
+        =======================================================
+    */
+
+    function startAnimation() {
+
+        stopPlay();
+
+        n = parseInt(
+            document.getElementById("nInput").value
+        );
+
+
+        if (isNaN(n) || n < 1) {
+
+            alert("Please enter an n value of at least 1.");
+
+            return;
+
+        }
+
+
+        // Keep demo a reasonable size.
+
+        if (n > 10) {
+
+            alert("For the animation, please use n = 10 or less.");
+
+            return;
+
+        }
+
+
+        states = [];
+
+        swaps = [];
+
+        traces = [];
+
+        currentStep = 0;
+
+
+        /*
+            Create:
+
+            [0, 0, ..., 1, 1]
+        */
+
+        let checkers = [];
+
+        for (let i = 0; i < n; i++) {
+            checkers.push(0);
+        }
+
+        for (let i = 0; i < n; i++) {
+            checkers.push(1);
+        }
+
+
+        /*
+            Store initial state.
+        */
+
+        states.push({
+            arrangement: [...checkers],
+            target: 1,
+            swapNumber: 0
+        });
+
+
+        /*
+            Generate every recursive step.
+        */
+
+        generateSolution(
+            checkers,
+            1,
+            0
+        );
+
+
+        renderTrace();
+
+        renderSwapList();
+
+        updateDisplay();
+
+    }
+
+
+
+    /*
+        =======================================================
+        DISPLAY CHECKERS
+        =======================================================
+    */
+
+    function updateDisplay() {
+
+        if (states.length === 0) {
+            return;
+        }
+
+
+        let state = states[currentStep];
+
+        let checkerContainer =
+            document.getElementById(
+                "checkerContainer"
+            );
+
+
+        checkerContainer.innerHTML = "";
+
+
+        /*
+            Generate checker circles.
+        */
+
+        state.arrangement.forEach(
+            function(value) {
+
+                let checker =
+                    document.createElement("div");
+
+                checker.classList.add("checker");
+
+
+                if (value === 0) {
+
+                    checker.classList.add("red");
+
+                }
+                else {
+
+                    checker.classList.add("black");
+
+                }
+
+
+                checker.textContent = value;
+
+                checkerContainer.appendChild(
+                    checker
+                );
+
+            }
+        );
+
+
+        /*
+            Show Python-style array.
+        */
+
+        document.getElementById(
+            "arrayDisplay"
+        ).textContent =
+            "[" +
+            state.arrangement.join(", ") +
+            "]";
+
+
+        /*
+            Statistics.
+        */
+
+        document.getElementById(
+            "currentStep"
+        ).textContent =
+            currentStep;
+
+
+        document.getElementById(
+            "totalSteps"
+        ).textContent =
+            states.length - 1;
+
+
+        document.getElementById(
+            "totalSwaps"
+        ).textContent =
+            swaps.length;
+
+
+        document.getElementById(
+            "recursiveTarget"
+        ).textContent =
+            state.target < state.arrangement.length
+            ? state.target
+            : "done";
+
+
+        highlightCurrentSwap();
+
+
+        /*
+            Disable navigation buttons when appropriate.
+        */
+
+        document.getElementById(
+            "previousButton"
+        ).disabled =
+            currentStep === 0;
+
+
+        document.getElementById(
+            "nextButton"
+        ).disabled =
+            currentStep >= states.length - 1;
+
+    }
+
+
+
+    /*
+        =======================================================
+        NEXT
+        =======================================================
+    */
+
+    function nextStep() {
+
+        if (currentStep < states.length - 1) {
+
+            currentStep++;
+
+            updateDisplay();
+
+        }
+        else {
+
+            stopPlay();
+
+        }
+
+    }
+
+
+
+    /*
+        =======================================================
+        PREVIOUS
+        =======================================================
+    */
+
+    function previousStep() {
+
+        stopPlay();
+
+        if (currentStep > 0) {
+
+            currentStep--;
+
+            updateDisplay();
+
+        }
+
+    }
+
+
+
+    /*
+        =======================================================
+        PLAY
+        =======================================================
+    */
+
+    function togglePlay() {
+
+        if (playTimer !== null) {
+
+            stopPlay();
+
+            return;
+
+        }
+
+
+        /*
+            If already finished, start again.
+        */
+
+        if (currentStep >= states.length - 1) {
+
+            currentStep = 0;
+
+            updateDisplay();
+
+        }
+
+
+        document.getElementById(
+            "playButton"
+        ).textContent = "Pause";
+
+
+        let speed =
+            parseInt(
+                document.getElementById(
+                    "speedSlider"
+                ).value
+            );
+
+
+        playTimer =
+            setInterval(
+                function() {
+
+                    if (
+                        currentStep <
+                        states.length - 1
+                    ) {
+
+                        currentStep++;
+
+                        updateDisplay();
+
+                    }
+                    else {
+
+                        stopPlay();
+
+                    }
+
+                },
+
+                speed
+            );
+
+    }
+
+
+
+    /*
+        =======================================================
+        STOP PLAY
+        =======================================================
+    */
+
+    function stopPlay() {
+
+        if (playTimer !== null) {
+
+            clearInterval(playTimer);
+
+            playTimer = null;
+
+        }
+
+
+        document.getElementById(
+            "playButton"
+        ).textContent = "Play";
+
+    }
+
+
+
+    /*
+        =======================================================
+        RESET
+        =======================================================
+    */
+
+    function resetAnimation() {
+
+        stopPlay();
+
+        currentStep = 0;
+
+        updateDisplay();
+
+    }
+
+
+
+    /*
+        =======================================================
+        RECURSIVE TRACE
+        =======================================================
+    */
+
+    function renderTrace() {
+
+        let container =
+            document.getElementById(
+                "traceContainer"
+            );
+
+
+        container.innerHTML = "";
+
+
+        traces.forEach(
+            function(trace, index) {
+
+                let line =
+                    document.createElement("div");
+
+
+                line.classList.add(
+                    "trace-line"
+                );
+
+
+                /*
+                    Limit indentation so very large n
+                    does not go off-screen.
+                */
+
+                let indentation =
+                    Math.min(
+                        trace.depth * 25,
+                        150
+                    );
+
+
+                line.style.marginLeft =
+                    indentation + "px";
+
+
+                if (trace.target >= 2 * n) {
+
+                    line.textContent =
+                        "base case → return";
+
+                }
+                else {
+
+                    line.textContent =
+                        "checker_swap(checkers, " +
+                        trace.target +
+                        ")";
+
+                }
+
+
+                container.appendChild(
+                    line
+                );
+
+            }
+        );
+
+    }
+
+
+
+    /*
+        =======================================================
+        GENERATED SWAPS
+        =======================================================
+    */
+
+    function renderSwapList() {
+
+        let container =
+            document.getElementById(
+                "swapContainer"
+            );
+
+
+        container.innerHTML = "";
+
+
+        swaps.forEach(
+            function(swap, index) {
+
+                let line =
+                    document.createElement("div");
+
+
+                line.classList.add(
+                    "swap-line"
+                );
+
+
+                line.id =
+                    "swap-" + (index + 1);
+
+
+                line.textContent =
+                    (index + 1) +
+                    ". swap(" +
+                    swap.left +
+                    ", " +
+                    swap.right +
+                    ") inside checker_swap(checkers, " +
+                    swap.target +
+                    ")";
+
+
+                container.appendChild(
+                    line
+                );
+
+            }
+        );
+
+    }
+
+
+
+    /*
+        =======================================================
+        HIGHLIGHT CURRENT SWAP
+        =======================================================
+    */
+
+    function highlightCurrentSwap() {
+
+        document.querySelectorAll(
+            ".swap-line"
+        ).forEach(
+            function(element) {
+
+                element.classList.remove(
+                    "active"
+                );
+
+            }
+        );
+
+
+        /*
+            Step zero represents the initial arrangement,
+            so there is no swap to highlight.
+        */
+
+        if (currentStep > 0) {
+
+            let element =
+                document.getElementById(
+                    "swap-" + currentStep
+                );
+
+
+            if (element) {
+
+                element.classList.add(
+                    "active"
+                );
+
+            }
+
+        }
+
+    }
+
+
+
+    /*
+        =======================================================
+        SPEED SLIDER
+        =======================================================
+    */
+
+    document.getElementById(
+        "speedSlider"
+    ).addEventListener(
+        "input",
+        function() {
+
+            document.getElementById(
+                "speedValue"
+            ).textContent =
+                this.value + " ms";
+
+
+            /*
+                If animation is playing,
+                restart timer using new speed.
+            */
+
+            if (playTimer !== null) {
+
+                stopPlay();
+
+                togglePlay();
+
+            }
+
+        }
+    );
+
+
+
+    /*
+        =======================================================
+        INITIALIZE PAGE
+        =======================================================
+    */
+
+    window.onload = function() {
+
+        startAnimation();
+
+    };
+
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>8-Puzzle BFS</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        #board {
+            display: grid;
+            grid-template-columns: repeat(3, 80px);
+            gap: 5px;
+            justify-content: center;
+            margin: 20px auto;
+        }
+
+        .tile {
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid black;
+            font-size: 28px;
+        }
+
+        .blank {
+            background-color: white;
+        }
+
+        button {
+            padding: 8px 14px;
+            margin: 4px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        input {
+            padding: 7px;
+            width: 220px;
+            text-align: center;
+        }
+
+        #results {
+            margin-top: 20px;
+            line-height: 1.6;
+        }
+
+        #controls {
+            margin-top: 15px;
+        }
+
+        #speedControl {
+            margin-top: 15px;
+        }
+
+        #message {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>8-Puzzle BFS Solver</h1>
+
+    <p>
+        Enter the puzzle using numbers 0-8.<br>
+        Use 0 for the blank.
+    </p>
+
+    <input
+        id="puzzleInput"
+        type="text"
+        value="8 7 6 5 4 3 2 1 0"
+    >
+
+    <br><br>
+
+    <button onclick="solvePuzzle()">Solve</button>
+
+    <div id="message"></div>
+
+    <div id="board"></div>
+
+    <div id="controls">
+        <button onclick="previousStep()">Previous</button>
+        <button onclick="togglePlay()" id="playButton">Play</button>
+        <button onclick="nextStep()">Next</button>
+        <button onclick="resetPuzzle()">Reset</button>
+    </div>
+
+    <div id="speedControl">
+        Animation Speed:
+        <input
+            type="range"
+            id="speed"
+            min="100"
+            max="1500"
+            value="600"
+            step="100"
+        >
+    </div>
+
+    <div id="results"></div>
+
+
+    <script>
+
+        const defaultInitialState = [
+            8, 7, 6,
+            5, 4, 3,
+            2, 1, 0
+        ];
+
+        const goalState = [
+            1, 2, 3,
+            4, 5, 6,
+            7, 8, 0
+        ];
+
+        let initialState = [...defaultInitialState];
+
+        let solutionPath = [];
+        let currentStep = 0;
+
+        let statesExpanded = 0;
+        let statesDiscovered = 0;
+
+        let playTimer = null;
+
+
+        // Display puzzle board
+        function displayBoard(state) {
+
+            const board = document.getElementById("board");
+            board.innerHTML = "";
+
+            for (let value of state) {
+
+                const tile = document.createElement("div");
+                tile.className = "tile";
+
+                if (value === 0) {
+                    tile.classList.add("blank");
+                    tile.textContent = "";
+                } else {
+                    tile.textContent = value;
+                }
+
+                board.appendChild(tile);
+            }
+        }
+
+
+        // Convert state into a string for Set and Map
+        function stateKey(state) {
+            return state.join(",");
+        }
+
+
+        // Generate all legal neighboring states
+        function getNeighbors(state) {
+
+            const neighbors = [];
+
+            const blank = state.indexOf(0);
+
+            const row = Math.floor(blank / 3);
+            const col = blank % 3;
+
+            const moves = [
+                [-1, 0],
+                [1, 0],
+                [0, -1],
+                [0, 1]
+            ];
+
+            for (let move of moves) {
+
+                const newRow = row + move[0];
+                const newCol = col + move[1];
+
+                if (
+                    newRow >= 0 && newRow < 3 &&
+                    newCol >= 0 && newCol < 3
+                ) {
+
+                    const newBlank = newRow * 3 + newCol;
+
+                    const newState = [...state];
+
+                    const temp = newState[blank];
+                    newState[blank] = newState[newBlank];
+                    newState[newBlank] = temp;
+
+                    neighbors.push(newState);
+                }
+            }
+
+            return neighbors;
+        }
+
+
+        // Breadth-First Search
+        function bfs(start, goal) {
+
+            const queue = [start];
+
+            // Instead of queue.shift(), use an index.
+            // This is much faster for a large BFS.
+            let queueIndex = 0;
+
+            const discovered = new Set();
+            discovered.add(stateKey(start));
+
+            const parent = new Map();
+            parent.set(stateKey(start), null);
+
+            const states = new Map();
+            states.set(stateKey(start), start);
+
+            let expanded = 0;
+
+            const goalKey = stateKey(goal);
+
+            while (queueIndex < queue.length) {
+
+                const current = queue[queueIndex];
+                queueIndex++;
+
+                expanded++;
+
+                const currentKey = stateKey(current);
+
+                if (currentKey === goalKey) {
+
+                    return {
+                        parent: parent,
+                        states: states,
+                        statesExpanded: expanded,
+                        statesDiscovered: discovered.size
+                    };
+                }
+
+                const neighbors = getNeighbors(current);
+
+                for (let neighbor of neighbors) {
+
+                    const neighborKey = stateKey(neighbor);
+
+                    if (!discovered.has(neighborKey)) {
+
+                        // Mark discovered when added to queue
+                        discovered.add(neighborKey);
+
+                        parent.set(neighborKey, currentKey);
+                        states.set(neighborKey, neighbor);
+
+                        queue.push(neighbor);
+                    }
+                }
+            }
+
+            return null;
+        }
+
+
+        // Reconstruct solution path
+        function reconstructPath(result, goal) {
+
+            const path = [];
+
+            let currentKey = stateKey(goal);
+
+            while (currentKey !== null) {
+
+                path.push(result.states.get(currentKey));
+
+                currentKey = result.parent.get(currentKey);
+            }
+
+            path.reverse();
+
+            return path;
+        }
+
+
+        // Determine which tile moved between two states
+        function getMovedTile(previousState, currentState) {
+
+            if (!previousState || !currentState) {
+                return "-";
+            }
+
+            const previousBlank = previousState.indexOf(0);
+
+            return currentState[previousBlank];
+        }
+
+
+        // Update board and information
+        function showStep() {
+
+            if (solutionPath.length === 0) {
+                return;
+            }
+
+            const state = solutionPath[currentStep];
+
+            displayBoard(state);
+
+            let movedTile = "-";
+
+            if (currentStep > 0) {
+                movedTile = getMovedTile(
+                    solutionPath[currentStep - 1],
+                    solutionPath[currentStep]
+                );
+            }
+
+            document.getElementById("results").innerHTML =
+                "<strong>Current Step:</strong> " +
+                currentStep +
+                " / " +
+                (solutionPath.length - 1) +
+                "<br>" +
+
+                "<strong>Tile Moved:</strong> " +
+                movedTile +
+                "<br>" +
+
+                "<strong>Total Moves:</strong> " +
+                (solutionPath.length - 1) +
+                "<br>" +
+
+                "<strong>States Expanded:</strong> " +
+                statesExpanded +
+                "<br>" +
+
+                "<strong>States Discovered:</strong> " +
+                statesDiscovered;
+        }
+
+
+        // Read and validate puzzle input
+        function readPuzzleInput() {
+
+            const text =
+                document.getElementById("puzzleInput").value.trim();
+
+            const parts = text.split(/\s+/);
+
+            if (parts.length !== 9) {
+                return null;
+            }
+
+            const numbers = parts.map(Number);
+
+            if (numbers.some(Number.isNaN)) {
+                return null;
+            }
+
+            const sorted = [...numbers].sort(
+                (a, b) => a - b
+            );
+
+            for (let i = 0; i <= 8; i++) {
+
+                if (sorted[i] !== i) {
+                    return null;
+                }
+            }
+
+            return numbers;
+        }
+
+
+        // Solve button
+        function solvePuzzle() {
+
+            stopPlaying();
+
+            const message =
+                document.getElementById("message");
+
+            const enteredState = readPuzzleInput();
+
+            if (enteredState === null) {
+
+                message.textContent =
+                    "Invalid puzzle. Enter each number from 0 to 8 exactly once.";
+
+                return;
+            }
+
+            initialState = enteredState;
+
+            displayBoard(initialState);
+
+            message.textContent = "Running BFS...";
+
+            // Allow browser to display "Running BFS..."
+            // before beginning the search.
+            setTimeout(function () {
+
+                const result =
+                    bfs(initialState, goalState);
+
+                if (result === null) {
+
+                    message.textContent =
+                        "No solution found.";
+
+                    solutionPath = [];
+
+                    return;
+                }
+
+                solutionPath =
+                    reconstructPath(result, goalState);
+
+                statesExpanded =
+                    result.statesExpanded;
+
+                statesDiscovered =
+                    result.statesDiscovered;
+
+                currentStep = 0;
+
+                message.textContent =
+                    "Solution found.";
+
+                showStep();
+
+            }, 10);
+        }
+
+
+        // Next button
+        function nextStep() {
+
+            if (
+                solutionPath.length > 0 &&
+                currentStep < solutionPath.length - 1
+            ) {
+
+                currentStep++;
+
+                showStep();
+            }
+        }
+
+
+        // Previous button
+        function previousStep() {
+
+            if (
+                solutionPath.length > 0 &&
+                currentStep > 0
+            ) {
+
+                currentStep--;
+
+                showStep();
+            }
+        }
+
+
+        // Play / Pause
+        function togglePlay() {
+
+            if (solutionPath.length === 0) {
+                return;
+            }
+
+            if (playTimer !== null) {
+
+                stopPlaying();
+
+                return;
+            }
+
+            document.getElementById(
+                "playButton"
+            ).textContent = "Pause";
+
+            playNextStep();
+        }
+
+
+        function playNextStep() {
+
+            if (
+                currentStep >= solutionPath.length - 1
+            ) {
+
+                stopPlaying();
+
+                return;
+            }
+
+            const speed =
+                Number(
+                    document.getElementById("speed").value
+                );
+
+            playTimer = setTimeout(function () {
+
+                currentStep++;
+
+                showStep();
+
+                playNextStep();
+
+            }, speed);
+        }
+
+
+        // Stop animation
+        function stopPlaying() {
+
+            if (playTimer !== null) {
+
+                clearTimeout(playTimer);
+
+                playTimer = null;
+            }
+
+            document.getElementById(
+                "playButton"
+            ).textContent = "Play";
+        }
+
+
+        // Reset button
+        function resetPuzzle() {
+
+            stopPlaying();
+
+            initialState =
+                [...defaultInitialState];
+
+            document.getElementById(
+                "puzzleInput"
+            ).value =
+                "8 7 6 5 4 3 2 1 0";
+
+            solutionPath = [];
+
+            currentStep = 0;
+
+            statesExpanded = 0;
+            statesDiscovered = 0;
+
+            document.getElementById(
+                "results"
+            ).innerHTML = "";
+
+            document.getElementById(
+                "message"
+            ).textContent = "";
+
+            displayBoard(initialState);
+        }
+
+
+        // Display starting puzzle when page opens
+        displayBoard(initialState);
+
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>8-Puzzle A* Visualization</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 30px;
+        }
+
+        #inputArea {
+            margin-bottom: 20px;
+        }
+
+        #puzzleInput {
+            width: 280px;
+            padding: 8px;
+            font-size: 16px;
+        }
+
+        button, select {
+            padding: 8px 12px;
+            margin: 4px;
+            font-size: 14px;
+        }
+
+        #error {
+            color: red;
+            margin: 10px;
+        }
+
+        #board {
+            display: grid;
+            grid-template-columns: repeat(3, 75px);
+            gap: 5px;
+            justify-content: center;
+            margin: 20px auto;
+        }
+
+        .tile {
+            width: 75px;
+            height: 75px;
+            border: 1px solid black;
+            background: #eeeeee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+        }
+
+        .blank {
+            background: white;
+        }
+
+        #values {
+            margin: 15px;
+            font-size: 18px;
+        }
+
+        #values span {
+            margin: 0 10px;
+        }
+
+        #controls {
+            margin: 15px;
+        }
+
+        #stats {
+            margin: 15px;
+            line-height: 1.6;
+        }
+
+        table {
+            border-collapse: collapse;
+            margin: 20px auto;
+        }
+
+        th, td {
+            border: 1px solid #999;
+            padding: 7px 12px;
+        }
+
+        th {
+            background: #eeeeee;
+        }
+
+        .small-state {
+            font-family: monospace;
+            white-space: pre;
+            text-align: left;
+        }
+
+        .selected {
+            background: #e6f2ff;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>8-Puzzle A* Visualization</h1>
+
+    <p>Goal: 1 2 3 4 5 6 7 8 0</p>
+
+
+    <div id="inputArea">
+
+        <input
+            id="puzzleInput"
+            type="text"
+            value="8 7 6 5 4 3 2 1 0"
+        >
+
+        <button id="solveButton">Solve</button>
+
+        <div id="error"></div>
+
+    </div>
+
+
+    <h2 id="stepTitle">Initial State</h2>
+
+    <div id="board"></div>
+
+
+    <div id="values">
+
+        <span>
+            g(n): <strong id="gValue">0</strong>
+        </span>
+
+        <span>
+            h(n): <strong id="hValue">0</strong>
+        </span>
+
+        <span>
+            f(n): <strong id="fValue">0</strong>
+        </span>
+
+        <span>
+            Tile Moved: <strong id="tileMoved">-</strong>
+        </span>
+
+    </div>
+
+
+    <div id="controls">
+
+        <button id="playButton">Play</button>
+
+        <button id="pauseButton">Pause</button>
+
+        <button id="previousButton">Previous</button>
+
+        <button id="nextButton">Next</button>
+
+        <button id="resetButton">Reset</button>
+
+        <select id="speed">
+            <option value="1500">Slow</option>
+            <option value="800" selected>Normal</option>
+            <option value="300">Fast</option>
+        </select>
+
+    </div>
+
+
+    <div id="stats">
+        Press <strong>Solve</strong> to run A*.
+    </div>
+
+
+    <h2>Small A* Open List Snapshot</h2>
+
+    <p id="queueMessage">
+        The priority queue will appear after solving.
+    </p>
+
+
+    <table>
+
+        <thead>
+            <tr>
+                <th>Status</th>
+                <th>State</th>
+                <th>g</th>
+                <th>h</th>
+                <th>f</th>
+            </tr>
+        </thead>
+
+        <tbody id="openListBody">
+        </tbody>
+
+    </table>
+
+
+<script>
+
+const goalState = [
+    1, 2, 3,
+    4, 5, 6,
+    7, 8, 0
+];
+
+let solutionPath = [];
+let snapshots = new Map();
+
+let currentStep = 0;
+let timer = null;
+
+
+/* ---------- Basic puzzle functions ---------- */
+
+
+function stateKey(state) {
+    return state.join(",");
+}
+
+
+function getNeighbors(state) {
+
+    const neighbors = [];
+
+    const blank = state.indexOf(0);
+
+    const row = Math.floor(blank / 3);
+    const col = blank % 3;
+
+    const moves = [
+        [-1, 0],
+        [1, 0],
+        [0, -1],
+        [0, 1]
+    ];
+
+    for (const move of moves) {
+
+        const newRow = row + move[0];
+        const newCol = col + move[1];
+
+        if (
+            newRow >= 0 && newRow < 3 &&
+            newCol >= 0 && newCol < 3
+        ) {
+
+            const newBlank = newRow * 3 + newCol;
+
+            const next = [...state];
+
+            [next[blank], next[newBlank]] =
+                [next[newBlank], next[blank]];
+
+            neighbors.push(next);
+        }
+    }
+
+    return neighbors;
+}
+
+
+/* Manhattan distance, excluding blank tile 0 */
+
+function manhattanDistance(state) {
+
+    let distance = 0;
+
+    for (let tile = 1; tile <= 8; tile++) {
+
+        const current = state.indexOf(tile);
+        const goal = goalState.indexOf(tile);
+
+        const currentRow = Math.floor(current / 3);
+        const currentCol = current % 3;
+
+        const goalRow = Math.floor(goal / 3);
+        const goalCol = goal % 3;
+
+        distance +=
+            Math.abs(currentRow - goalRow) +
+            Math.abs(currentCol - goalCol);
+    }
+
+    return distance;
+}
+
+
+/*
+    Compare two puzzle states the same way
+    Python compares tuples.
+
+    This matches Python heap entries:
+    (f, state)
+*/
+function compareStates(a, b) {
+
+    for (let i = 0; i < 9; i++) {
+
+        if (a[i] !== b[i]) {
+            return a[i] - b[i];
+        }
+    }
+
+    return 0;
+}
+
+
+/*
+    Sort by f first.
+
+    If f values are equal, compare the
+    puzzle states themselves, matching
+    Python's (f, state) heap ordering.
+*/
+function compareEntries(a, b) {
+
+    if (a.f !== b.f) {
+        return a.f - b.f;
+    }
+
+    return compareStates(
+        a.state,
+        b.state
+    );
+}
+
+
+/* ---------- A* ---------- */
+
+
+function aStar(start) {
+
+    const open = [];
+
+    const gScore = new Map();
+    const parent = new Map();
+    const states = new Map();
+
+    /*
+        Only small snapshots are stored.
+
+        key = selected state
+        value = selected state + first 8 waiting states
+    */
+    snapshots = new Map();
+
+    const h = manhattanDistance(start);
+
+    open.push({
+        state: start,
+        g: 0,
+        h: h,
+        f: h
+    });
+
+    gScore.set(stateKey(start), 0);
+    parent.set(stateKey(start), null);
+    states.set(stateKey(start), start);
+
+    let expanded = 0;
+
+
+    while (open.length > 0) {
+
+        /*
+            Sort like Python's:
+            (f, state)
+        */
+        open.sort(compareEntries);
+
+
+        const current = open.shift();
+        const key = stateKey(current.state);
+
+
+        /*
+            Skip an outdated entry if a better
+            g-value was found later.
+        */
+        if (current.g !== gScore.get(key)) {
+            continue;
+        }
+
+
+        expanded++;
+
+
+        /*
+            Store ONLY a small snapshot.
+
+            At most:
+            1 selected state
+            8 waiting states
+        */
+        const waiting = open
+            .filter(item =>
+                item.g === gScore.get(stateKey(item.state))
+            )
+            .sort(compareEntries)
+            .slice(0, 8)
+            .map(item => ({
+                state: item.state,
+                g: item.g,
+                h: item.h,
+                f: item.f
+            }));
+
+
+        snapshots.set(key, {
+            selected: {
+                state: current.state,
+                g: current.g,
+                h: current.h,
+                f: current.f
+            },
+
+            waiting: waiting
+        });
+
+
+        /*
+            Goal reached
+        */
+        if (key === stateKey(goalState)) {
+
+            return {
+                parent: parent,
+                states: states,
+                expanded: expanded,
+                discovered: gScore.size
+            };
+        }
+
+
+        /*
+            Expand current state
+        */
+        for (const neighbor of getNeighbors(current.state)) {
+
+            const neighborKey =
+                stateKey(neighbor);
+
+            const newG =
+                current.g + 1;
+
+
+            /*
+                Best known g-value
+            */
+            if (
+                !gScore.has(neighborKey) ||
+                newG < gScore.get(neighborKey)
+            ) {
+
+                gScore.set(
+                    neighborKey,
+                    newG
+                );
+
+                parent.set(
+                    neighborKey,
+                    key
+                );
+
+                states.set(
+                    neighborKey,
+                    neighbor
+                );
+
+
+                const neighborH =
+                    manhattanDistance(neighbor);
+
+
+                open.push({
+                    state: neighbor,
+                    g: newG,
+                    h: neighborH,
+                    f: newG + neighborH
+                });
+            }
+        }
+    }
+
+
+    return null;
+}
+
+
+/* ---------- Reconstruct solution ---------- */
+
+
+function reconstructPath(result) {
+
+    const path = [];
+
+    let key =
+        stateKey(goalState);
+
+
+    while (key !== null) {
+
+        path.push(
+            result.states.get(key)
+        );
+
+        key =
+            result.parent.get(key);
+    }
+
+
+    path.reverse();
+
+    return path;
+}
+
+
+/* ---------- Display functions ---------- */
+
+
+function displayBoard(state) {
+
+    const board =
+        document.getElementById("board");
+
+    board.innerHTML = "";
+
+
+    for (const value of state) {
+
+        const tile =
+            document.createElement("div");
+
+        tile.className = "tile";
+
+
+        if (value === 0) {
+
+            tile.classList.add("blank");
+            tile.textContent = "";
+
+        } else {
+
+            tile.textContent = value;
+        }
+
+
+        board.appendChild(tile);
+    }
+}
+
+
+function formatState(state) {
+
+    let text = "";
+
+    for (let i = 0; i < 9; i++) {
+
+        text +=
+            state[i] === 0
+            ? "_"
+            : state[i];
+
+        if ((i + 1) % 3 === 0) {
+
+            if (i < 8) {
+                text += "\n";
+            }
+
+        } else {
+
+            text += " ";
+        }
+    }
+
+    return text;
+}
+
+
+function addQueueRow(status, item, className = "") {
+
+    const body =
+        document.getElementById("openListBody");
+
+    const row =
+        document.createElement("tr");
+
+    row.className = className;
+
+
+    const statusCell =
+        document.createElement("td");
+
+    statusCell.textContent = status;
+
+
+    const stateCell =
+        document.createElement("td");
+
+    stateCell.className = "small-state";
+
+    stateCell.textContent =
+        formatState(item.state);
+
+
+    const gCell =
+        document.createElement("td");
+
+    gCell.textContent = item.g;
+
+
+    const hCell =
+        document.createElement("td");
+
+    hCell.textContent = item.h;
+
+
+    const fCell =
+        document.createElement("td");
+
+    fCell.textContent = item.f;
+
+
+    row.appendChild(statusCell);
+    row.appendChild(stateCell);
+    row.appendChild(gCell);
+    row.appendChild(hCell);
+    row.appendChild(fCell);
+
+    body.appendChild(row);
+}
+
+
+function displaySnapshot(state) {
+
+    const body =
+        document.getElementById("openListBody");
+
+    const message =
+        document.getElementById("queueMessage");
+
+    body.innerHTML = "";
+
+
+    const snapshot =
+        snapshots.get(stateKey(state));
+
+
+    if (!snapshot) {
+
+        message.textContent =
+            "No stored open-list snapshot for this solution state.";
+
+        return;
+    }
+
+
+    addQueueRow(
+        "Selected",
+        snapshot.selected,
+        "selected"
+    );
+
+
+    for (const item of snapshot.waiting) {
+
+        addQueueRow(
+            "Waiting",
+            item
+        );
+    }
+
+
+    /*
+        Accurate wording regarding ties.
+    */
+    const sameMinimumF =
+        snapshot.waiting.filter(
+            item =>
+                item.f === snapshot.selected.f
+        ).length;
+
+
+    if (sameMinimumF > 0) {
+
+        message.textContent =
+            "The selected state was one of multiple states " +
+            "with the same minimum f-value. The table shows " +
+            "up to 8 other states waiting in the actual open list.";
+
+    } else {
+
+        message.textContent =
+            "The selected state had the minimum f-value. " +
+            "The table shows up to 8 states waiting in the actual open list.";
+    }
+}
+
+
+/*
+    Find which numbered tile moved
+    between two solution states.
+*/
+function getMovedTile(previousState, currentState) {
+
+    const oldBlank =
+        previousState.indexOf(0);
+
+    return previousState[
+        currentState.indexOf(0)
+    ];
+}
+
+
+function displayStep(index) {
+
+    if (solutionPath.length === 0) {
+        return;
+    }
+
+
+    const state =
+        solutionPath[index];
+
+    const g = index;
+
+    const h =
+        manhattanDistance(state);
+
+    const f =
+        g + h;
+
+
+    displayBoard(state);
+
+
+    document.getElementById(
+        "stepTitle"
+    ).textContent =
+        "Solution Step " +
+        index +
+        " of " +
+        (solutionPath.length - 1);
+
+
+    document.getElementById(
+        "gValue"
+    ).textContent = g;
+
+
+    document.getElementById(
+        "hValue"
+    ).textContent = h;
+
+
+    document.getElementById(
+        "fValue"
+    ).textContent = f;
+
+
+    /*
+        Step 0 has no moved tile.
+    */
+    if (index === 0) {
+
+        document.getElementById(
+            "tileMoved"
+        ).textContent = "-";
+
+    } else {
+
+        document.getElementById(
+            "tileMoved"
+        ).textContent =
+            getMovedTile(
+                solutionPath[index - 1],
+                state
+            );
+    }
+
+
+    displaySnapshot(state);
+}
+
+
+/* ---------- Input validation ---------- */
+
+
+function readInput() {
+
+    const text =
+        document.getElementById(
+            "puzzleInput"
+        ).value.trim();
+
+
+    const parts =
+        text.split(/[\s,]+/);
+
+
+    if (parts.length !== 9) {
+
+        throw new Error(
+            "Enter exactly 9 numbers."
+        );
+    }
+
+
+    const numbers =
+        parts.map(Number);
+
+
+    if (
+        numbers.some(
+            number =>
+                !Number.isInteger(number) ||
+                number < 0 ||
+                number > 8
+        )
+    ) {
+
+        throw new Error(
+            "Use only the numbers 0 through 8."
+        );
+    }
+
+
+    if (
+        new Set(numbers).size !== 9
+    ) {
+
+        throw new Error(
+            "Each number 0 through 8 must appear exactly once."
+        );
+    }
+
+
+    return numbers;
+}
+
+
+/* ---------- Solve ---------- */
+
+
+function solve() {
+
+    pause();
+
+
+    const error =
+        document.getElementById("error");
+
+    error.textContent = "";
+
+
+    let start;
+
+
+    try {
+
+        start = readInput();
+
+    } catch (problem) {
+
+        error.textContent =
+            problem.message;
+
+        return;
+    }
+
+
+    document.getElementById(
+        "stats"
+    ).textContent =
+        "Running A*...";
+
+
+    const result =
+        aStar(start);
+
+
+    if (result === null) {
+
+        solutionPath = [];
+
+        displayBoard(start);
+
+
+        document.getElementById(
+            "stats"
+        ).textContent =
+            "No solution exists for this puzzle.";
+
+        document.getElementById(
+            "openListBody"
+        ).innerHTML = "";
+
+        document.getElementById(
+            "queueMessage"
+        ).textContent =
+            "No solution found.";
+
+        document.getElementById(
+            "tileMoved"
+        ).textContent = "-";
+
+        return;
+    }
+
+
+    solutionPath =
+        reconstructPath(result);
+
+    currentStep = 0;
+
+
+    document.getElementById(
+        "stats"
+    ).innerHTML =
+
+        "<strong>A* Solution Found</strong><br>" +
+
+        "Optimal moves: " +
+        (solutionPath.length - 1) +
+
+        "<br>States expanded: " +
+        result.expanded +
+
+        "<br>States discovered/generated: " +
+        result.discovered;
+
+
+    displayStep(0);
+}
+
+
+/* ---------- Animation ---------- */
+
+
+function play() {
+
+    if (solutionPath.length === 0) {
+        return;
+    }
+
+
+    pause();
+
+
+    if (
+        currentStep >=
+        solutionPath.length - 1
+    ) {
+
+        currentStep = 0;
+        displayStep(currentStep);
+    }
+
+
+    const speed =
+        Number(
+            document.getElementById(
+                "speed"
+            ).value
+        );
+
+
+    timer =
+        setInterval(function () {
+
+            if (
+                currentStep <
+                solutionPath.length - 1
+            ) {
+
+                currentStep++;
+
+                displayStep(
+                    currentStep
+                );
+
+            } else {
+
+                pause();
+            }
+
+        }, speed);
+}
+
+
+function pause() {
+
+    if (timer !== null) {
+
+        clearInterval(timer);
+
+        timer = null;
+    }
+}
+
+
+function previous() {
+
+    pause();
+
+    if (currentStep > 0) {
+
+        currentStep--;
+
+        displayStep(currentStep);
+    }
+}
+
+
+function next() {
+
+    pause();
+
+    if (
+        currentStep <
+        solutionPath.length - 1
+    ) {
+
+        currentStep++;
+
+        displayStep(currentStep);
+    }
+}
+
+
+function reset() {
+
+    pause();
+
+    if (solutionPath.length > 0) {
+
+        currentStep = 0;
+
+        displayStep(0);
+    }
+}
+
+
+/* ---------- Buttons ---------- */
+
+
+document.getElementById(
+    "solveButton"
+).addEventListener(
+    "click",
+    solve
+);
+
+
+document.getElementById(
+    "playButton"
+).addEventListener(
+    "click",
+    play
+);
+
+
+document.getElementById(
+    "pauseButton"
+).addEventListener(
+    "click",
+    pause
+);
+
+
+document.getElementById(
+    "previousButton"
+).addEventListener(
+    "click",
+    previous
+);
+
+
+document.getElementById(
+    "nextButton"
+).addEventListener(
+    "click",
+    next
+);
+
+
+document.getElementById(
+    "resetButton"
+).addEventListener(
+    "click",
+    reset
+);
+
+
+document.getElementById(
+    "speed"
+).addEventListener(
+    "change",
+    function () {
+
+        if (timer !== null) {
+            play();
+        }
+    }
+);
+
+
+/* ---------- Initial page display ---------- */
+
+
+const startingDisplay = [
+    8, 7, 6,
+    5, 4, 3,
+    2, 1, 0
+];
+
+displayBoard(startingDisplay);
+
+
+const startingH =
+    manhattanDistance(
+        startingDisplay
+    );
+
+
+document.getElementById(
+    "gValue"
+).textContent = 0;
+
+
+document.getElementById(
+    "hValue"
+).textContent =
+    startingH;
+
+
+document.getElementById(
+    "fValue"
+).textContent =
+    startingH;
+
+
+document.getElementById(
+    "tileMoved"
+).textContent = "-";
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1743 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Chopsticks</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+</head>
+
+
+<body>
+
+<main class="game-container">
+
+    <h1>Chopsticks</h1>
+
+
+    <!-- ====================================================== -->
+    <!-- NEW GAME SETUP                                         -->
+    <!-- ====================================================== -->
+
+    <section
+        id="setup-panel"
+        class="panel setup-panel"
+    >
+
+        <h2>New Game</h2>
+
+        <p>
+            Do you want to go first or second?
+        </p>
+
+
+        <div class="setup-buttons">
+
+            <button id="first-button">
+                Go First
+            </button>
+
+            <button id="second-button">
+                Go Second
+            </button>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- ====================================================== -->
+    <!-- GAME                                                   -->
+    <!-- ====================================================== -->
+
+    <section
+        id="game-panel"
+        class="panel hidden"
+    >
+
+
+        <!-- -------------------------------------------------- -->
+        <!-- GAME INFORMATION                                   -->
+        <!-- -------------------------------------------------- -->
+
+        <div class="game-info">
+
+            <div class="info-item">
+                <span class="info-label">
+                    You are
+                </span>
+
+                <strong id="human-role">
+                    Player A
+                </strong>
+            </div>
+
+
+            <div class="info-item turn-info">
+                <span class="info-label">
+                    Turn
+                </span>
+
+                <strong id="turn-display">
+                    Player A
+                </strong>
+            </div>
+
+
+            <div class="info-item">
+                <span class="info-label">
+                    Level
+                </span>
+
+                <strong id="level-display">
+                    0
+                </strong>
+            </div>
+
+
+            <div class="info-item">
+                <span class="info-label">
+                    Remaining
+                </span>
+
+                <strong id="moves-display">
+                    20
+                </strong>
+            </div>
+
+        </div>
+
+
+
+        <!-- -------------------------------------------------- -->
+        <!-- PLAY AREA                                          -->
+        <!-- -------------------------------------------------- -->
+
+        <div class="play-area">
+
+
+            <!-- COMPUTER -->
+
+            <section
+                id="computer-area"
+                class="player-area"
+            >
+
+                <div class="player-heading">
+
+                    <h2>
+                        Computer
+                    </h2>
+
+                    <span
+                        id="computer-role"
+                        class="player-role"
+                    >
+                        Player B
+                    </span>
+
+                </div>
+
+
+                <div class="hands">
+
+                    <button
+                        id="computer-left-hand"
+                        class="hand"
+                        aria-label="Computer left hand"
+                    >
+
+                        <span class="hand-label">
+                            Left
+                        </span>
+
+                        <span
+                            id="computer-left"
+                            class="finger-count"
+                        >
+                            1
+                        </span>
+
+                    </button>
+
+
+                    <button
+                        id="computer-right-hand"
+                        class="hand"
+                        aria-label="Computer right hand"
+                    >
+
+                        <span class="hand-label">
+                            Right
+                        </span>
+
+                        <span
+                            id="computer-right"
+                            class="finger-count"
+                        >
+                            1
+                        </span>
+
+                    </button>
+
+                </div>
+
+            </section>
+
+
+
+            <div class="versus">
+                VS
+            </div>
+
+
+
+            <!-- HUMAN -->
+
+            <section
+                id="human-area"
+                class="player-area"
+            >
+
+                <div class="player-heading">
+
+                    <h2>
+                        You
+                    </h2>
+
+                    <span
+                        id="player-role"
+                        class="player-role"
+                    >
+                        Player A
+                    </span>
+
+                </div>
+
+
+                <div class="hands">
+
+                    <button
+                        id="human-left-hand"
+                        class="hand"
+                        aria-label="Your left hand"
+                    >
+
+                        <span class="hand-label">
+                            Left
+                        </span>
+
+                        <span
+                            id="human-left"
+                            class="finger-count"
+                        >
+                            1
+                        </span>
+
+                    </button>
+
+
+                    <button
+                        id="human-right-hand"
+                        class="hand"
+                        aria-label="Your right hand"
+                    >
+
+                        <span class="hand-label">
+                            Right
+                        </span>
+
+                        <span
+                            id="human-right"
+                            class="finger-count"
+                        >
+                            1
+                        </span>
+
+                    </button>
+
+                </div>
+
+            </section>
+
+        </div>
+
+
+
+        <!-- -------------------------------------------------- -->
+        <!-- THINKING INDICATOR                                 -->
+        <!-- -------------------------------------------------- -->
+
+        <div
+            id="thinking-indicator"
+            class="thinking-indicator hidden"
+        >
+            <span class="thinking-dot"></span>
+            <span class="thinking-dot"></span>
+            <span class="thinking-dot"></span>
+
+            <span>
+                Computer is thinking...
+            </span>
+        </div>
+
+
+
+        <!-- -------------------------------------------------- -->
+        <!-- REDISTRIBUTION                                     -->
+        <!-- -------------------------------------------------- -->
+
+        <section class="controls">
+
+            <button id="redistribute-button">
+                Redistribute
+            </button>
+
+        </section>
+
+
+        <section
+            id="redistribution-panel"
+            class="redistribution-panel hidden"
+        >
+
+            <h3>
+                Legal Redistributions
+            </h3>
+
+            <div id="redistribution-options">
+            </div>
+
+            <button
+                id="cancel-redistribute"
+                class="secondary-button"
+            >
+                Cancel
+            </button>
+
+        </section>
+
+
+
+        <!-- -------------------------------------------------- -->
+        <!-- AI ANALYSIS                                        -->
+        <!-- -------------------------------------------------- -->
+
+        <section class="analysis-section">
+
+            <button
+                id="analysis-toggle"
+                class="secondary-button"
+            >
+                Show AI Analysis
+            </button>
+
+
+            <div
+                id="analysis-panel"
+                class="analysis-panel hidden"
+            >
+
+                <h2>
+                    AI Analysis
+                </h2>
+
+
+                <p>
+                    <strong>
+                        Current state:
+                    </strong>
+
+                    <span id="analysis-state">
+                        -
+                    </span>
+                </p>
+
+
+                <p>
+                    <strong>
+                        Computer role:
+                    </strong>
+
+                    <span id="analysis-role">
+                        -
+                    </span>
+                </p>
+
+
+                <p>
+                    <strong>
+                        Moves considered:
+                    </strong>
+                </p>
+
+
+                <div id="analysis-moves">
+                    No computer move analyzed yet.
+                </div>
+
+
+                <p>
+                    <strong>
+                        Selected move:
+                    </strong>
+
+                    <span id="analysis-selected">
+                        -
+                    </span>
+                </p>
+
+
+                <p>
+                    <strong>
+                        Predicted outcome:
+                    </strong>
+
+                    <span id="analysis-outcome">
+                        -
+                    </span>
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- -------------------------------------------------- -->
+        <!-- STATUS                                             -->
+        <!-- -------------------------------------------------- -->
+
+        <section
+            id="status-area"
+            class="status-area"
+        >
+
+            <h2>
+                Game Status
+            </h2>
+
+            <p id="status-display">
+                Game in progress.
+            </p>
+
+        </section>
+
+
+
+        <button
+            id="restart-button"
+            class="restart-button"
+        >
+            Restart / New Game
+        </button>
+
+    </section>
+
+</main>
+
+
+
+<script src="game.js"></script>
+<script src="ai.js"></script>
+
+
+
+<script>
+
+    const MAX_DEPTH = 20;
+
+    let state = null;
+
+    let humanPlayer = null;
+    let computerPlayer = null;
+
+    let dp = null;
+
+    let selectedHumanHand = null;
+
+    let computerThinking = false;
+
+
+
+    // ==========================================================
+    // DOM
+    // ==========================================================
+
+    const setupPanel =
+        document.getElementById("setup-panel");
+
+    const gamePanel =
+        document.getElementById("game-panel");
+
+    const humanRoleDisplay =
+        document.getElementById("human-role");
+
+    const computerRoleDisplay =
+        document.getElementById("computer-role");
+
+    const playerRoleDisplay =
+        document.getElementById("player-role");
+
+    const turnDisplay =
+        document.getElementById("turn-display");
+
+    const levelDisplay =
+        document.getElementById("level-display");
+
+    const movesDisplay =
+        document.getElementById("moves-display");
+
+    const statusDisplay =
+        document.getElementById("status-display");
+
+    const statusArea =
+        document.getElementById("status-area");
+
+    const humanArea =
+        document.getElementById("human-area");
+
+    const computerArea =
+        document.getElementById("computer-area");
+
+    const thinkingIndicator =
+        document.getElementById("thinking-indicator");
+
+
+    const humanLeft =
+        document.getElementById("human-left");
+
+    const humanRight =
+        document.getElementById("human-right");
+
+    const computerLeft =
+        document.getElementById("computer-left");
+
+    const computerRight =
+        document.getElementById("computer-right");
+
+
+    const humanLeftHand =
+        document.getElementById("human-left-hand");
+
+    const humanRightHand =
+        document.getElementById("human-right-hand");
+
+    const computerLeftHand =
+        document.getElementById("computer-left-hand");
+
+    const computerRightHand =
+        document.getElementById("computer-right-hand");
+
+
+    const redistributeButton =
+        document.getElementById("redistribute-button");
+
+    const redistributionPanel =
+        document.getElementById("redistribution-panel");
+
+    const redistributionOptions =
+        document.getElementById("redistribution-options");
+
+
+    const analysisToggle =
+        document.getElementById("analysis-toggle");
+
+    const analysisPanel =
+        document.getElementById("analysis-panel");
+
+    const analysisState =
+        document.getElementById("analysis-state");
+
+    const analysisRole =
+        document.getElementById("analysis-role");
+
+    const analysisMoves =
+        document.getElementById("analysis-moves");
+
+    const analysisSelected =
+        document.getElementById("analysis-selected");
+
+    const analysisOutcome =
+        document.getElementById("analysis-outcome");
+
+
+
+    // ==========================================================
+    // EVENTS
+    // ==========================================================
+
+    document
+        .getElementById("first-button")
+        .addEventListener(
+            "click",
+            () => startGame("A")
+        );
+
+
+    document
+        .getElementById("second-button")
+        .addEventListener(
+            "click",
+            () => startGame("B")
+        );
+
+
+    document
+        .getElementById("restart-button")
+        .addEventListener(
+            "click",
+            restartGame
+        );
+
+
+    document
+        .getElementById("cancel-redistribute")
+        .addEventListener(
+            "click",
+            () => {
+                redistributionPanel.classList.add("hidden");
+            }
+        );
+
+
+    redistributeButton.addEventListener(
+        "click",
+        showRedistributions
+    );
+
+
+    humanLeftHand.addEventListener(
+        "click",
+        () => selectHumanHand(0)
+    );
+
+
+    humanRightHand.addEventListener(
+        "click",
+        () => selectHumanHand(1)
+    );
+
+
+    computerLeftHand.addEventListener(
+        "click",
+        () => attackComputerHand(0)
+    );
+
+
+    computerRightHand.addEventListener(
+        "click",
+        () => attackComputerHand(1)
+    );
+
+
+    analysisToggle.addEventListener(
+        "click",
+        () => {
+
+            const hidden =
+                analysisPanel.classList.contains("hidden");
+
+            analysisPanel.classList.toggle("hidden");
+
+            analysisToggle.textContent =
+                hidden
+                    ? "Hide AI Analysis"
+                    : "Show AI Analysis";
+        }
+    );
+
+
+
+    // ==========================================================
+    // START / RESTART
+    // ==========================================================
+
+    function startGame(playerChoice) {
+
+        humanPlayer = playerChoice;
+
+        computerPlayer =
+            humanPlayer === "A"
+                ? "B"
+                : "A";
+
+
+        state = [
+            [1, 1],
+            [1, 1],
+            0
+        ];
+
+
+        selectedHumanHand = null;
+
+        computerThinking = false;
+
+
+        redistributionPanel.classList.add("hidden");
+
+        resetAIAnalysis();
+
+
+        dp =
+            bestMoveDP(MAX_DEPTH);
+
+
+        setupPanel.classList.add("hidden");
+
+        gamePanel.classList.remove("hidden");
+
+
+        updateDisplay();
+
+
+        if (computerPlayer === "A") {
+            scheduleComputerMove();
+        }
+    }
+
+
+
+    function restartGame() {
+
+        state = null;
+
+        humanPlayer = null;
+
+        computerPlayer = null;
+
+        selectedHumanHand = null;
+
+        computerThinking = false;
+
+
+        redistributionPanel.classList.add("hidden");
+
+        analysisPanel.classList.add("hidden");
+
+        analysisToggle.textContent =
+            "Show AI Analysis";
+
+
+        resetAIAnalysis();
+
+
+        gamePanel.classList.add("hidden");
+
+        setupPanel.classList.remove("hidden");
+
+
+        statusDisplay.textContent =
+            "Game in progress.";
+    }
+
+
+
+    // ==========================================================
+    // TURN HELPERS
+    // ==========================================================
+
+    function currentPlayer() {
+
+        return state[2] % 2 === 0
+            ? "A"
+            : "B";
+    }
+
+
+
+    function isHumanTurn() {
+
+        return (
+            state !== null &&
+            currentPlayer() === humanPlayer &&
+            !computerThinking &&
+            !gameFinished()
+        );
+    }
+
+
+
+    function gameFinished() {
+
+        if (state === null) {
+            return false;
+        }
+
+
+        return (
+            isTerminal(state) ||
+            state[2] >= MAX_DEPTH
+        );
+    }
+
+
+
+    function humanStateIndex() {
+
+        return humanPlayer === "A"
+            ? 0
+            : 1;
+    }
+
+
+
+    function computerStateIndex() {
+
+        return computerPlayer === "A"
+            ? 0
+            : 1;
+    }
+
+
+
+    // ==========================================================
+    // HUMAN ATTACK
+    // ==========================================================
+
+    function selectHumanHand(handIndex) {
+
+        if (!isHumanTurn()) {
+            return;
+        }
+
+
+        redistributionPanel.classList.add("hidden");
+
+
+        const playerIndex =
+            humanStateIndex();
+
+
+        const value =
+            state[playerIndex][handIndex];
+
+
+        if (value === 0) {
+            return;
+        }
+
+
+        selectedHumanHand =
+            handIndex;
+
+
+        updateHandSelection();
+
+        updateStatus();
+    }
+
+
+
+    function attackComputerHand(targetHandIndex) {
+
+        if (!isHumanTurn()) {
+            return;
+        }
+
+
+        if (selectedHumanHand === null) {
+
+            statusDisplay.textContent =
+                "Select one of your active hands first.";
+
+            pulseStatus();
+
+            return;
+        }
+
+
+        const humanIndex =
+            humanStateIndex();
+
+
+        const opponentIndex =
+            computerStateIndex();
+
+
+        if (
+            state[opponentIndex][targetHandIndex]
+            === 0
+        ) {
+            return;
+        }
+
+
+        const legalMoves =
+            nextMoves(state);
+
+
+        const matchingMove =
+            legalMoves.find(
+                move =>
+                    isMatchingAttack(
+                        state,
+                        move,
+                        humanIndex,
+                        opponentIndex,
+                        selectedHumanHand,
+                        targetHandIndex
+                    )
+            );
+
+
+        if (!matchingMove) {
+
+            statusDisplay.textContent =
+                "That attack is not a legal move.";
+
+            pulseStatus();
+
+            return;
+        }
+
+
+        const attackedHand =
+            targetHandIndex === 0
+                ? computerLeftHand
+                : computerRightHand;
+
+
+        state = matchingMove;
+
+        selectedHumanHand = null;
+
+
+        animateAttack(attackedHand);
+
+        updateDisplay();
+
+        afterHumanMove();
+    }
+
+
+
+    function isMatchingAttack(
+        oldState,
+        newState,
+        humanIndex,
+        opponentIndex,
+        attackingHand,
+        targetHand
+    ) {
+
+        if (
+            newState[humanIndex][0]
+                !== oldState[humanIndex][0] ||
+
+            newState[humanIndex][1]
+                !== oldState[humanIndex][1]
+        ) {
+            return false;
+        }
+
+
+        if (
+            newState[opponentIndex][targetHand]
+                === oldState[opponentIndex][targetHand]
+        ) {
+            return false;
+        }
+
+
+        const otherTarget =
+            targetHand === 0
+                ? 1
+                : 0;
+
+
+        if (
+            newState[opponentIndex][otherTarget]
+                !== oldState[opponentIndex][otherTarget]
+        ) {
+            return false;
+        }
+
+
+        const expectedValue =
+            overflowSum(
+                oldState[humanIndex][attackingHand],
+                oldState[opponentIndex][targetHand]
+            );
+
+
+        return (
+            newState[opponentIndex][targetHand]
+            === expectedValue
+        );
+    }
+
+
+
+    // ==========================================================
+    // REDISTRIBUTION
+    // ==========================================================
+
+    function showRedistributions() {
+
+        if (!isHumanTurn()) {
+            return;
+        }
+
+
+        selectedHumanHand = null;
+
+        updateHandSelection();
+
+
+        const legalMoves =
+            nextMoves(state);
+
+
+        const humanIndex =
+            humanStateIndex();
+
+
+        const opponentIndex =
+            computerStateIndex();
+
+
+        const redistributions =
+            legalMoves.filter(
+                move =>
+                    isRedistribution(
+                        state,
+                        move,
+                        humanIndex,
+                        opponentIndex
+                    )
+            );
+
+
+        redistributionOptions.innerHTML =
+            "";
+
+
+        if (redistributions.length === 0) {
+
+            redistributionOptions.textContent =
+                "No legal redistributions are available.";
+
+        } else {
+
+            for (const move of redistributions) {
+
+                const button =
+                    document.createElement("button");
+
+
+                const left =
+                    move[humanIndex][0];
+
+
+                const right =
+                    move[humanIndex][1];
+
+
+                button.textContent =
+                    `Left: ${left}, Right: ${right}`;
+
+
+                button.classList.add(
+                    "redistribution-choice"
+                );
+
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        if (!isHumanTurn()) {
+                            return;
+                        }
+
+
+                        state =
+                            move;
+
+
+                        redistributionPanel
+                            .classList
+                            .add("hidden");
+
+
+                        flashPlayerArea(humanArea);
+
+                        updateDisplay();
+
+                        afterHumanMove();
+                    }
+                );
+
+
+                redistributionOptions
+                    .appendChild(button);
+            }
+        }
+
+
+        redistributionPanel.classList.remove("hidden");
+    }
+
+
+
+    function isRedistribution(
+        oldState,
+        newState,
+        humanIndex,
+        opponentIndex
+    ) {
+
+        const opponentUnchanged =
+            oldState[opponentIndex][0]
+                === newState[opponentIndex][0]
+
+            &&
+
+            oldState[opponentIndex][1]
+                === newState[opponentIndex][1];
+
+
+        const humanChanged =
+            oldState[humanIndex][0]
+                !== newState[humanIndex][0]
+
+            ||
+
+            oldState[humanIndex][1]
+                !== newState[humanIndex][1];
+
+
+        return (
+            opponentUnchanged &&
+            humanChanged
+        );
+    }
+
+
+
+    // ==========================================================
+    // COMPUTER
+    // ==========================================================
+
+    function afterHumanMove() {
+
+        if (gameFinished()) {
+
+            updateDisplay();
+
+            return;
+        }
+
+
+        scheduleComputerMove();
+    }
+
+
+
+    function scheduleComputerMove() {
+
+        if (gameFinished()) {
+            return;
+        }
+
+
+        computerThinking = true;
+
+        selectedHumanHand = null;
+
+
+        redistributionPanel.classList.add("hidden");
+
+
+        updateAIAnalysis(state);
+
+        updateDisplay();
+
+
+        computerMove();
+
+        computerThinking = false;
+
+
+        flashPlayerArea(computerArea);
+
+        updateDisplay();
+    }
+
+
+
+    function computerMove() {
+
+        if (gameFinished()) {
+            return;
+        }
+
+
+        if (
+            currentPlayer()
+            !== computerPlayer
+        ) {
+            return;
+        }
+
+
+        const result =
+            getDPResult(
+                dp,
+                state
+            );
+
+
+        if (
+            result &&
+            result.bestMove
+        ) {
+
+            state =
+                result.bestMove;
+        }
+    }
+
+
+
+    // ==========================================================
+    // UI ANIMATIONS
+    // ==========================================================
+
+    function animateAttack(element) {
+
+        element.classList.remove("attack-hit");
+
+        void element.offsetWidth;
+
+        element.classList.add("attack-hit");
+
+
+        setTimeout(
+            () => {
+                element.classList.remove("attack-hit");
+            },
+            260
+        );
+    }
+
+
+
+    function flashPlayerArea(element) {
+
+        element.classList.remove("turn-flash");
+
+        void element.offsetWidth;
+
+        element.classList.add("turn-flash");
+
+
+        setTimeout(
+            () => {
+                element.classList.remove("turn-flash");
+            },
+            300
+        );
+    }
+
+
+
+    function pulseStatus() {
+
+        statusArea.classList.remove("status-pulse");
+
+        void statusArea.offsetWidth;
+
+        statusArea.classList.add("status-pulse");
+
+
+        setTimeout(
+            () => {
+                statusArea.classList.remove("status-pulse");
+            },
+            260
+        );
+    }
+
+
+
+    // ==========================================================
+    // AI ANALYSIS
+    // ==========================================================
+
+    function formatState(s) {
+
+        if (!s) {
+            return "-";
+        }
+
+
+        return (
+            "((" +
+            s[0][0] + "," +
+            s[0][1] +
+            "),(" +
+            s[1][0] + "," +
+            s[1][1] +
+            ")," +
+            s[2] +
+            ")"
+        );
+    }
+
+
+
+    function outcomeText(value) {
+
+        if (value === 1) {
+            return "WIN";
+        }
+
+
+        if (value === -1) {
+            return "LOSS";
+        }
+
+
+        return "TIE";
+    }
+
+
+
+    function resetAIAnalysis() {
+
+        analysisState.textContent =
+            "-";
+
+
+        analysisRole.textContent =
+            "-";
+
+
+        analysisMoves.textContent =
+            "No computer move analyzed yet.";
+
+
+        analysisSelected.textContent =
+            "-";
+
+
+        analysisOutcome.textContent =
+            "-";
+    }
+
+
+
+    function updateAIAnalysis(currentState) {
+
+        const result =
+            getDPResult(
+                dp,
+                currentState
+            );
+
+
+        const legalMoves =
+            nextMoves(
+                currentState
+            );
+
+
+        analysisState.textContent =
+            formatState(
+                currentState
+            );
+
+
+        if (
+            currentState[2] % 2 === 0
+        ) {
+
+            analysisRole.textContent =
+                "Player A - MAX";
+
+        } else {
+
+            analysisRole.textContent =
+                "Player B - MIN";
+        }
+
+
+        analysisMoves.innerHTML =
+            "";
+
+
+        for (const move of legalMoves) {
+
+            const moveResult =
+                getDPResult(
+                    dp,
+                    move
+                );
+
+
+            const row =
+                document.createElement(
+                    "div"
+                );
+
+
+            row.classList.add(
+                "analysis-move"
+            );
+
+
+            const selected =
+                result.bestMove &&
+                stateKey(move)
+                    === stateKey(result.bestMove);
+
+
+            if (selected) {
+
+                row.classList.add(
+                    "selected-move"
+                );
+            }
+
+
+            row.textContent =
+                formatState(move)
+                +
+                "   value = "
+                +
+                moveResult.value
+                +
+                (
+                    selected
+                        ? "   ← selected"
+                        : ""
+                );
+
+
+            analysisMoves.appendChild(row);
+        }
+
+
+        analysisSelected.textContent =
+            result.bestMove
+                ? formatState(result.bestMove)
+                : "None";
+
+
+        analysisOutcome.textContent =
+            outcomeText(result.value)
+            +
+            " from Player A's perspective";
+    }
+
+
+
+    // ==========================================================
+    // DISPLAY
+    // ==========================================================
+
+    function updateDisplay() {
+
+        if (state === null) {
+            return;
+        }
+
+
+        humanRoleDisplay.textContent =
+            "Player " + humanPlayer;
+
+
+        playerRoleDisplay.textContent =
+            "Player " + humanPlayer;
+
+
+        computerRoleDisplay.textContent =
+            "Player " + computerPlayer;
+
+
+        turnDisplay.textContent =
+            "Player " + currentPlayer();
+
+
+        levelDisplay.textContent =
+            state[2];
+
+
+        movesDisplay.textContent =
+            MAX_DEPTH - state[2];
+
+
+        const aHands =
+            state[0];
+
+
+        const bHands =
+            state[1];
+
+
+        if (humanPlayer === "A") {
+
+            humanLeft.textContent =
+                aHands[0];
+
+            humanRight.textContent =
+                aHands[1];
+
+            computerLeft.textContent =
+                bHands[0];
+
+            computerRight.textContent =
+                bHands[1];
+
+        } else {
+
+            humanLeft.textContent =
+                bHands[0];
+
+            humanRight.textContent =
+                bHands[1];
+
+            computerLeft.textContent =
+                aHands[0];
+
+            computerRight.textContent =
+                aHands[1];
+        }
+
+
+        updateInactiveHands();
+
+        updateHandSelection();
+
+        updateControls();
+
+        updateTurnHighlight();
+
+        updateThinkingIndicator();
+
+        updateStatus();
+    }
+
+
+
+    function updateInactiveHands() {
+
+        const humanIndex =
+            humanStateIndex();
+
+
+        const computerIndex =
+            computerStateIndex();
+
+
+        humanLeftHand.classList.toggle(
+            "inactive",
+            state[humanIndex][0] === 0
+        );
+
+
+        humanRightHand.classList.toggle(
+            "inactive",
+            state[humanIndex][1] === 0
+        );
+
+
+        computerLeftHand.classList.toggle(
+            "inactive",
+            state[computerIndex][0] === 0
+        );
+
+
+        computerRightHand.classList.toggle(
+            "inactive",
+            state[computerIndex][1] === 0
+        );
+    }
+
+
+
+    function updateHandSelection() {
+
+        humanLeftHand.classList.toggle(
+            "selected",
+            selectedHumanHand === 0
+        );
+
+
+        humanRightHand.classList.toggle(
+            "selected",
+            selectedHumanHand === 1
+        );
+    }
+
+
+
+    function updateControls() {
+
+        const humanCanMove =
+            isHumanTurn();
+
+
+        const humanIndex =
+            humanStateIndex();
+
+
+        const computerIndex =
+            computerStateIndex();
+
+
+        humanLeftHand.disabled =
+            !humanCanMove ||
+            state[humanIndex][0] === 0;
+
+
+        humanRightHand.disabled =
+            !humanCanMove ||
+            state[humanIndex][1] === 0;
+
+
+        computerLeftHand.disabled =
+            !humanCanMove ||
+            state[computerIndex][0] === 0;
+
+
+        computerRightHand.disabled =
+            !humanCanMove ||
+            state[computerIndex][1] === 0;
+
+
+        redistributeButton.disabled =
+            !humanCanMove;
+    }
+
+
+
+    function updateTurnHighlight() {
+
+        humanArea.classList.remove("active-turn");
+
+        computerArea.classList.remove("active-turn");
+
+
+        if (gameFinished()) {
+            return;
+        }
+
+
+        if (
+            currentPlayer()
+            === humanPlayer
+        ) {
+
+            humanArea.classList.add("active-turn");
+
+        } else {
+
+            computerArea.classList.add("active-turn");
+        }
+    }
+
+
+
+    function updateThinkingIndicator() {
+
+        thinkingIndicator.classList.toggle(
+            "hidden",
+            !computerThinking
+        );
+    }
+
+
+
+    function updateStatus() {
+
+        const result =
+            terminalValue(state);
+
+
+        if (result === -1) {
+
+            statusDisplay.textContent =
+                humanPlayer === "A"
+                    ? "Game over. Computer wins."
+                    : "Game over. You win!";
+
+            return;
+        }
+
+
+        if (result === 1) {
+
+            statusDisplay.textContent =
+                humanPlayer === "A"
+                    ? "Game over. You win!"
+                    : "Game over. Computer wins.";
+
+            return;
+        }
+
+
+        if (
+            state[2]
+            >= MAX_DEPTH
+        ) {
+
+            statusDisplay.textContent =
+                "Game over. Tie.";
+
+            return;
+        }
+
+
+        if (computerThinking) {
+
+            statusDisplay.textContent =
+                "Computer is choosing a move...";
+
+            return;
+        }
+
+
+        if (isHumanTurn()) {
+
+            if (
+                selectedHumanHand
+                !== null
+            ) {
+
+                statusDisplay.textContent =
+                    "Now select an active computer hand.";
+
+            } else {
+
+                statusDisplay.textContent =
+                    "Your turn. Select a hand to attack or choose Redistribute.";
+            }
+
+        } else {
+
+            statusDisplay.textContent =
+                "Computer's turn.";
+        }
+    }
+
+</script>
+
+
+</body>
+
+</html>
