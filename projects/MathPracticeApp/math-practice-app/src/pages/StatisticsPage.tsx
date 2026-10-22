@@ -11,6 +11,12 @@ export function StatisticsPage() {
   const [revision, setRevision] = useState(0);
   const data = loadPractice();
   const stats = loadStatistics();
+  const activeMistakes = data.mistakes.filter((p) => !p.mastered);
+  const masteredMistakes = data.mistakes.filter((p) => p.mastered);
+  const missCounts = operations.map((op) => ({ op, count: data.mistakes.filter((p) => p.operation === op).reduce((sum, p) => sum + p.incorrectCount, 0) }));
+  const mostMissed = [...missCounts].sort((a, b) => b.count - a.count)[0];
+  const topFacts = [...data.mistakes].sort((a, b) => b.incorrectCount - a.incorrectCount).slice(0, 5);
+  const similarPracticed = data.attempts.filter((a) => a.source === 'mistake-review').length;
   function reset() {
     if (!window.confirm('Are you sure you want to erase all practice history and statistics?')) return;
     if (resetStatistics()) setRevision((current) => current + 1);
@@ -37,6 +43,15 @@ export function StatisticsPage() {
       const s = stats.byDifficulty[level];
       return <div key={level}><h3 className="stats-title">Level {level}</h3><p>{s.attempted} attempted</p><p>{s.correct} correct · {s.incorrect} incorrect</p><strong>{accuracy(s.correct, s.attempted)}%</strong><span>Accuracy</span></div>;
     })}</div>
+    <h2>Mistake review</h2>
+    <div className="summary-grid stats-grid">
+      <div><strong>{activeMistakes.length}</strong><span>Active patterns</span></div>
+      <div><strong>{masteredMistakes.length}</strong><span>Mastered patterns</span></div>
+      <div><strong>{similarPracticed}</strong><span>Similar questions practiced</span></div>
+      <div><strong>{mostMissed?.count ? mostMissed.op : 'None yet'}</strong><span>Most missed operation</span></div>
+    </div>
+    <h3>Most frequently missed number facts</h3>
+    {topFacts.length ? <ul>{topFacts.map((p) => <li key={p.id}>{p.firstOperand} {({addition: '+', subtraction: '−', multiplication: '×', division: '÷'} as const)[p.operation]} {p.secondOperand} = {p.correctAnswer}: {p.incorrectCount} missed, {p.similarCorrectCount} review successes {p.mastered ? '(mastered)' : ''}</li>)}</ul> : <p>No mistakes recorded yet.</p>}
     <h2>Recent sessions</h2>
     {recentSessions(data.sessions).length === 0 ? <p>No completed sessions yet.</p> :
       <div className="table-scroll"><table className="stats-table"><thead><tr><th>Date</th><th>Operations</th><th>Level</th><th>Attempted</th><th>Correct</th><th>Incorrect</th><th>Accuracy</th></tr></thead><tbody>

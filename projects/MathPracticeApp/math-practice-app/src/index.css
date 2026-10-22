@@ -107,3 +107,12 @@ button:disabled { opacity: .5; cursor: not-allowed; transform: none; }
 .stats-table { border-collapse: collapse; width: 100%; text-align: left; min-width: 600px; }
 .stats-table th, .stats-table td { padding: .75rem .6rem; border-bottom: 1px solid #d2d9e5; }
 .stats-table th { font-size: .9rem; }
+
+/* Phase 8 settings controls */
+.settings-form { display: grid; gap: 1.2rem; max-width: 650px; margin: 1.5rem 0; }
+.setting-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; font-weight: 650; }
+.setting-row select, .setting-row input[type='number'] { min-height: 44px; min-width: 130px; border: 1px solid #a7a9ba; border-radius: 10px; padding: 0.6rem; background: white; font: inherit; }
+.setting-row input[type='checkbox'], .setting-operations input { width: 1.35rem; height: 1.35rem; accent-color: #3269be; }
+.setting-operations { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 0.5rem; }
+.setting-operations label { display: flex; align-items: center; gap: 0.4rem; text-transform: capitalize; }
+@media (max-width: 520px) { .setting-row { align-items: flex-start; flex-direction: column; } }

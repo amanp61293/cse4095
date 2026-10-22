@@ -1,8 +1,9 @@
 import { cleanup, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import App from '../app/App';
 
+beforeEach(() => localStorage.clear());
 afterEach(() => { cleanup(); window.history.pushState({}, '', '/'); });
 
 async function openSetup() {
@@ -16,31 +17,34 @@ describe('Phase 3 practice setup', () => {
     await openSetup();
     expect(screen.getByRole('heading', { name: 'Choose Your Practice' })).toBeInTheDocument();
     expect(screen.getByRole('checkbox', { name: /addition/i })).toBeChecked();
-    expect(screen.getByRole('radio', { name: /level 1: beginner/i })).toBeChecked();
+    expect(screen.getByRole('radio', { name: /level 2: easy/i })).toBeChecked();
     expect(screen.getByRole('radio', { name: /10 questions/i })).toBeChecked();
     expect(screen.getByRole('radio', { name: /past mistakes/i })).toBeDisabled();
   });
 
   it('allows mixed operations and choosing a single difficulty and length', async () => {
     const user = await openSetup();
+    await user.click(screen.getByRole('button', { name: /clear all/i }));
     await user.click(screen.getByRole('button', { name: /select all/i }));
     expect(screen.getAllByRole('checkbox', { checked: true })).toHaveLength(4);
     await user.click(screen.getByRole('radio', { name: /level 4: advanced/i }));
     expect(screen.getByRole('radio', { name: /level 4: advanced/i })).toBeChecked();
-    expect(screen.getByRole('radio', { name: /level 1: beginner/i })).not.toBeChecked();
+    expect(screen.getByRole('radio', { name: /level 2: easy/i })).not.toBeChecked();
     await user.click(screen.getByRole('radio', { name: /continuous practice/i }));
     expect(screen.getByRole('radio', { name: /continuous practice/i })).toBeChecked();
   });
 
   it('blocks sessions with no operations and shows guidance', async () => {
     const user = await openSetup();
-    await user.click(screen.getByRole('checkbox', { name: /addition/i }));
+    await user.click(screen.getByRole('button', { name: /clear all/i }));
     expect(screen.getByRole('button', { name: /start session/i })).toBeDisabled();
-    expect(screen.getByRole('alert')).toHaveTextContent('Choose at least one operation');
+    expect(screen.getByText('Choose at least one operation to start.')).toBeInTheDocument();
   });
 
   it('passes selected configuration to the session route', async () => {
     const user = await openSetup();
+    await user.click(screen.getByRole('button', { name: /clear all/i }));
+    await user.click(screen.getByRole('checkbox', { name: /addition/i }));
     await user.click(screen.getByRole('checkbox', { name: /division/i }));
     await user.click(screen.getByRole('radio', { name: /level 3: intermediate/i }));
     await user.click(screen.getByRole('radio', { name: /5 questions/i }));

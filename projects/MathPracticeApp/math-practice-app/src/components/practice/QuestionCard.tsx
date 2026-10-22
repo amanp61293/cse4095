@@ -8,6 +8,7 @@ interface Props {
   onResult: (correct: boolean, selectedAnswer: number) => void;
   animationsEnabled?: boolean;
   showExplanations?: boolean;
+  soundEnabled?: boolean;
 }
 
 function explanation(question: Question): string {
@@ -20,7 +21,7 @@ function explanation(question: Question): string {
   }
 }
 
-export function QuestionCard({ question, index, total, onResult, animationsEnabled = true, showExplanations = true }: Props) {
+export function QuestionCard({ question, index, total, onResult, animationsEnabled = true, showExplanations = true, soundEnabled = true }: Props) {
   const [selected, setSelected] = useState<number | null>(null);
   const [flipped, setFlipped] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -34,6 +35,20 @@ export function QuestionCard({ question, index, total, onResult, animationsEnabl
   function submit(correct: boolean) {
     if (!flipped || selected === null || submitted) return;
     setSubmitted(true);
+    if (soundEnabled) {
+      try {
+        const context = new AudioContext();
+        const tone = context.createOscillator();
+        const gain = context.createGain();
+        tone.frequency.value = correct ? 650 : 300;
+        gain.gain.value = 0.03;
+        tone.connect(gain);
+        gain.connect(context.destination);
+        tone.start();
+        tone.stop(context.currentTime + 0.09);
+        void context.close().catch(() => {});
+      } catch { /* Audio unsupported: question cards still work without sound. */ }
+    }
     onResult(correct, selected);
   }
 

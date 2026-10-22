@@ -103,3 +103,18 @@ The student ran 50 tests locally: 49 passed and one failed because Testing Libra
 **Tests written:** Storage parsing/migration, duplicate prevention, persistence, aggregation, blocked storage, future version handling, reset scope, accuracy edge cases, operation/difficulty breakdowns and session ordering.
 
 **Verification status:** Automated tests, ESLint, formatting and production build require confirmation from actual command outputs. No mistake-review algorithms or settings page controls were added. During blocked storage or quota errors, saving is explicitly reported to the user and a scored attempt is not advanced. Active in-progress session state remains temporary, as only completed history and attempts are required in this phase. Statistics are recalculated from stored attempts (not an independent writeable counter).
+
+
+## Revised Phase 7: Student-reported verification and design decision (2026-10-21)
+
+The student reported the Phase 7 build and checks completed without errors. During manual browser testing, they selected 20 for 5 + 5 but clicked **I Got It Right**, and the score increased as correct. We verified the specification explicitly requires **self-reported scoring**: the choice records the student's selected answer, but the Right/Wrong buttons determine the saved result. This behavior was deliberately preserved for grading compliance. The potential for a contradictory self-report was documented rather than silently changing the requirement.
+
+## Revised Phase 8: Mistake Review and Settings (2026-10-21)
+
+**Student prompt:** Implement original Phases 11–15 together: persisted and deduplicated mistake patterns, difficulty-valid related questions and inverse fact families, review prioritization, mastery threshold, settings and sound/animation/explanation behavior, mistake statistics, tests and accurate documentation. Preserve all Phases 1–7.
+
+**Implementation:** Added `math/mistakeEngine.ts` for mistake aggregation, mastery transitions, weighted review selection, and related-question creation from bounded candidate pools. Created `SettingsPage` with persistent preferences, mastery threshold and confirmed application-data reset. Evolved storage schema from v1 to v2 while retaining validated attempts/sessions/settings, and added validated mistake records. Updated session recording to preserve self-reported scoring while tracking regular misses and review results; setup now offers mistake review only when matching active patterns exist, and session summaries link to mistake practice when eligible. Settings affect explanations, animations and submission sounds; a sound may be suppressed by browser policies. Expanded statistics with active/mastered counts, common errors and number of review attempts.
+
+**Testing written:** Added `mistakeEngine.test.ts`, `mistakeStorage.test.ts`, and `SettingsPage.test.tsx` for grouping, mastery, prioritization, four operations across four levels, storage migration and persistence, settings saves, and destructive-action confirmation. Browser smoke checks are needed for review transitions, refresh persistence, and preference effects.
+
+**Known limitations:** Only completed answer attempts are persisted, not currently active sessions; review patterns are filtered by chosen operation and difficulty, and mastered patterns remain in history but are excluded from regular review until missed again. Settings are saved with an explicit Save button. User-visible tests/lint/build/format still require local verification if dependency installation cannot complete in this environment. Remaining original TODO checkboxes retain unfinished functionality for revised Phase 9.

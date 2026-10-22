@@ -5,8 +5,8 @@ import { NotFoundPage } from '../pages/NotFoundPage';
 import { PracticeSetupPage } from '../pages/PracticeSetupPage';
 import { PracticeSessionPage } from '../pages/PracticeSessionPage';
 import { SessionSummaryPage } from '../pages/SessionSummaryPage';
-import { PlaceholderPage } from '../pages/PlaceholderPage';
 import { StatisticsPage } from '../pages/StatisticsPage';
+import { SettingsPage } from '../pages/SettingsPage';
 
 export default function App() {
   return (
@@ -18,7 +18,7 @@ export default function App() {
           <Route path="practice/session" element={<PracticeSessionPage />} />
           <Route path="practice/summary" element={<SessionSummaryPage />} />
           <Route path="statistics" element={<StatisticsPage />} />
-          <Route path="settings" element={<PlaceholderPage title="Settings" description="Your preferences will be available here in a later phase." />} />
+          <Route path="settings" element={<SettingsPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>

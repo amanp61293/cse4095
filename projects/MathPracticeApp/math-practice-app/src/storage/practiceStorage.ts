@@ -4,9 +4,12 @@ import { DEFAULT_APP_SETTINGS } from '../types/settings';
 import type { AppStatistics } from '../types/statistics';
 import { countAttempts } from '../math/statisticsEngine';
 import type { MathOperation } from '../types/question';
+import type { MistakePattern } from '../types/mistake';
+import type { Question } from '../types/question';
+import { recordMistake, recordReviewResult } from '../math/mistakeEngine';
 
 const KEY = 'math-practice-data';
-const VERSION = 1;
+const VERSION = 2;
 const OPERATIONS: MathOperation[] = ['addition', 'subtraction', 'multiplication', 'division'];
 
 export interface SavedPractice {
@@ -14,11 +17,12 @@ export interface SavedPractice {
   attempts: PracticeAttempt[];
   sessions: PracticeSession[];
   settings: AppSettings;
+  mistakes: MistakePattern[];
   currentDifficulty: 1 | 2 | 3 | 4;
 }
 
 export function emptySavedPractice(): SavedPractice {
-  return { version: VERSION, attempts: [], sessions: [], settings: { ...DEFAULT_APP_SETTINGS, defaultOperations: [...DEFAULT_APP_SETTINGS.defaultOperations] }, currentDifficulty: DEFAULT_APP_SETTINGS.defaultDifficulty };
+  return { version: VERSION, attempts: [], sessions: [], mistakes: [], settings: { ...DEFAULT_APP_SETTINGS, defaultOperations: [...DEFAULT_APP_SETTINGS.defaultOperations] }, currentDifficulty: DEFAULT_APP_SETTINGS.defaultDifficulty };
 }
 
 function object(value: unknown): value is Record<string, unknown> {
@@ -53,6 +57,12 @@ function validSession(value: unknown): value is PracticeSession {
     && nonnegativeInteger(value.attempted) && nonnegativeInteger(value.correct) && nonnegativeInteger(value.incorrect)
     && value.correct + value.incorrect === value.attempted;
 }
+function validMistake(value: unknown): value is MistakePattern {
+  if (!object(value)) return false;
+  return typeof value.id === 'string' && value.id.length > 0 && validOperation(value.operation)
+    && validDifficulty(value.difficulty) && ['firstOperand', 'secondOperand', 'correctAnswer', 'incorrectCount', 'similarCorrectCount'].every((k) => nonnegativeInteger(value[k]))
+    && validDate(value.lastIncorrectAt) && typeof value.mastered === 'boolean';
+}
 function validSettings(value: unknown): value is AppSettings {
   if (!object(value)) return false;
   return ['soundEffectsEnabled', 'cardAnimationEnabled', 'showExplanations'].every((key) => typeof value[key] === 'boolean')
@@ -67,13 +77,14 @@ export function parseSavedPractice(raw: string | null): SavedPractice {
     const parsed: unknown = JSON.parse(raw);
     if (!object(parsed)) return emptySavedPractice();
     // Version 0 is the legacy unversioned shape. Unknown future versions are not overwritten.
-    if (parsed.version !== 1 && parsed.version !== undefined && parsed.version !== 0) return emptySavedPractice();
+    if (parsed.version !== 2 && parsed.version !== 1 && parsed.version !== undefined && parsed.version !== 0) return emptySavedPractice();
     const attempts = Array.isArray(parsed.attempts) ? parsed.attempts.filter(validAttempt) : [];
     const sessions = Array.isArray(parsed.sessions) ? parsed.sessions.filter(validSession) : [];
     return {
       version: VERSION,
       attempts,
       sessions,
+      mistakes: Array.isArray(parsed.mistakes) ? parsed.mistakes.filter(validMistake) : [],
       settings: validSettings(parsed.settings) ? parsed.settings : emptySavedPractice().settings,
       currentDifficulty: validDifficulty(parsed.currentDifficulty) ? parsed.currentDifficulty : DEFAULT_APP_SETTINGS.defaultDifficulty,
     };
@@ -118,6 +129,19 @@ export function saveDifficulty(difficulty: 1 | 2 | 3 | 4): boolean {
 }
 export function loadStatistics(): AppStatistics { return countAttempts(loadPractice().attempts); }
 export function resetStatistics(): boolean {
-  const data = loadPractice(); data.attempts = []; data.sessions = []; return write(data);
+  const data = loadPractice(); data.attempts = []; data.sessions = []; data.mistakes = []; return write(data);
 }
 export const STORAGE_KEY = KEY;
+
+export function updateMistakeForAttempt(question: Question, correct: boolean, masteryThreshold: number): boolean {
+  const data = loadPractice();
+  if (question.source === 'mistake-review' && question.mistakePatternId) {
+    data.mistakes = recordReviewResult(data.mistakes, question.mistakePatternId, correct, masteryThreshold);
+  } else if (!correct) {
+    data.mistakes = recordMistake(data.mistakes, question);
+  }
+  return write(data);
+}
+export function clearApplicationData(): boolean {
+  try { window.localStorage.removeItem(KEY); return true; } catch { return false; }
+}

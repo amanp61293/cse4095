@@ -1,6 +1,6 @@
 import type { MathOperation } from '../../types/question';
 
-export const OPERATIONS: { value: MathOperation; label: string; symbol: string }[] = [
+const OPERATIONS: { value: MathOperation; label: string; symbol: string }[] = [
   { value: 'addition', label: 'Addition', symbol: '+' },
   { value: 'subtraction', label: 'Subtraction', symbol: '−' },
   { value: 'multiplication', label: 'Multiplication', symbol: '×' },

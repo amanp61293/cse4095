@@ -6,18 +6,20 @@ import { SessionLengthSelector } from '../components/practice/SessionLengthSelec
 import type { DifficultyLevel, MathOperation } from '../types/question';
 import type { SessionLength } from '../types/session';
 import type { PracticeConfig } from '../types/practiceConfig';
-import { saveDifficulty } from '../storage/practiceStorage';
+import { saveDifficulty, loadPractice } from '../storage/practiceStorage';
 
 export function PracticeSetupPage() {
   const navigate = useNavigate();
-  const [operations, setOperations] = useState<MathOperation[]>(['addition']);
-  const [difficulty, setDifficulty] = useState<DifficultyLevel>(1);
-  const [sessionLength, setSessionLength] = useState<SessionLength>(10);
+  const defaults = loadPractice().settings;
+  const [operations, setOperations] = useState<MathOperation[]>(defaults.defaultOperations);
+  const [difficulty, setDifficulty] = useState<DifficultyLevel>(defaults.defaultDifficulty);
+  const [sessionLength, setSessionLength] = useState<SessionLength>(defaults.defaultSessionLength);
   const [reviewMode, setReviewMode] = useState<PracticeConfig['reviewMode']>('regular');
 
+  const availableMistakes = loadPractice().mistakes.filter((p) => !p.mastered && operations.includes(p.operation) && p.difficulty === difficulty).length;
   function startSession(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (operations.length === 0) return;
+    if (operations.length === 0 || (reviewMode === 'mistake-review' && availableMistakes === 0)) return;
     const config: PracticeConfig = { operations, difficulty, sessionLength, reviewMode };
     saveDifficulty(difficulty);
     // Pass setup choices into the session route.
@@ -40,14 +42,15 @@ export function PracticeSetupPage() {
               <input type="radio" name="review-mode" checked={reviewMode === 'regular'} onChange={() => setReviewMode('regular')} />
               <span>Regular practice</span>
             </label>
-            <label className="option-card disabled-option">
-              <input type="radio" name="review-mode" disabled checked={reviewMode === 'mistake-review'} onChange={() => setReviewMode('mistake-review')} />
-              <span>Practice past mistakes (coming later)</span>
+            <label className={`option-card ${reviewMode === 'mistake-review' ? 'selected' : ''}`}>
+              <input type="radio" name="review-mode" disabled={availableMistakes === 0} checked={reviewMode === 'mistake-review'} onChange={() => setReviewMode('mistake-review')} />
+              <span>Practice past mistakes ({availableMistakes} active)</span>
             </label>
           </div>
         </fieldset>
+        {availableMistakes === 0 && <p role="alert" className="validation-message">No saved mistakes for these operations and level yet. Try regular practice first.</p>}
         {operations.length === 0 && <p role="alert" className="validation-message">Choose at least one operation to start.</p>}
-        <button className="button button-primary start-session" type="submit" disabled={operations.length === 0}>Start Session</button>
+        <button className="button button-primary start-session" type="submit" disabled={operations.length === 0 || (reviewMode === 'mistake-review' && availableMistakes === 0)}>Start Session</button>
       </form>
     </section>
   );

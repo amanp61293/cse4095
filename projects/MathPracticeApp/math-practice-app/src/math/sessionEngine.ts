@@ -3,6 +3,8 @@ import type { ActiveSession, SessionResult } from '../types/activeSession';
 import type { MathOperation, Question } from '../types/question';
 import { generateMixedQuestion } from './questionGenerator';
 import { createUniqueId } from '../utils/random';
+import { chooseReviewPattern, generateSimilarQuestion } from './mistakeEngine';
+import { loadPractice } from '../storage/practiceStorage';
 
 const OPS: MathOperation[] = ['addition', 'subtraction', 'multiplication', 'division'];
 
@@ -10,7 +12,7 @@ export function validConfig(value: unknown): value is PracticeConfig {
   if (!value || typeof value !== 'object') return false;
   const c = value as Partial<PracticeConfig>;
   return Array.isArray(c.operations) && c.operations.length > 0 && c.operations.every((o) => OPS.includes(o)) &&
-    [1, 2, 3, 4].includes(c.difficulty as number) && [5, 10, 20, 'continuous'].includes(c.sessionLength as string | number) && c.reviewMode === 'regular';
+    [1, 2, 3, 4].includes(c.difficulty as number) && [5, 10, 20, 'continuous'].includes(c.sessionLength as string | number) && ['regular', 'mistake-review'].includes(c.reviewMode as string);
 }
 
 export function sameFact(a: Question, b: Question): boolean {
@@ -18,6 +20,12 @@ export function sameFact(a: Question, b: Question): boolean {
 }
 
 export function nextQuestion(config: PracticeConfig, previous?: Question): Question {
+  if (config.reviewMode === 'mistake-review') {
+    const patterns = loadPractice().mistakes;
+    const pattern = chooseReviewPattern(patterns, config.operations, config.difficulty, previous?.mistakePatternId);
+    if (!pattern) throw new Error('No mistakes available for this practice configuration.');
+    return generateSimilarQuestion(pattern, config.operations, previous);
+  }
   // Use a bounded retry strategy to avoid repeating the immediately prior question.
   for (let attempt = 0; attempt < 35; attempt++) {
     const candidate = generateMixedQuestion(config.operations, config.difficulty);

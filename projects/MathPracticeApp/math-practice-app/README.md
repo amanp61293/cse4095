@@ -44,3 +44,9 @@ Sessions and results are not yet persisted. Refreshing a session or summary retu
 ## Phase 7: saved progress
 
 Completed answers and sessions are saved locally in your browser under `math-practice-data`. Open **Statistics** to view aggregate accuracy and recent sessions. **Reset Statistics** erases saved attempts and completed session history after confirmation; it preserves settings and other applications' localStorage keys. Settings UI and mistake review are planned for Phase 8. Private browsing, clearing site data, or changing browsers can make saved history unavailable.
+
+### Phase 8: Mistake practice and settings
+
+Mistakes marked with **I Got It Wrong** are stored as reusable patterns. Select a matching operation and level in Practice Setup and switch to **Practice past mistakes** to practice related problems. Completing a review question uses the self-reported result. The mastery threshold and other preferences are on the Settings page. Your original selected answer is recorded separately from the self-reported result.
+
+Previous browser data (storage v1) is read with v2 migration logic, preserving valid attempts and completed sessions. Mistake patterns are browser-specific; no account is required.

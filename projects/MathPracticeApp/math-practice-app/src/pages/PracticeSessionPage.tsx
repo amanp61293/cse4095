@@ -4,7 +4,7 @@ import { QuestionCard } from '../components/practice/QuestionCard';
 import type { PracticeConfig } from '../types/practiceConfig';
 import type { ActiveSession } from '../types/activeSession';
 import { finishPractice, nextQuestion, scoreAttempt, sessionComplete, startPractice, validConfig } from '../math/sessionEngine';
-import { saveAttempt, saveSession } from '../storage/practiceStorage';
+import { saveAttempt, saveSession, loadPractice, updateMistakeForAttempt } from '../storage/practiceStorage';
 import { createUniqueId } from '../utils/random';
 import type { PracticeSession } from '../types/session';
 
@@ -28,8 +28,16 @@ function PracticeGame({ config }: { config: PracticeConfig }) {
       window.alert('Unable to save this answer. Please check browser storage permissions.');
       return;
     }
+    if (!updateMistakeForAttempt(current.question, correct, loadPractice().settings.masteryThreshold)) {
+      window.alert('Answer saved, but mistake-review progress could not be saved.');
+    }
     const scored = scoreAttempt(current, correct);
     if (sessionComplete(scored)) {
+      finishAndNavigate(scored);
+      return;
+    }
+    // If mastering the final active mistake exhausts the review pool, end cleanly.
+    if (scored.config.reviewMode === 'mistake-review' && !loadPractice().mistakes.some((p) => !p.mastered && p.difficulty === scored.config.difficulty && scored.config.operations.includes(p.operation))) {
       finishAndNavigate(scored);
       return;
     }
@@ -54,6 +62,7 @@ function PracticeGame({ config }: { config: PracticeConfig }) {
     finishAndNavigate(sessionRef.current);
   }
 
+  const settings = loadPractice().settings;
   const total = config.sessionLength;
   return <section className="practice-panel">
     <div className="session-topline">
@@ -61,7 +70,7 @@ function PracticeGame({ config }: { config: PracticeConfig }) {
       {total === 'continuous' && <button className="button button-secondary" onClick={endSession}>End Session</button>}
     </div>
     {total !== 'continuous' && <div className="progress-wrap"><div role="progressbar" aria-label="Practice progress" aria-valuemin={0} aria-valuemax={total} aria-valuenow={session.attempted} className="progress-track"><div className="progress-fill" style={{ width: `${session.attempted / total * 100}%` }} /></div><p>{session.attempted} of {total} completed</p></div>}
-    <QuestionCard key={session.question.id} question={session.question} index={session.attempted + 1} total={total} onResult={onResult} />
+    <QuestionCard key={session.question.id} question={session.question} index={session.attempted + 1} total={total} onResult={onResult} animationsEnabled={settings.cardAnimationEnabled} showExplanations={settings.showExplanations} soundEnabled={settings.soundEffectsEnabled} />
     <p className="session-score" aria-live="polite">Correct: {session.correct} · Incorrect: {session.incorrect}</p>
     <Link to="/practice/setup" className="quiet-link" onClick={(event) => { if (!window.confirm('Leave this session? Your recorded answers will be saved, but this session will not appear in completed session history.')) event.preventDefault(); }}>Change Choices</Link>
   </section>;

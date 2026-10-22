@@ -9,7 +9,7 @@ describe('practice session engine', () => {
   it('validates configurations', () => {
     expect(validConfig(config)).toBe(true);
     expect(validConfig({ ...config, operations: [] })).toBe(false);
-    expect(validConfig({ ...config, reviewMode: 'mistake-review' })).toBe(false);
+    expect(validConfig({ ...config, reviewMode: 'mistake-review' })).toBe(true);
     expect(validConfig(null)).toBe(false);
   });
   it('counts self-reported results and completes after the selected length', () => {
