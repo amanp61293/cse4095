@@ -118,3 +118,19 @@ The student reported the Phase 7 build and checks completed without errors. Duri
 **Testing written:** Added `mistakeEngine.test.ts`, `mistakeStorage.test.ts`, and `SettingsPage.test.tsx` for grouping, mastery, prioritization, four operations across four levels, storage migration and persistence, settings saves, and destructive-action confirmation. Browser smoke checks are needed for review transitions, refresh persistence, and preference effects.
 
 **Known limitations:** Only completed answer attempts are persisted, not currently active sessions; review patterns are filtered by chosen operation and difficulty, and mastered patterns remain in history but are excluded from regular review until missed again. Settings are saved with an explicit Save button. User-visible tests/lint/build/format still require local verification if dependency installation cannot complete in this environment. Remaining original TODO checkboxes retain unfinished functionality for revised Phase 9.
+
+## Revised Phase 8: Student regression testing and debugging
+
+**Student evidence:** The student manually tested recording incorrect answers and reviewing the saved mistakes; these user flows worked. Their automated run reported 82/84 tests passing, with the remaining two failures arising from multiple simultaneous alerts and a stale test expectation that mistake-review configuration was unsupported. ESLint and build errors pinpointed a malformed `saveDifficulty, loadPractice(difficulty)` expression in `PracticeSetupPage.tsx`. The previous assistant suggested code and test corrections. The student subsequently reported readiness to continue; the final command output was not provided.
+
+## Revised Phase 9: Comprehensive testing and usability improvements
+
+**Student implementation request:** Audit original requirements and TODO, fix regressions, improve accessible responsive design, handle session recovery, add tests, and update logs without deploying.
+
+**Changes prepared:** Fixed the malformed difficulty save; updated stale session-config test; kept distinct review-unavailable guidance as a status message so required-operation validation remains the only alert; added keyboard selection using keys 1–4 with input-field guard and visible selected labels; added responsive adjustments at 430 px and reduced-motion overrides; introduced safe in-tab session recovery using `sessionStorage`, a Resume link in Practice Setup and new recovery tests. Existing self-reported grading remains unchanged.
+
+**New tests:** `activeSessionStorage.test.ts` checks save, restore, clear, and corrupt inputs; `QuestionCard.keyboard.test.tsx` checks keyboard selection, locked answers after flipping, and self-reported submission. Existing generator, storage, review, stats and session tests remain.
+
+**Verification limitations:** Offline npm installation failed because dependencies are not cached; online npm install timed out. No automated test, lint, production build, Prettier, screen-reader, real-device, zoom, or performance result is claimed. The student must run these locally and report failures for correction. These unverified items remain unchecked in TODO. No deployment was performed.
+
+**Outstanding limitations:** An unfinished question's selected option and flipped face reset upon refresh (question and counters are restored); browser sessionStorage may be cleared when the browsing session ends. Explicit screen-reader and multi-browser testing, large-history performance checks, and full remaining TODO review are still needed before release.

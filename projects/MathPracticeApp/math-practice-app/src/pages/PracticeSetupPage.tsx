@@ -7,6 +7,8 @@ import type { DifficultyLevel, MathOperation } from '../types/question';
 import type { SessionLength } from '../types/session';
 import type { PracticeConfig } from '../types/practiceConfig';
 import { saveDifficulty, loadPractice } from '../storage/practiceStorage';
+import { clearActiveSession, loadActiveSession } from '../storage/activeSessionStorage';
+import { Link } from 'react-router-dom';
 
 export function PracticeSetupPage() {
   const navigate = useNavigate();
@@ -22,15 +24,19 @@ export function PracticeSetupPage() {
     if (operations.length === 0 || (reviewMode === 'mistake-review' && availableMistakes === 0)) return;
     const config: PracticeConfig = { operations, difficulty, sessionLength, reviewMode };
     saveDifficulty(difficulty);
+    clearActiveSession();
     // Pass setup choices into the session route.
     navigate('/practice/session', { state: { config } });
   }
+
+  const resumable = loadActiveSession();
 
   return (
     <section className="setup-panel" aria-labelledby="setup-heading">
       <p className="eyebrow">Ready to learn?</p>
       <h1 id="setup-heading">Choose Your Practice</h1>
       <p className="setup-intro">Make a practice session that's just right for you!</p>
+      {resumable && <p className="resume-session"><Link className="button button-secondary" to="/practice/session">Resume unfinished session</Link></p>}
       <form onSubmit={startSession}>
         <OperationSelector selected={operations} onChange={setOperations} />
         <DifficultySelector selected={difficulty} onChange={setDifficulty} />
@@ -48,7 +54,7 @@ export function PracticeSetupPage() {
             </label>
           </div>
         </fieldset>
-        {availableMistakes === 0 && <p role="alert" className="validation-message">No saved mistakes for these operations and level yet. Try regular practice first.</p>}
+        {availableMistakes === 0 && <p role="status" className="validation-message">No saved mistakes for these operations and level yet. Try regular practice first.</p>}
         {operations.length === 0 && <p role="alert" className="validation-message">Choose at least one operation to start.</p>}
         <button className="button button-primary start-session" type="submit" disabled={operations.length === 0 || (reviewMode === 'mistake-review' && availableMistakes === 0)}>Start Session</button>
       </form>

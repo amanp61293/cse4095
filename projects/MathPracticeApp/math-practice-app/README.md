@@ -50,3 +50,9 @@ Completed answers and sessions are saved locally in your browser under `math-pra
 Mistakes marked with **I Got It Wrong** are stored as reusable patterns. Select a matching operation and level in Practice Setup and switch to **Practice past mistakes** to practice related problems. Completing a review question uses the self-reported result. The mastery threshold and other preferences are on the Settings page. Your original selected answer is recorded separately from the self-reported result.
 
 Previous browser data (storage v1) is read with v2 migration logic, preserving valid attempts and completed sessions. Mistake patterns are browser-specific; no account is required.
+
+## Phase 9 testing notes
+
+The app saves an unfinished session in browser `sessionStorage`. Refreshing the active practice route restores its question and counters, and Practice Setup provides a Resume button. Starting a new session replaces the unfinished one. The selected answer/flip face is not preserved; the current question is re-presented. Closing the browser may clear sessionStorage depending on browser settings.
+
+Before deploying, run `npm install`, `npm run test`, `npm run lint`, `npm run build`, and `npm run format:check`. Test desktop/mobile widths, keyboard navigation (answer keys 1–4), zoom and reduced-motion settings manually.

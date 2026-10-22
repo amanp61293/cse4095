@@ -657,10 +657,10 @@ Initial routes:
 ### 66. Improve Keyboard Navigation
 
 - [ ] Ensure every control is reachable with Tab.
-- [ ] Add visible focus indicators.
-- [ ] Support Enter and Space on buttons.
-- [ ] Support number keys 1–4 for answer selection.
-- [ ] Prevent keyboard shortcuts from interfering with form inputs.
+- [x] Add visible focus indicators.
+- [x] Support Enter and Space on buttons.
+- [x] Support number keys 1–4 for answer selection.
+- [x] Prevent keyboard shortcuts from interfering with form inputs.
 
 ### 67. Improve Screen-Reader Support
 
@@ -682,7 +682,7 @@ Initial routes:
 
 - [ ] Verify sufficient color contrast.
 - [ ] Avoid communicating results by color alone.
-- [ ] Add text or icons to selected states.
+- [x] Add text or icons to selected states.
 - [ ] Test at 200% browser zoom.
 - [ ] Test with larger system font sizes.
 
@@ -726,11 +726,11 @@ Initial routes:
 
 ### 74. Persist an Active Session
 
-- [ ] Save the active session.
-- [ ] Save the current question.
+- [x] Save the active session.
+- [x] Save the current question.
 - [ ] Save the selected answer when appropriate.
-- [ ] Restore the session after a page refresh.
-- [ ] Clear restored state when the session ends.
+- [x] Restore the session after a page refresh.
+- [x] Clear restored state when the session ends.
 
 ### 75. Protect Against Accidental Navigation
 

@@ -15,8 +15,7 @@ describe('QuestionCard', () => {
     const flip = screen.getByRole('button', { name: 'Flip Card' });
     expect(flip).toBeDisabled();
     await user.click(screen.getByRole('button', { name: '5' }));
-    expect(screen.getByRole('button', { name: '5' })).toHaveAttribute('aria-pressed', 'true');
-    await user.click(screen.getByRole('button', { name: '7' }));
+    expect(screen.getByRole('button', { name: /5.*selected/i })).toHaveAttribute('aria-pressed', 'true');    await user.click(screen.getByRole('button', { name: '7' }));
     expect(screen.getByRole('button', { name: '5' })).toHaveAttribute('aria-pressed', 'false');
     expect(flip).toBeEnabled();
     await user.click(flip);

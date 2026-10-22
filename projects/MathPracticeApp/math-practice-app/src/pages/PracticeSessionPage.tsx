@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { QuestionCard } from '../components/practice/QuestionCard';
 import type { PracticeConfig } from '../types/practiceConfig';
@@ -7,12 +7,15 @@ import { finishPractice, nextQuestion, scoreAttempt, sessionComplete, startPract
 import { saveAttempt, saveSession, loadPractice, updateMistakeForAttempt } from '../storage/practiceStorage';
 import { createUniqueId } from '../utils/random';
 import type { PracticeSession } from '../types/session';
+import { clearActiveSession, loadActiveSession, saveActiveSession } from '../storage/activeSessionStorage';
 
 function PracticeGame({ config }: { config: PracticeConfig }) {
   const navigate = useNavigate();
-  const [session, setSession] = useState<ActiveSession>(() => startPractice(config));
+  const [session, setSession] = useState<ActiveSession>(() => loadActiveSession() ?? startPractice(config));
   const sessionRef = useRef(session);
   const busyRef = useRef(false);
+
+  useEffect(() => { saveActiveSession(session); }, [session]);
 
   function onResult(correct: boolean, selectedAnswer: number) {
     if (busyRef.current) return;
@@ -32,6 +35,8 @@ function PracticeGame({ config }: { config: PracticeConfig }) {
       window.alert('Answer saved, but mistake-review progress could not be saved.');
     }
     const scored = scoreAttempt(current, correct);
+    // Checkpoint the scored state before advancing so a refresh never loses an answer.
+    saveActiveSession(scored);
     if (sessionComplete(scored)) {
       finishAndNavigate(scored);
       return;
@@ -43,6 +48,7 @@ function PracticeGame({ config }: { config: PracticeConfig }) {
     }
     const next = { ...scored, question: nextQuestion(scored.config, scored.question) };
     sessionRef.current = next;
+    saveActiveSession(next);
     setSession(next);
     busyRef.current = false;
   }
@@ -53,6 +59,7 @@ function PracticeGame({ config }: { config: PracticeConfig }) {
       operations: result.config.operations, difficulty: result.config.difficulty,
       sessionLength: result.config.sessionLength, attempted: result.attempted, correct: result.correct,
       incorrect: result.incorrect };
+    clearActiveSession();
     if (!saveSession(record)) window.alert('The summary is available, but your session history could not be saved.');
     navigate('/practice/summary', { replace: true, state: { result } });
   }
@@ -72,13 +79,15 @@ function PracticeGame({ config }: { config: PracticeConfig }) {
     {total !== 'continuous' && <div className="progress-wrap"><div role="progressbar" aria-label="Practice progress" aria-valuemin={0} aria-valuemax={total} aria-valuenow={session.attempted} className="progress-track"><div className="progress-fill" style={{ width: `${session.attempted / total * 100}%` }} /></div><p>{session.attempted} of {total} completed</p></div>}
     <QuestionCard key={session.question.id} question={session.question} index={session.attempted + 1} total={total} onResult={onResult} animationsEnabled={settings.cardAnimationEnabled} showExplanations={settings.showExplanations} soundEnabled={settings.soundEffectsEnabled} />
     <p className="session-score" aria-live="polite">Correct: {session.correct} · Incorrect: {session.incorrect}</p>
-    <Link to="/practice/setup" className="quiet-link" onClick={(event) => { if (!window.confirm('Leave this session? Your recorded answers will be saved, but this session will not appear in completed session history.')) event.preventDefault(); }}>Change Choices</Link>
+    <Link to="/practice/setup" className="quiet-link" onClick={(event) => { if (!window.confirm('Leave this session? You can resume it from Practice Setup.')) event.preventDefault(); }}>Change Choices</Link>
   </section>;
 }
 
 export function PracticeSessionPage() {
   const location = useLocation();
   const config = (location.state as { config?: PracticeConfig } | null)?.config;
-  if (!validConfig(config)) return <section className="panel"><h1>Set up your practice first</h1><p>Choose your practice options before starting a session.</p><Link className="button button-primary" to="/practice/setup">Choose Practice</Link></section>;
-  return <PracticeGame config={config} />;
+  const recovered = loadActiveSession();
+  const chosenConfig = validConfig(config) ? config : recovered?.config;
+  if (!validConfig(chosenConfig)) return <section className="panel"><h1>Set up your practice first</h1><p>Choose your practice options before starting a session.</p><Link className="button button-primary" to="/practice/setup">Choose Practice</Link></section>;
+  return <PracticeGame config={chosenConfig} />;
 }

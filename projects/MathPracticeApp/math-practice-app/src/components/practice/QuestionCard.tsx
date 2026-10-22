@@ -32,6 +32,19 @@ export function QuestionCard({ question, index, total, onResult, animationsEnabl
     setSubmitted(false);
   }, [question.id]);
 
+  useEffect(() => {
+    function handleKey(event: KeyboardEvent) {
+      if (flipped || submitted || event.altKey || event.ctrlKey || event.metaKey) return;
+      const target = event.target;
+      if (target instanceof HTMLElement &&
+          (['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName) || target.isContentEditable)) return;
+      const index = Number(event.key) - 1;
+      if (Number.isInteger(index) && index >= 0 && index < 4) setSelected(question.choices[index]);
+    }
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [flipped, submitted, question]);
+
   function submit(correct: boolean) {
     if (!flipped || selected === null || submitted) return;
     setSubmitted(true);
@@ -53,15 +66,15 @@ export function QuestionCard({ question, index, total, onResult, animationsEnabl
   }
 
   return (
-    <article className={`question-card ${flipped && animationsEnabled ? 'question-card-flipped' : ''}`} aria-label="Math question card">
+    <article className={`question-card ${flipped && animationsEnabled ? 'question-card-flipped' : ''}`} aria-label="Math question card" aria-keyshortcuts="1 2 3 4">
       <p className="eyebrow">Question {index} {total === 'continuous' ? '' : `of ${total}`}</p>
       <h2 className="math-question">{question.displayText}</h2>
       {!flipped ? (
         <div className="question-face" key={`front-${question.id}`}>
-          <p id="choice-instructions">Choose the answer you think is correct.</p>
+          <p id="choice-instructions">Choose the answer you think is correct. You can also press 1, 2, 3, or 4.</p>
           <div className="answers" role="group" aria-labelledby="choice-instructions">
             {question.choices.map((choice) => (
-              <button key={choice} type="button" className={`answer-choice ${selected === choice ? 'answer-selected' : ''}`} aria-pressed={selected === choice} onClick={() => setSelected(choice)}>{choice}</button>
+              <button key={choice} type="button" className={`answer-choice ${selected === choice ? 'answer-selected' : ''}`} aria-pressed={selected === choice} onClick={() => setSelected(choice)}>{choice}{selected === choice ? <span className="selected-indicator"> ✓ Selected</span> : null}</button>
             ))}
           </div>
           <button className="button button-primary card-action" disabled={selected === null} onClick={() => setFlipped(true)}>Flip Card</button>

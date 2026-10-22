@@ -38,7 +38,7 @@ describe('Phase 3 practice setup', () => {
     const user = await openSetup();
     await user.click(screen.getByRole('button', { name: /clear all/i }));
     expect(screen.getByRole('button', { name: /start session/i })).toBeDisabled();
-    expect(screen.getByText('Choose at least one operation to start.')).toBeInTheDocument();
+    expect(screen.getByRole('alert')).toHaveTextContent('Choose at least one operation');
   });
 
   it('passes selected configuration to the session route', async () => {
@@ -57,6 +57,8 @@ describe('Phase 3 practice setup', () => {
 
   it('asks for setup when session is opened directly', () => {
     window.history.pushState({}, '', '/practice/session');
+    window.localStorage.clear();
+    window.sessionStorage.clear();
     render(<App />);
     expect(screen.getByRole('heading', { name: /set up your practice first/i })).toBeInTheDocument();
   });
