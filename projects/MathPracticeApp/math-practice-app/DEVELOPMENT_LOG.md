@@ -186,3 +186,17 @@ Status: Manual testing observation documented. Existing functionality preserved.
 
 ## GitHub repository link: https://github.com/amanp61293/cse4095/tree/projects
 ## Netlify link: https://apmathpracticeapp.netlify.app
+
+## Phase 10: Final local verification and live deployment (2026-10-22)
+
+**Local dependency installation:** Student ran `npm install` successfully. npm reported three security advisories in Vitest-related development dependencies (one moderate and two critical); no forced potentially breaking update was applied.
+
+**Automated checks:** The student provided terminal output showing **87 tests passed in 17 files**, `npm run lint` completed without errors, and `npm run build` succeeded (Vite built 64 modules). A separate `npm run format:check` reported 47 formatting differences. Formatting cleanup was recommended, but the conversation does not yet contain a verified passing final formatting check. The student should re-run the check after any formatting changes.
+
+**Manual acceptance checks:** The student confirmed the deployed app worked. Earlier manual tests covered statistics, statistics reset, recording incorrect results, practice of past mistakes, and review mastery. A five-question mistake-review session ended after three correct similar answers when its sole active mistake was mastered; this was documented as existing behavior, not a requirement to change the code.
+
+**Repository and deployment:** Existing course repository on branch `projects`: https://github.com/amanp61293/cse4095/tree/projects . Netlify deployment: https://apmathpracticeapp.netlify.app . The student reported that the deployed application worked. This is user-reported verification, not an independently performed live browser audit.
+
+**Submission documents:** A revised two-page development report and a separate AI-conversation evidence PDF were prepared for submission. Upload through HuskyCT remains the student's action.
+
+**Remaining follow-up:** Review and commit formatting updates if necessary; keep the development-dependency audit finding documented; confirm final source files and submission links are current. No additional application behavior changes were requested.

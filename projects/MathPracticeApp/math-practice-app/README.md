@@ -1,62 +1,69 @@
 # Math Practice App
 
-React + TypeScript + Vite arithmetic practice for children ages 7–12, including question cards, sessions, browser-based statistics, mistake review, and settings.
+A React, TypeScript, and Vite web application for children ages 7–12 to practice addition, subtraction, multiplication, and division. Students can choose one or more operations, four difficulty levels, and fixed-length or continuous sessions.
 
-## Run locally
+**Live application:** https://apmathpracticeapp.netlify.app  
+**GitHub repository (course project branch):** https://github.com/amanp61293/cse4095/tree/projects
 
-Requires Node.js 20.19+ or 22+. In a terminal in this folder:
+## Features
 
-```bash
+- Four-option multiple-choice question cards with answer selection, card flipping, explanations, and **self-reported** results using **I Got It Right** / **I Got It Wrong**, as required by the specification.
+- Five-, ten-, twenty-question, and continuous practice sessions with progress and summaries.
+- Browser-stored practice history, accuracy statistics by operation and difficulty, and a reset option with confirmation.
+- Mistake-pattern tracking, similar-question review, prioritization, and configurable mastery thresholds (three correct similar answers by default).
+- Settings for sound, animation, explanations, default difficulty, operations, and session length.
+- Responsive layout, keyboard answer shortcuts (1–4), and reduced-motion support.
+- Recovery of the current question and scored totals when refreshing an active practice session in the same browser session.
+
+## Requirements and local development
+
+Use a current Node.js LTS release compatible with Vite. From **this folder**, which contains `package.json`, run:
+
+```powershell
 npm install
 npm run dev
 ```
 
-Open the localhost URL shown in the terminal. Navigate to **Start Practice**, select operations, difficulty, and a session length, and select **Start Session**. Choose an answer, flip the card, and self-report correct or incorrect. Five-, ten-, and twenty-question sessions end automatically. Continuous sessions end using **End Session**.
+Open the local URL printed by Vite.
 
-## Tests and checks
+## Tests and production build
 
-```bash
+```powershell
 npm run test
 npm run lint
 npm run build
 npm run format:check
+npm run preview
 ```
 
-For format warnings: `npm run format` followed by `npm run format:check`. Check browser functionality on narrow screens and with a keyboard.
+If formatting needs correction, run `npm run format`, review the changes, and repeat the checks.
 
-## Architecture
+**Recorded verification:** In final local testing, all **87 tests across 17 test files passed**; ESLint and the production build also passed. A later Prettier run reported formatting differences in 47 files. The final formatting check should be rerun after cleanup; it is not claimed as passing here. An `npm audit` run reported three advisories affecting Vitest development dependencies. No forced breaking upgrade was applied.
 
-- `src/math/`: question generation, answer distractors, session state helpers
-- `src/components/practice/`: selectors and interactive question card
-- `src/pages/`: setup, playable session, summary, navigation pages
-- `src/types/`: shared data contracts
-- `TODO.md`: instructor's original requirements checklist, retained and updated
-- `DEVELOPMENT_LOG.md`: implementation prompts, debugging and verification evidence
+## How the data works
 
-## Data and privacy
+Completed attempts, practice history, settings, and mistake patterns use browser `localStorage`. Temporary active-session recovery uses `sessionStorage`. Progress does not transfer between devices, browsers, or the localhost and deployed domains. Clearing browser data removes saved progress.
 
-Practice attempts, settings, and mistake history are stored in the browser (localStorage); active-session recovery uses sessionStorage. No account or backend is required. Clearing site data removes saved progress. Self-reported **I Got It Right / I Got It Wrong** buttons determine recorded correctness as specified, even when the selected answer differs.
+Correctness is deliberately **self-reported**, not inferred from the selected multiple-choice option. This matches the supplied software specification.
 
-## Production deployment
+A review session can end before its selected question count if all matching mistake patterns become mastered. The default mastery threshold is three correctly self-reported similar questions. This observed behavior is documented in `DEVELOPMENT_LOG.md`.
 
-Run `npm run build` and `npm run preview` to inspect the production build locally. Netlify settings are in `netlify.toml` and `public/_redirects` handles SPA navigation. See [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) for GitHub publishing, Netlify deployment, live-site testing, and submission steps.
+## Project organization
+
+- `src/math/`: arithmetic, answer choices, session logic, and mistake patterns
+- `src/components/practice/`: interactive question card and setup selectors
+- `src/pages/`: pages for setup, practice, summary, settings, and statistics
+- `src/storage/`: browser data persistence
+- `src/types/`: shared TypeScript types
+- `specification.md`: supplied feature requirements
+- `TODO.md`: original numbered requirements checklist with completion status
+- `DEVELOPMENT_LOG.md`: prompts, implementation decisions, testing, and debugging evidence
+- `DEPLOYMENT_GUIDE.md`: GitHub, Netlify, and submission instructions
+
+## Deployment
+
+The application is published on Netlify. The deployment uses the `projects` branch of the course repository, with base directory `projects/MathPracticeApp/math-practice-app`, build command `npm run build`, and publish directory `dist`. The SPA fallback is configured for direct page refreshes. See `DEPLOYMENT_GUIDE.md`.
 
 ## Known limitations
 
-The current question and scored counters can recover after refreshing an active session, but the selected answer and flipped card state reset. Browser-local data will not sync between devices or domains. No live deployment has been verified as part of this package.
-
-## Phase 7: saved progress
-
-Completed answers and sessions are saved locally in your browser under `math-practice-data`. Open **Statistics** to view aggregate accuracy and recent sessions. **Reset Statistics** erases saved attempts and completed session history after confirmation; it preserves settings and other applications' localStorage keys. Settings UI and mistake review are planned for Phase 8. Private browsing, clearing site data, or changing browsers can make saved history unavailable.
-
-### Phase 8: Mistake practice and settings
-
-Mistakes marked with **I Got It Wrong** are stored as reusable patterns. Select a matching operation and level in Practice Setup and switch to **Practice past mistakes** to practice related problems. Completing a review question uses the self-reported result. The mastery threshold and other preferences are on the Settings page. Your original selected answer is recorded separately from the self-reported result.
-
-Previous browser data (storage v1) is read with v2 migration logic, preserving valid attempts and completed sessions. Mistake patterns are browser-specific; no account is required.
-
-## Phase 9 testing notes
-
-The app saves an unfinished session in browser `sessionStorage`. Refreshing the active practice route restores its question and counters, and Practice Setup provides a Resume button. Starting a new session replaces the unfinished one. The selected answer/flip face is not preserved; the current question is re-presented. Closing the browser may clear sessionStorage depending on browser settings.
-
-Before deploying, run `npm install`, `npm run test`, `npm run lint`, `npm run build`, and `npm run format:check`. Test desktop/mobile widths, keyboard navigation (answer keys 1–4), zoom and reduced-motion settings manually.
+The selected option and flipped face are reset on refresh, even when the active question and counters are recovered. Browser data is local to that origin. Full screen-reader, multiple-browser, and large-history stress testing have not been independently documented. See the TODO checklist for remaining verification and optional enhancements.

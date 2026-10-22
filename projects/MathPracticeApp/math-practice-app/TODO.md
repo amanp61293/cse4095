@@ -6,7 +6,7 @@
 
 ### 1. Create the React Project
 
-- [ ] Create a new React project using Vite.
+- [x] Create a new React project using Vite.
 - [x] Configure TypeScript.
 - [x] Install project dependencies.
 - [x] Confirm that the development server runs.
@@ -314,7 +314,7 @@ Initial routes:
 - [x] Increment the session-attempt total.
 - [x] Increment the correct or incorrect total.
 - [x] Prevent duplicate result recording.
-- [ ] Store the completed attempt. (Phase 7 revised: persistent history)
+- [x] Store the completed attempt. (Implemented in revised Phase 7 storage.)
 
 ### 29. Advance to the Next Question
 
@@ -619,7 +619,7 @@ Initial routes:
 
 - [x] Mark a pattern as mastered after three correct similar questions.
 - [x] Make the mastery threshold configurable.
-- [ ] Exclude mastered patterns from normal review.
+- [x] Exclude mastered patterns from normal review.
 - [x] Allow mastered patterns to return after a future mistake.
 - [x] Add tests for mastery transitions.
 
@@ -673,10 +673,10 @@ Initial routes:
 
 ### 68. Support Reduced Motion
 
-- [ ] Detect `prefers-reduced-motion`.
-- [ ] Disable card animations when reduced motion is requested.
-- [ ] Ensure card content still changes clearly.
-- [ ] Respect the application's animation setting.
+- [x] Detect `prefers-reduced-motion`.
+- [x] Disable card animations when reduced motion is requested.
+- [x] Ensure card content still changes clearly.
+- [x] Respect the application's animation setting.
 
 ### 69. Check Visual Accessibility
 
@@ -775,27 +775,27 @@ Initial routes:
 
 ### 79. Complete Unit Tests
 
-- [ ] Test all arithmetic generators.
-- [ ] Test difficulty boundaries.
-- [ ] Test distractor generation.
-- [ ] Test answer-choice uniqueness.
-- [ ] Test statistics calculations.
-- [ ] Test mistake-pattern updates.
-- [ ] Test similar-question generation.
-- [ ] Test mastery rules.
-- [ ] Test storage serialization and validation.
+- [x] Test all arithmetic generators.
+- [x] Test difficulty boundaries.
+- [x] Test distractor generation.
+- [x] Test answer-choice uniqueness.
+- [x] Test statistics calculations.
+- [x] Test mistake-pattern updates.
+- [x] Test similar-question generation.
+- [x] Test mastery rules.
+- [x] Test storage serialization and validation.
 
 ### 80. Complete Component Tests
 
-- [ ] Test operation selection.
-- [ ] Test difficulty selection.
-- [ ] Test answer selection.
-- [ ] Test card flipping.
-- [ ] Test right and wrong buttons.
-- [ ] Test progress updates.
-- [ ] Test session completion.
-- [ ] Test statistics display.
-- [ ] Test confirmation dialogs.
+- [x] Test operation selection.
+- [x] Test difficulty selection.
+- [x] Test answer selection.
+- [x] Test card flipping.
+- [x] Test right and wrong buttons.
+- [x] Test progress updates.
+- [x] Test session completion.
+- [x] Test statistics display.
+- [x] Test confirmation dialogs.
 
 ### 81. Complete Integration Tests
 
@@ -805,8 +805,8 @@ Initial routes:
 - [ ] Test an incorrect answer creating a mistake pattern.
 - [ ] Test mistake-review generation.
 - [ ] Test mastery completion.
-- [ ] Test persistence after a browser refresh.
-- [ ] Test resetting statistics.
+- [x] Test persistence after a browser refresh. (Local storage and active-session recovery tests; manual browser persistence also reported.)
+- [x] Test resetting statistics.
 
 ### 82. Complete Accessibility Testing
 
@@ -867,17 +867,17 @@ Initial routes:
 
 ### 88. Prepare the Production Build
 
-- [ ] Run all tests.
-- [ ] Resolve linting errors.
-- [ ] Resolve TypeScript errors.
-- [ ] Create the production build.
+- [x] Run all tests. (87/87 passed locally.)
+- [x] Resolve linting errors. (Local ESLint run passed.)
+- [x] Resolve TypeScript errors. (Local production build passed.)
+- [x] Create the production build. (Local Vite build passed.)
 - [ ] Test the production build locally.
 - [x] Configure deployment routing for React Router (Netlify fallback added; live test pending).
 
 ### 89. Deploy the Application
 
-- [ ] Select a hosting service.
-- [ ] Deploy the production build.
+- [x] Select a hosting service. (Netlify.)
+- [x] Deploy the production build. (Student-confirmed live Netlify deployment.)
 - [ ] Verify every route.
 - [ ] Verify local-storage persistence.
 - [ ] Verify responsive behavior.
@@ -968,9 +968,19 @@ This produces a usable prototype before adding routing, persistence, advanced st
 - [x] Prepare GitHub/Netlify publishing instructions and final acceptance checklist.
 - [x] Prepare 2–3-page development report and selected AI evidence document.
 - [x] Add student-reported Phase 9 regression fixes to distributable tests.
-- [ ] Re-run all four checks on Phase 10 package locally.
-- [ ] Push final commit to GitHub and verify repository URL/history.
-- [ ] Deploy to Netlify and verify live application, route refresh, and browser behavior.
+- [ ] Re-run all four checks on Phase 10 package locally. (Test 87/87, lint, build passed; format:check reported 47 differences.)
+- [ ] Push final documentation updates to GitHub and verify repository URL/history. (Existing course repository and branch confirmed by student.)
+- [x] Deploy to Netlify and verify live application, route refresh, and browser behavior. (User-reported: live application works; individual browser checks not independently reproduced.)
 - [ ] Submit public URLs, PDFs, and evidence to HuskyCT.
 
 **Note:** Original Phase 22 browser/device/privacy checklist above remains unchanged where final verification is pending.
+
+
+## Final submission reconciliation (2026-10-22)
+
+- The revised ten-phase development workflow was completed through deployment. The original numbered checklist remains for grading traceability.
+- Student-provided terminal output confirmed **87/87 tests passed**, ESLint passed, and the production build succeeded. `format:check` identified 47 files needing formatting; a successful final recheck has not been supplied.
+- The application is deployed at https://apmathpracticeapp.netlify.app and the code is in https://github.com/amanp61293/cse4095/tree/projects (student-reported live testing).
+- Remaining unchecked items represent unimplemented enhancements, unverified device/accessibility/performance checks, or final submission steps. They have **not** been silently marked complete.
+- The earlier *Suggested First Implementation Sequence* is preserved as a historical planning list, not the current feature-completion status.
+- Development report and AI evidence PDFs were prepared; final HuskyCT upload remains outstanding.

@@ -1,8 +1,16 @@
-# GitHub and Netlify publishing guide
+# Math Practice App — GitHub and Netlify Deployment Guide
 
-## 1. Verify locally
+## Deployment details
 
-In PowerShell from the project root, run:
+- **GitHub repository:** https://github.com/amanp61293/cse4095/tree/projects
+- **Application directory:** `projects/MathPracticeApp/math-practice-app`
+- **Deployment branch:** `projects`
+- **Live application:** https://apmathpracticeapp.netlify.app
+- **Status:** Deployed to Netlify; the student confirmed the application works on the live site.
+
+## 1. Run local checks
+
+From the application directory in PowerShell:
 
 ```powershell
 npm install
@@ -13,43 +21,56 @@ npm run format:check
 npm run preview
 ```
 
-If prettier reports differences, run `npm run format`, then re-run checks, and commit only after reviewing the formatting diff. `npm run preview` serves the production build locally. Verify the local preview in the browser.
+The automated test suite was reported as **87 passing tests across 17 test files**, and linting and production build succeeded. A previous Prettier check flagged formatting differences; the final result of `npm run format:check` has not been confirmed in the conversation. If it reports differences, run `npm run format`, inspect the changes, and repeat `npm run format:check`.
 
-## 2. GitHub
+`npm run preview` starts a local preview server; check the address printed in the terminal. Stop it with `Ctrl+C` when finished.
 
-Preserve your existing `.git` folder when copying these updated files into your local repository. Do **not** replace your original repository with a new initialized repository: its earlier commits are important evidence.
+## 2. GitHub publishing
+
+The project lives in the existing `cse4095` course repository on the **`projects` branch**. Preserve its `.git` folder and commit history. Do not create a replacement repository.
+
+After making documentation changes, run the following commands from the application directory:
 
 ```powershell
 git status
-git add .
-git commit -m "Prepare Phase 10 release and submission docs"
-git remote -v
+git add README.md DEVELOPMENT_LOG.md TODO.md DEPLOYMENT_GUIDE.md
+git commit -m "Update final project documentation"
+git push origin projects
 ```
 
-If a GitHub remote exists, use `git push -u origin HEAD`. Otherwise create an empty repository on GitHub, then run `git remote add origin https://github.com/YOUR-USERNAME/YOUR-REPO.git` followed by `git push -u origin HEAD`. Replace placeholders with your actual account and repository name. Confirm that README, source code, `netlify.toml`, and history are visible on GitHub.
+If `git status` shows additional intended project changes, review and stage them separately. If Git reports nothing to commit, no new commit is needed.
 
-## 3. Netlify
+## 3. Netlify configuration
 
-Sign in at https://app.netlify.com/ and select **Add new project** > **Import an existing project**, then connect the GitHub repository. Configure build command `npm run build` and publish directory `dist` (also present in `netlify.toml`). Publish the site. Netlify reads the SPA fallback from `public/_redirects` (copied into `dist`) or `netlify.toml`.
+The existing Netlify project is connected to the GitHub repository with these settings:
 
-## 4. Live acceptance checks
+| Setting | Value |
+| --- | --- |
+| Branch to deploy | `projects` |
+| Base directory | `projects/MathPracticeApp/math-practice-app` |
+| Build command | `npm run build` |
+| Publish directory | `dist` |
+| Functions directory | Not required |
 
-- Open the public URL in a new browser tab and verify the landing page loads.
-- Open `/practice/setup`, `/statistics`, and `/settings` directly in the address bar, then refresh each route. Confirm no Netlify 404.
-- Complete a five-question session. Check that the summary and statistics agree.
-- Mark an incorrect answer, review a related question, and verify saved mistake history.
-- Refresh during a practice session and verify it can be resumed.
-- Change a setting, refresh, and verify it persists.
-- Check mobile width, keyboard input, no console errors, and confirmation dialogs for destructive actions.
-- Remember that localStorage data is browser-specific and will not transfer from localhost to the deployed domain.
+The repository contains `netlify.toml` with the build settings and an SPA redirect to `index.html`. The `public/_redirects` file also supplies a fallback for client-side routes. These support opening or refreshing app routes without a Netlify 404.
 
-## 5. HuskyCT submission
+New commits to the deployed branch normally trigger a new Netlify build; check the Netlify deploy status after pushing changes.
 
-Submit the verified GitHub repository URL, verified live application URL, development report PDF, and AI conversation evidence PDF. Confirm the instructor can access the public links without a login.
+## 4. Live-site acceptance checklist
 
-**Deployment Status: The Math Practice application has been successfully deployed to Netlify. The GitHub repository is available, and the deployed application has been manually tested to verify its core functionality, navigation, statistics, and mistake-review features.**
+The student has confirmed that the deployed application works. Use the checklist below to document any remaining detailed checks rather than assuming every item was independently verified:
 
-**GitHub Repository**: https://github.com/amanp61293/cse4095/tree/projects
-**Live Application**: https://apmathpracticeapp.netlify.app
-**Deployment Branch**: projects
-**Netlify Base Directory**: projects/MathPracticeApp/math-practice-app
+- [ ] Open the homepage from the public URL in a new browser tab.
+- [ ] Open and refresh `/practice/setup`, `/statistics`, and `/settings` directly; confirm no 404 errors.
+- [ ] Complete a five-question session and compare the summary with statistics.
+- [ ] Mark a question incorrect, enter mistake review, and check mastery/history behavior.
+- [ ] Refresh partway through an active session and check recovery.
+- [ ] Change and save a setting; refresh to confirm persistence.
+- [ ] Check narrow-screen layout, keyboard answer keys 1–4, and browser console for errors.
+- [ ] Check destructive-action confirmation dialogs.
+
+**Storage note:** `localStorage` is specific to the browser and origin. Existing data from `localhost` will not automatically appear on the Netlify domain.
+
+1. **GitHub:** https://github.com/amanp61293/cse4095/tree/projects
+2. **Live application:** https://apmathpracticeapp.netlify.app
+
