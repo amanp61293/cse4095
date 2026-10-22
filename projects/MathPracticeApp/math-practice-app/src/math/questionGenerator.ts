@@ -1,5 +1,6 @@
 import type { DifficultyLevel, MathOperation, Question } from '../types/question';
 import { createUniqueId, randomInt } from '../utils/random';
+import { generateAnswerChoices } from './answerChoices';
 
 const OPERATIONS: readonly MathOperation[] = ['addition', 'subtraction', 'multiplication', 'division'];
 const DIFFICULTIES: readonly DifficultyLevel[] = [1, 2, 3, 4];
@@ -10,11 +11,13 @@ function makeQuestion(operation: MathOperation, difficulty: DifficultyLevel, fir
     : operation === 'subtraction' ? firstOperand - secondOperand
     : operation === 'multiplication' ? firstOperand * secondOperand
     : firstOperand / secondOperand;
-  return {
+  const question: Question = {
     id: createUniqueId(), operation, difficulty, firstOperand, secondOperand,
     displayText: `${firstOperand} ${symbols[operation]} ${secondOperand} = ?`,
     correctAnswer, choices: [], source: 'regular',
   };
+  question.choices = generateAnswerChoices(question);
+  return question;
 }
 
 export function generateAddition(difficulty: DifficultyLevel): Question {

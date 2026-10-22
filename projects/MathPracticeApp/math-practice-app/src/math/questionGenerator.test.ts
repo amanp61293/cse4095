@@ -11,7 +11,10 @@ function verify(operation: MathOperation, level: DifficultyLevel) {
     expect(q.operation).toBe(operation);
     expect(q.difficulty).toBe(level);
     expect(q.id).toBeTruthy();
-    expect(q.choices).toEqual([]); // Multiple-choice belongs to Phase 5.
+    expect(q.choices).toHaveLength(4);
+    expect(new Set(q.choices).size).toBe(4);
+    expect(q.choices.filter((choice) => choice === q.correctAnswer)).toHaveLength(1);
+    expect(q.choices.every((choice) => Number.isSafeInteger(choice) && choice >= 0)).toBe(true);
     expect(q.source).toBe('regular');
     expect(q.displayText).toContain('= ?');
     expect(Number.isInteger(q.correctAnswer)).toBe(true);

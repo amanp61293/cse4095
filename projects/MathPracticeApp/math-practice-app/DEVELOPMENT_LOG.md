@@ -57,3 +57,17 @@
 **Tests added:** 16 operation/level combinations sampled 300 times each, mathematical identity and boundary checks, invalid input cases, mixed-operation selection, and utility tests.
 
 **Verification:** Local npm dependencies/build/tests must be run by the student after unpacking. Check results before confirming Phase 4 completion.
+
+## Phase 4: Student verification (reported)
+
+**Student result:** Student confirmed Phase 4 was completed locally and requested the Phase 5 implementation. Detailed command output was not provided; record this as student-reported verification, not independently reproduced. The preceding user message also confirmed a Git commit for Phase 3.
+
+## Phase 5: Multiple-choice answer generation (2026-10-21)
+
+**Student implementation prompt:** Generate four unique, shuffled, plausible integer answers for every operation and difficulty, integrate into Phase 4 generators, test zeros, large answers, correctness, uniqueness, and randomization; preserve UI; update TODO and development log.
+
+**Implementation:** Added `src/math/answerChoices.ts` with operation-specific candidate distractors (nearby sums/differences, multiplication facts and division neighbors), bounded random fallback, deterministic final fallback, deduplication and final shuffled options. The existing question generator now fills `Question.choices` directly, including mixed sessions. No card UI was added.
+
+**Tests:** Updated existing question generator tests to expect four valid choices; added tests covering every operation and difficulty, zero and large answers, mixed operations, varying correct-answer positions, and invalid answers.
+
+**Verification:** Test, lint, build and formatting checks are pending local VS Code verification by the student.
