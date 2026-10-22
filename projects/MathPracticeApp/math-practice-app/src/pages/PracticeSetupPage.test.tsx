@@ -45,10 +45,10 @@ describe('Phase 3 practice setup', () => {
     await user.click(screen.getByRole('radio', { name: /level 3: intermediate/i }));
     await user.click(screen.getByRole('radio', { name: /5 questions/i }));
     await user.click(screen.getByRole('button', { name: /start session/i }));
-    expect(await screen.findByRole('heading', { name: 'Session Ready!' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'Math Practice' })).toBeInTheDocument();
     expect(screen.getByText(/addition, division/i)).toBeInTheDocument();
     expect(screen.getByText(/level 3/i)).toBeInTheDocument();
-    expect(screen.getByText(/5 questions/i)).toBeInTheDocument();
+    expect(screen.getByText(/question 1 of 5/i)).toBeInTheDocument();
   });
 
   it('asks for setup when session is opened directly', () => {

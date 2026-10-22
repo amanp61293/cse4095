@@ -71,3 +71,21 @@
 **Tests:** Updated existing question generator tests to expect four valid choices; added tests covering every operation and difficulty, zero and large answers, mixed operations, varying correct-answer positions, and invalid answers.
 
 **Verification:** Test, lint, build and formatting checks are pending local VS Code verification by the student.
+
+## Phase 5: Student verification (reported, 2026-10-21)
+
+**Student result:** Student replied “done” following the Phase 5 package and verification instructions. This is treated as a completion report, not independent access to their command output. The developer recommended committing the phase before starting Phase 6.
+
+## Revised development plan (2026-10-21)
+
+**Student request:** Consolidate the remaining 17 original phases into five larger stages while preserving the full project scope and quality. Revised Phase 6 covers original Phases 6–8 (interactive cards, sessions, summaries); revised Phase 7 covers storage and statistics; revised Phase 8 covers mistakes and settings; revised Phase 9 covers accessibility, polish, reliability and comprehensive testing; revised Phase 10 covers deployment and submission. Retain original TODO checkboxes for traceability.
+
+## Revised Phase 6: Interactive practice system (2026-10-21)
+
+**Student prompt:** Implement interactive question cards, selection and flip interaction, self-reported scoring, fixed and continuous sessions, progress tracking, accurate session summaries, navigation, accessibility, animation with reduced-motion support, and automated tests. Preserve previous functionality and defer persistent history, statistics, and mistake review.
+
+**Implementation:** Added `QuestionCard`, `PracticeSessionPage` gameplay, `SessionSummaryPage`, strongly typed session state and pure session-engine helpers. Answer selection remains editable until flipping. The card shows the chosen and correct answers with a plain-language operation-specific explanation and prevents multiple result submissions. Active sessions generate Phase 5 questions using selected operations and difficulty, update attempt/correct/incorrect counts, avoid immediate repeats with bounded retries, and advance automatically. Fixed sessions end at the selected length; continuous sessions support confirmation before ending. The summary calculates accuracy, shows operation, difficulty, review count, and supports Practice Again, Change Settings, View Statistics placeholder, and Return Home. Practice Mistakes is explicitly marked unavailable until revised Phase 8. No persistent attempt history is claimed.
+
+**Testing implemented:** New QuestionCard interaction tests, session engine unit tests, and full route-flow tests for fixed and continuous sessions; updated Phase 3 navigation expectations to match a playable session. Browser verification should include mobile width, keyboard-only selection, reduced-motion preferences, and direct route handling.
+
+**Known limitations and verification:** Dependency installation timed out in this environment, so automated tests, lint, build, format, and visual interaction require local verification. The animation can be disabled through the component prop; the actual settings-page toggle is deferred to revised Phase 8. Session state and result navigation are transient until revised Phase 7 adds storage, so refreshing a session or summary will not restore it. Original TODO items not yet implemented remain unchecked.

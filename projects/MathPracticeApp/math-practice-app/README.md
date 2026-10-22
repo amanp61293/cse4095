@@ -1,22 +1,19 @@
 # Math Practice App
 
-A browser-based math practice application for ages 7–12. **This repository contains Phases 1–3**: the project foundation, shared layout, home page, routing, and practice configuration. Question generation and actual practice sessions are reserved for later phases.
-
-## Requirements
-
-- Node.js 20.19+ or 22+
-- npm
+React + TypeScript + Vite arithmetic practice for ages 7–12. Revised Phase 6 includes playable multiple-choice question cards, self-reported scoring, finite and continuous practice sessions, and a session summary.
 
 ## Run locally
+
+Requires Node.js 20.19+ or 22+. In a terminal in this folder:
 
 ```bash
 npm install
 npm run dev
 ```
 
-Open the localhost address printed by Vite, usually `http://localhost:5173/`.
+Open the localhost URL shown in the terminal. Navigate to **Start Practice**, select operations, difficulty, and a session length, and select **Start Session**. Choose an answer, flip the card, and self-report correct or incorrect. Five-, ten-, and twenty-question sessions end automatically. Continuous sessions end using **End Session**.
 
-## Validate Phases 1–3
+## Tests and checks
 
 ```bash
 npm run test
@@ -25,28 +22,21 @@ npm run build
 npm run format:check
 ```
 
-Run `npm run format` if formatting checks fail, then rerun the check. `npm run dev` requires visual verification in your browser.
+For format warnings: `npm run format` followed by `npm run format:check`. Check browser functionality on narrow screens and with a keyboard.
 
-## Production build
+## Architecture
 
-```bash
-npm run build
-npm run preview
-```
+- `src/math/`: question generation, answer distractors, session state helpers
+- `src/components/practice/`: selectors and interactive question card
+- `src/pages/`: setup, playable session, summary, navigation pages
+- `src/types/`: shared data contracts
+- `TODO.md`: instructor's original requirements checklist, retained and updated
+- `DEVELOPMENT_LOG.md`: implementation prompts, debugging and verification evidence
 
-Vite writes the static site to `dist/`; for a future Netlify deployment, set build command to `npm run build` and publish directory to `dist`.
+## Current limitations
 
-## Organization
+Sessions and results are not yet persisted. Refreshing a session or summary returns to setup or an empty state. Statistics and mistake-review features will be implemented in later stages. The card has an animation-disable prop and honors reduced-motion settings; the settings UI is not yet available.
 
-- `src/app`: top-level React app
-- `src/components/common`: reusable components
-- `src/types`: data models required by specification
-- `src/test`: automated test setup
-- `specification.md`: instructor-provided requirements
-- `TODO.md`: instructor-provided phased checklist with verified progress
+## Build and deploy (later phase)
 
-This is an individually developed class project using AI-assisted development, testing, and review. See `DEVELOPMENT_LOG.md` for the process.
-
-## Phase 4 math engine
-
-Import `generateQuestion(operation, difficulty)` or `generateMixedQuestion(operations, difficulty)` from `src/math/questionGenerator.ts` to generate question objects. `choices` deliberately stays empty until Phase 5. No question card is shown yet. Tests in `src/math/questionGenerator.test.ts` cover all difficulty/operation combinations.
+`npm run build` generates `dist/`. A hosting platform may require an SPA rewrite for client-side routes.

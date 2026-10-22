@@ -18,7 +18,7 @@ export function PracticeSetupPage() {
     event.preventDefault();
     if (operations.length === 0) return;
     const config: PracticeConfig = { operations, difficulty, sessionLength, reviewMode };
-    // React Router state hands the configuration to Phase 7's practice page.
+    // Pass setup choices into the session route.
     navigate('/practice/session', { state: { config } });
   }
 
