@@ -183,3 +183,6 @@ The early-ending behavior was documented for transparency.
 No additional modifications were introduced before deployment.
 
 Status: Manual testing observation documented. Existing functionality preserved.
+
+## GitHub repository link: https://github.com/amanp61293/cse4095/tree/projects
+## Netlify link: https://apmathpracticeapp.netlify.app

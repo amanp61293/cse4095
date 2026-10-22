@@ -47,4 +47,9 @@ Sign in at https://app.netlify.com/ and select **Add new project** > **Import an
 
 Submit the verified GitHub repository URL, verified live application URL, development report PDF, and AI conversation evidence PDF. Confirm the instructor can access the public links without a login.
 
-**Deployment and live testing are pending until the user completes these steps.**
+**Deployment Status: The Math Practice application has been successfully deployed to Netlify. The GitHub repository is available, and the deployed application has been manually tested to verify its core functionality, navigation, statistics, and mistake-review features.**
+
+**GitHub Repository**: https://github.com/amanp61293/cse4095/tree/projects
+**Live Application**: https://apmathpracticeapp.netlify.app
+**Deployment Branch**: projects
+**Netlify Base Directory**: projects/MathPracticeApp/math-practice-app
