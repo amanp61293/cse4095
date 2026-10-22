@@ -6,8 +6,8 @@
 
 - [ ] Create a new React project using Vite.
 - [x] Configure TypeScript.
-- [ ] Install project dependencies.
-- [ ] Confirm that the development server runs.
+- [x] Install project dependencies.
+- [x] Confirm that the development server runs.
 - [x] Remove the default Vite demonstration content.
 - [x] Create the initial application folder structure.
 
@@ -25,10 +25,10 @@ npm run dev
 - [x] Configure ESLint.
 - [x] Configure Prettier.
 - [x] Add scripts for linting and formatting.
-- [ ] Install Vitest.
-- [ ] Install React Testing Library.
+- [x] Install Vitest.
+- [x] Install React Testing Library.
 - [x] Create one basic component test.
-- [ ] Confirm that tests run successfully.
+- [x] Confirm that tests run successfully.
 
 ### 3. Define Shared TypeScript Types
 
@@ -77,7 +77,7 @@ src/types/
 
 ### 6. Add Application Routing
 
-- [ ] Install React Router (dependency added; verify after npm install).
+- [x] Install React Router.
 - [x] Create the application routes.
 - [x] Connect the home-page buttons to their routes.
 - [x] Add a fallback page for unknown routes.
@@ -141,59 +141,59 @@ Initial routes:
 
 ### 11. Create General Question Utilities
 
-- [ ] Create a random integer utility.
-- [ ] Create an array-shuffling utility.
-- [ ] Create a unique-ID utility.
-- [ ] Add unit tests for each utility.
+- [x] Create a random integer utility.
+- [x] Create an array-shuffling utility.
+- [x] Create a unique-ID utility.
+- [x] Add unit tests for each utility.
 
 ### 12. Implement Addition Questions
 
-- [ ] Generate two operands.
-- [ ] Apply the selected difficulty rules.
-- [ ] Calculate the correct answer.
-- [ ] Generate the display text.
-- [ ] Return a valid `Question` object.
-- [ ] Test minimum and maximum operand ranges.
-- [ ] Test maximum-result restrictions.
+- [x] Generate two operands.
+- [x] Apply the selected difficulty rules.
+- [x] Calculate the correct answer.
+- [x] Generate the display text.
+- [x] Return a valid `Question` object.
+- [x] Test minimum and maximum operand ranges.
+- [x] Test maximum-result restrictions.
 
 ### 13. Implement Subtraction Questions
 
-- [ ] Generate two operands.
-- [ ] Prevent negative answers for the initial version.
-- [ ] Apply the selected difficulty rules.
-- [ ] Calculate the correct answer.
-- [ ] Generate the display text.
-- [ ] Return a valid `Question` object.
-- [ ] Test that the first operand is not smaller than the second.
+- [x] Generate two operands.
+- [x] Prevent negative answers for the initial version.
+- [x] Apply the selected difficulty rules.
+- [x] Calculate the correct answer.
+- [x] Generate the display text.
+- [x] Return a valid `Question` object.
+- [x] Test that the first operand is not smaller than the second.
 
 ### 14. Implement Multiplication Questions
 
-- [ ] Generate two factors.
-- [ ] Apply the selected difficulty rules.
-- [ ] Calculate the correct product.
-- [ ] Generate the display text.
-- [ ] Return a valid `Question` object.
-- [ ] Test factor ranges for every difficulty level.
+- [x] Generate two factors.
+- [x] Apply the selected difficulty rules.
+- [x] Calculate the correct product.
+- [x] Generate the display text.
+- [x] Return a valid `Question` object.
+- [x] Test factor ranges for every difficulty level.
 
 ### 15. Implement Division Questions
 
-- [ ] Generate a nonzero divisor.
-- [ ] Generate a whole-number quotient.
-- [ ] Calculate the dividend from the divisor and quotient.
-- [ ] Apply the selected difficulty rules.
-- [ ] Generate the display text.
-- [ ] Return a valid `Question` object.
-- [ ] Test that division by zero is impossible.
-- [ ] Test that all answers are whole numbers.
+- [x] Generate a nonzero divisor.
+- [x] Generate a whole-number quotient.
+- [x] Calculate the dividend from the divisor and quotient.
+- [x] Apply the selected difficulty rules.
+- [x] Generate the display text.
+- [x] Return a valid `Question` object.
+- [x] Test that division by zero is impossible.
+- [x] Test that all answers are whole numbers.
 
 ### 16. Create the Main Question Generator
 
-- [ ] Accept an operation and difficulty level.
-- [ ] Call the correct operation-specific generator.
-- [ ] Randomly select an operation when multiple operations are enabled.
-- [ ] Validate the generated question.
-- [ ] Handle unexpected generation failures.
-- [ ] Add unit tests for all operations and difficulty levels.
+- [x] Accept an operation and difficulty level.
+- [x] Call the correct operation-specific generator.
+- [x] Randomly select an operation when multiple operations are enabled.
+- [x] Validate the generated question.
+- [x] Handle unexpected generation failures.
+- [x] Add unit tests for all operations and difficulty levels.
 
 ---
 

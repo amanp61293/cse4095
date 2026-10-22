@@ -1,5 +1,4 @@
-export type MathOperation =
-  'addition' | 'subtraction' | 'multiplication' | 'division';
+export type MathOperation = 'addition' | 'subtraction' | 'multiplication' | 'division';
 export type DifficultyLevel = 1 | 2 | 3 | 4;
 export type QuestionSource = 'regular' | 'mistake-review';
 

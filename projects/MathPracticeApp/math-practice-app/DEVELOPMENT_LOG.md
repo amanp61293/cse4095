@@ -37,3 +37,23 @@
 **Verification status:** Implementation and test code prepared. Student still needs to run `npm install`, `npm run test`, `npm run lint`, `npm run build`, `npm run format:check`, and visually verify in VS Code. Do not claim a local passing result until output is provided. Existing Phase 2 verification was reported by the student.
 
 **Next:** Record student Phase 3 test results and any fixes, then make a meaningful Git commit before Phase 4.
+
+## Phase 3: Student testing, debugging, and Git verification (2026-10-21)
+
+**Initial test results:** Four previously existing tests passed, but the new setup-page suite and TypeScript build failed because `@testing-library/user-event` was missing. ESLint reported a nonblocking Fast Refresh warning; Prettier reported formatting inconsistencies in 23 files.
+
+**Debugging guidance:** Install `@testing-library/user-event` as a development dependency, run Prettier, and re-run all four checks. The Fast Refresh warning was identified as arising from exports alongside a component.
+
+**Student verification:** Student reported no errors on rerunning `npm run test`, `npm run lint`, `npm run build`, and `npm run format:check` and confirmed a Git commit was made. The exact output and commit hash were not supplied. Package dependency now included so a fresh checkout also installs it.
+
+## Phase 4: Basic math question generation (2026-10-21)
+
+**Student prompt:** Implement Phase 4 with operation-specific math generators, exact level rules, reusable random/shuffle/ID utilities, mixed operation support, automated boundary testing, and updated logs. Preserve the UI and defer multiple-choice cards until later phases.
+
+**Implementation:** Added pure question generation functions in `src/math/questionGenerator.ts`; inclusive integer randomization, immutable Fisher-Yates shuffle, and unique IDs in `src/utils/random.ts`. All questions return `Question` objects with an empty `choices` array pending Phase 5. Division constructs dividends from nonzero divisors and integral quotients; subtraction avoids negatives. Mixed questions choose only among selected operations. No UI change.
+
+**Specification detail:** Level 4 division has no numeric dividend maximum stated in the specification; this implementation uses divisors 1–99 and quotients 1–30, giving whole-number answers with larger dividends. Level 3 multiplication covers one-digit by one-digit or by two-digit.
+
+**Tests added:** 16 operation/level combinations sampled 300 times each, mathematical identity and boundary checks, invalid input cases, mixed-operation selection, and utility tests.
+
+**Verification:** Local npm dependencies/build/tests must be run by the student after unpacking. Check results before confirming Phase 4 completion.

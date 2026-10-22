@@ -559,7 +559,11 @@ Questions involving remainders may be added in a future version.
 Each generated question should have a structure similar to:
 
 ```ts
-type MathOperation = 'addition' | 'subtraction' | 'multiplication' | 'division';
+type MathOperation =
+  | "addition"
+  | "subtraction"
+  | "multiplication"
+  | "division";
 
 type DifficultyLevel = 1 | 2 | 3 | 4;
 
@@ -572,7 +576,7 @@ interface Question {
   correctAnswer: number;
   choices: number[];
   difficulty: DifficultyLevel;
-  source: 'regular' | 'mistake-review';
+  source: "regular" | "mistake-review";
   mistakePatternId?: string;
 }
 ```
@@ -666,7 +670,7 @@ interface PracticeAttempt {
   selectedAnswer: number;
   selfReportedCorrect: boolean;
   difficulty: DifficultyLevel;
-  source: 'regular' | 'mistake-review';
+  source: "regular" | "mistake-review";
   attemptedAt: string;
   sessionId: string;
 }
@@ -681,7 +685,7 @@ interface PracticeSession {
   completedAt?: string;
   operations: MathOperation[];
   difficulty: DifficultyLevel;
-  sessionLength: number | 'continuous';
+  sessionLength: number | "continuous";
   attempted: number;
   correct: number;
   incorrect: number;
@@ -1017,7 +1021,7 @@ Suggested function:
 ```ts
 function generateQuestion(
   operation: MathOperation,
-  difficulty: DifficultyLevel,
+  difficulty: DifficultyLevel
 ): Question;
 ```
 
@@ -1034,7 +1038,9 @@ Responsibilities:
 Suggested function:
 
 ```ts
-function generateSimilarQuestion(pattern: MistakePattern): Question;
+function generateSimilarQuestion(
+  pattern: MistakePattern
+): Question;
 ```
 
 ## 20.3 Statistics Service

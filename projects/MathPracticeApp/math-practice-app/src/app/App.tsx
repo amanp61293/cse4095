@@ -14,33 +14,9 @@ export default function App() {
           <Route index element={<HomePage />} />
           <Route path="practice/setup" element={<PracticeSetupPage />} />
           <Route path="practice/session" element={<PracticeSessionPage />} />
-          <Route
-            path="practice/summary"
-            element={
-              <PlaceholderPage
-                title="Session Summary"
-                description="Your practice results will appear here in a later phase."
-              />
-            }
-          />
-          <Route
-            path="statistics"
-            element={
-              <PlaceholderPage
-                title="Your Statistics"
-                description="Performance tracking will appear here after we add practice sessions."
-              />
-            }
-          />
-          <Route
-            path="settings"
-            element={
-              <PlaceholderPage
-                title="Settings"
-                description="Your preferences will be available here in a later phase."
-              />
-            }
-          />
+          <Route path="practice/summary" element={<PlaceholderPage title="Session Summary" description="Your practice results will appear here in a later phase." />} />
+          <Route path="statistics" element={<PlaceholderPage title="Your Statistics" description="Performance tracking will appear here after we add practice sessions." />} />
+          <Route path="settings" element={<PlaceholderPage title="Settings" description="Your preferences will be available here in a later phase." />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>

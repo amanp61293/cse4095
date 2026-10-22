@@ -46,3 +46,7 @@ Vite writes the static site to `dist/`; for a future Netlify deployment, set bui
 - `TODO.md`: instructor-provided phased checklist with verified progress
 
 This is an individually developed class project using AI-assisted development, testing, and review. See `DEVELOPMENT_LOG.md` for the process.
+
+## Phase 4 math engine
+
+Import `generateQuestion(operation, difficulty)` or `generateMixedQuestion(operations, difficulty)` from `src/math/questionGenerator.ts` to generate question objects. `choices` deliberately stays empty until Phase 5. No question card is shown yet. Tests in `src/math/questionGenerator.test.ts` cover all difficulty/operation combinations.
