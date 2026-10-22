@@ -1,14 +1,11 @@
-import { render, screen } from '@testing-library/react';
+import { cleanup, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { QuestionCard } from './QuestionCard';
 import type { Question } from '../../types/question';
-import { afterEach } from 'vitest';
-import { cleanup } from '@testing-library/react';
 
-afterEach(() => {
-  cleanup();
-});
+afterEach(() => cleanup());
+
 const question: Question = { id: 'a', operation: 'addition', difficulty: 1, firstOperand: 3, secondOperand: 4, displayText: '3 + 4 = ?', correctAnswer: 7, choices: [5, 6, 7, 8], source: 'regular' };
 
 describe('QuestionCard', () => {

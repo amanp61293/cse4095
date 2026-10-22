@@ -15,7 +15,7 @@ export function SessionSummaryPage() {
     <div className="summary-actions">
       <button className="button button-primary" onClick={() => navigate('/practice/session', { state: { config: result.config } })}>Practice Again</button>
       <Link className="button button-secondary" to="/practice/setup">Change Settings</Link>
-      <Link className="button button-secondary" to="/statistics">View Statistics (coming soon)</Link>
+      <Link className="button button-secondary" to="/statistics">View Statistics</Link>
       <Link className="button button-secondary" to="/">Return Home</Link>
     </div>
     <p className="feature-note">Practice Mistakes will be available when mistake review is implemented in Phase 8.</p>

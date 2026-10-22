@@ -6,6 +6,7 @@ import { PracticeSetupPage } from '../pages/PracticeSetupPage';
 import { PracticeSessionPage } from '../pages/PracticeSessionPage';
 import { SessionSummaryPage } from '../pages/SessionSummaryPage';
 import { PlaceholderPage } from '../pages/PlaceholderPage';
+import { StatisticsPage } from '../pages/StatisticsPage';
 
 export default function App() {
   return (
@@ -16,7 +17,7 @@ export default function App() {
           <Route path="practice/setup" element={<PracticeSetupPage />} />
           <Route path="practice/session" element={<PracticeSessionPage />} />
           <Route path="practice/summary" element={<SessionSummaryPage />} />
-          <Route path="statistics" element={<PlaceholderPage title="Your Statistics" description="Performance tracking will appear here after we add practice sessions." />} />
+          <Route path="statistics" element={<StatisticsPage />} />
           <Route path="settings" element={<PlaceholderPage title="Settings" description="Your preferences will be available here in a later phase." />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>

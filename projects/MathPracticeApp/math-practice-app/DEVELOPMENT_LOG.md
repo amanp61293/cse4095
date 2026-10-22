@@ -89,3 +89,17 @@
 **Testing implemented:** New QuestionCard interaction tests, session engine unit tests, and full route-flow tests for fixed and continuous sessions; updated Phase 3 navigation expectations to match a playable session. Browser verification should include mobile width, keyboard-only selection, reduced-motion preferences, and direct route handling.
 
 **Known limitations and verification:** Dependency installation timed out in this environment, so automated tests, lint, build, format, and visual interaction require local verification. The animation can be disabled through the component prop; the actual settings-page toggle is deferred to revised Phase 8. Session state and result navigation are transient until revised Phase 7 adds storage, so refreshing a session or summary will not restore it. Original TODO items not yet implemented remain unchecked.
+
+## Revised Phase 6: Student-reported debugging and verification (2026-10-21)
+
+The student ran 50 tests locally: 49 passed and one failed because Testing Library found multiple mounted QuestionCards. A cleanup hook was added to the card tests. ESLint found an unused `_selectedAnswer` parameter in PracticeSessionPage, which was removed. The student confirmed the fix and requested Phase 7; command outputs of the final rerun were not independently provided. A Fast Refresh export warning was also reported and remains cosmetic if present. The production build passed in the supplied output.
+
+## Revised Phase 7: Storage and statistics (2026-10-21)
+
+**Student prompt:** Implement localStorage with schema versioning, validation and failure handling; persist attempts, completed sessions, settings, and computed statistics; add a statistics dashboard, reset confirmation, tests, and maintain existing behavior. Defer mistake review and the full settings page.
+
+**Implementation:** Added a versioned, namespaced localStorage service with safe reads/writes, basic unversioned migration, record validation, protection against future schema overwrites, a settings saver, difficulty saver, saved attempts and completed session records. Statistics are derived from saved attempt records for consistency and survive page refreshes; completed sessions are shown newest first. The Practice Session page now records each answer including the selected choice, self-reported score, timestamp, operation and difficulty, and saves completed sessions. The Statistics page displays overall counts/accuracy, breakdowns by operation and difficulty, recent sessions, and confirmed history reset that retains settings and unrelated storage.
+
+**Tests written:** Storage parsing/migration, duplicate prevention, persistence, aggregation, blocked storage, future version handling, reset scope, accuracy edge cases, operation/difficulty breakdowns and session ordering.
+
+**Verification status:** Automated tests, ESLint, formatting and production build require confirmation from actual command outputs. No mistake-review algorithms or settings page controls were added. During blocked storage or quota errors, saving is explicitly reported to the user and a scored attempt is not advanced. Active in-progress session state remains temporary, as only completed history and attempts are required in this phase. Statistics are recalculated from stored attempts (not an independent writeable counter).

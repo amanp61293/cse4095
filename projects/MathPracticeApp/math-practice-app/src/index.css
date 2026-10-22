@@ -97,3 +97,13 @@ button:disabled { opacity: .5; cursor: not-allowed; transform: none; }
 .feature-note { font-size: .88rem; }
 @media (max-width: 520px) { .answers { gap: .6rem; } .answer-choice { min-height: 65px; } .summary-actions { grid-template-columns: 1fr; } }
 @media (prefers-reduced-motion: reduce) { .question-card-flipped .question-face { animation: none; } .progress-fill { transition: none; } }
+
+/* Phase 7 statistics dashboard */
+.stats-page h2 { margin-top: 1.7rem; }
+.stats-grid { margin: 1rem 0; }
+.stats-grid > div { min-width: 0; }
+.stats-title { margin: 0 0 .6rem; font-size: 1.05rem; text-transform: capitalize; }
+.table-scroll { width: 100%; overflow-x: auto; }
+.stats-table { border-collapse: collapse; width: 100%; text-align: left; min-width: 600px; }
+.stats-table th, .stats-table td { padding: .75rem .6rem; border-bottom: 1px solid #d2d9e5; }
+.stats-table th { font-size: .9rem; }

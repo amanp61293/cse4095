@@ -40,3 +40,7 @@ Sessions and results are not yet persisted. Refreshing a session or summary retu
 ## Build and deploy (later phase)
 
 `npm run build` generates `dist/`. A hosting platform may require an SPA rewrite for client-side routes.
+
+## Phase 7: saved progress
+
+Completed answers and sessions are saved locally in your browser under `math-practice-data`. Open **Statistics** to view aggregate accuracy and recent sessions. **Reset Statistics** erases saved attempts and completed session history after confirmation; it preserves settings and other applications' localStorage keys. Settings UI and mistake review are planned for Phase 8. Private browsing, clearing site data, or changing browsers can make saved history unavailable.

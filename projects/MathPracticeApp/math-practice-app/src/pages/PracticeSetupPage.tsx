@@ -6,6 +6,7 @@ import { SessionLengthSelector } from '../components/practice/SessionLengthSelec
 import type { DifficultyLevel, MathOperation } from '../types/question';
 import type { SessionLength } from '../types/session';
 import type { PracticeConfig } from '../types/practiceConfig';
+import { saveDifficulty } from '../storage/practiceStorage';
 
 export function PracticeSetupPage() {
   const navigate = useNavigate();
@@ -18,6 +19,7 @@ export function PracticeSetupPage() {
     event.preventDefault();
     if (operations.length === 0) return;
     const config: PracticeConfig = { operations, difficulty, sessionLength, reviewMode };
+    saveDifficulty(difficulty);
     // Pass setup choices into the session route.
     navigate('/practice/session', { state: { config } });
   }
