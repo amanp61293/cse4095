@@ -4,16 +4,28 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import App from '../app/App';
 import { loadPractice } from '../storage/practiceStorage';
 
-beforeEach(() => { localStorage.clear(); window.history.pushState({}, '', '/settings'); });
-afterEach(() => { cleanup(); vi.restoreAllMocks(); window.history.pushState({}, '', '/'); });
+beforeEach(() => {
+  localStorage.clear();
+  window.history.pushState({}, '', '/settings');
+});
+afterEach(() => {
+  cleanup();
+  vi.restoreAllMocks();
+  window.history.pushState({}, '', '/');
+});
 describe('settings', () => {
   it('saves preferences and restores them from localStorage', async () => {
     const user = userEvent.setup();
     render(<App />);
-    await user.click(screen.getByRole('checkbox', { name: /show explanations/i }));
+    await user.click(
+      screen.getByRole('checkbox', { name: /show explanations/i }),
+    );
     await user.click(screen.getByRole('checkbox', { name: /sound effects/i }));
     await user.selectOptions(screen.getByLabelText('Default difficulty'), '4');
-    await user.selectOptions(screen.getByLabelText('Default session length'), '5');
+    await user.selectOptions(
+      screen.getByLabelText('Default session length'),
+      '5',
+    );
     await user.click(screen.getByRole('button', { name: 'Save Settings' }));
     expect(loadPractice().settings.showExplanations).toBe(false);
     expect(loadPractice().settings.soundEffectsEnabled).toBe(false);
@@ -24,8 +36,12 @@ describe('settings', () => {
     const user = userEvent.setup();
     const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false);
     render(<App />);
-    await user.click(screen.getByRole('button', { name: 'Clear All Application Data' }));
+    await user.click(
+      screen.getByRole('button', { name: 'Clear All Application Data' }),
+    );
     expect(confirm).toHaveBeenCalledOnce();
-    expect(screen.getByRole('heading', { name: 'Settings' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: 'Settings' }),
+    ).toBeInTheDocument();
   });
 });

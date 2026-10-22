@@ -1,9 +1,22 @@
 import { describe, expect, it } from 'vitest';
-import { finishPractice, nextQuestion, sameFact, scoreAttempt, sessionComplete, startPractice, validConfig } from './sessionEngine';
+import {
+  finishPractice,
+  nextQuestion,
+  sameFact,
+  scoreAttempt,
+  sessionComplete,
+  startPractice,
+  validConfig,
+} from './sessionEngine';
 import type { PracticeConfig } from '../types/practiceConfig';
 import { generateMixedQuestion } from './questionGenerator';
 
-const config: PracticeConfig = { operations: ['addition'], difficulty: 1, sessionLength: 5, reviewMode: 'regular' };
+const config: PracticeConfig = {
+  operations: ['addition'],
+  difficulty: 1,
+  sessionLength: 5,
+  reviewMode: 'regular',
+};
 
 describe('practice session engine', () => {
   it('validates configurations', () => {
@@ -36,7 +49,12 @@ describe('practice session engine', () => {
     }
   });
   it('generates valid questions for all operations', () => {
-    for (const operation of ['addition', 'subtraction', 'multiplication', 'division'] as const) {
+    for (const operation of [
+      'addition',
+      'subtraction',
+      'multiplication',
+      'division',
+    ] as const) {
       const session = startPractice({ ...config, operations: [operation] });
       expect(session.question.operation).toBe(operation);
       expect(session.question.choices).toHaveLength(4);

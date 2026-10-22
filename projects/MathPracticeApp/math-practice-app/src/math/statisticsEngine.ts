@@ -9,7 +9,11 @@ export function accuracy(correct: number, attempted: number): number {
 export function countAttempts(attempts: PracticeAttempt[]): AppStatistics {
   const stats = createEmptyStatistics();
   for (const attempt of attempts) {
-    const groups: OperationStatistics[] = [stats, stats.byOperation[attempt.operation], stats.byDifficulty[attempt.difficulty]];
+    const groups: OperationStatistics[] = [
+      stats,
+      stats.byOperation[attempt.operation],
+      stats.byDifficulty[attempt.difficulty],
+    ];
     for (const group of groups) {
       group.attempted += 1;
       if (attempt.selfReportedCorrect) group.correct += 1;
@@ -19,7 +23,12 @@ export function countAttempts(attempts: PracticeAttempt[]): AppStatistics {
   return stats;
 }
 
-export function recentSessions(sessions: PracticeSession[], count = 10): PracticeSession[] {
-  return [...sessions].filter((session) => Boolean(session.completedAt))
-    .sort((a, b) => (b.completedAt ?? '').localeCompare(a.completedAt ?? '')).slice(0, count);
+export function recentSessions(
+  sessions: PracticeSession[],
+  count = 10,
+): PracticeSession[] {
+  return [...sessions]
+    .filter((session) => Boolean(session.completedAt))
+    .sort((a, b) => (b.completedAt ?? '').localeCompare(a.completedAt ?? ''))
+    .slice(0, count);
 }

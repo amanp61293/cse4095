@@ -12,11 +12,18 @@ export interface AppStatistics extends OperationStatistics {
 }
 
 export function createEmptyStatistics(): AppStatistics {
-  const empty = (): OperationStatistics => ({ attempted: 0, correct: 0, incorrect: 0 });
+  const empty = (): OperationStatistics => ({
+    attempted: 0,
+    correct: 0,
+    incorrect: 0,
+  });
   return {
     ...empty(),
     byOperation: {
-      addition: empty(), subtraction: empty(), multiplication: empty(), division: empty(),
+      addition: empty(),
+      subtraction: empty(),
+      multiplication: empty(),
+      division: empty(),
     },
     byDifficulty: { 1: empty(), 2: empty(), 3: empty(), 4: empty() },
   };

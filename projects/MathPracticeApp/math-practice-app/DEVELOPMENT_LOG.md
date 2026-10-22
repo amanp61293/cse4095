@@ -104,7 +104,6 @@ The student ran 50 tests locally: 49 passed and one failed because Testing Libra
 
 **Verification status:** Automated tests, ESLint, formatting and production build require confirmation from actual command outputs. No mistake-review algorithms or settings page controls were added. During blocked storage or quota errors, saving is explicitly reported to the user and a scored attempt is not advanced. Active in-progress session state remains temporary, as only completed history and attempts are required in this phase. Statistics are recalculated from stored attempts (not an independent writeable counter).
 
-
 ## Revised Phase 7: Student-reported verification and design decision (2026-10-21)
 
 The student reported the Phase 7 build and checks completed without errors. During manual browser testing, they selected 20 for 5 + 5 but clicked **I Got It Right**, and the score increased as correct. We verified the specification explicitly requires **self-reported scoring**: the choice records the student's selected answer, but the Right/Wrong buttons determine the saved result. This behavior was deliberately preserved for grading compliance. The potential for a contradictory self-report was documented rather than silently changing the requirement.
@@ -134,3 +133,53 @@ The student reported the Phase 7 build and checks completed without errors. Duri
 **Verification limitations:** Offline npm installation failed because dependencies are not cached; online npm install timed out. No automated test, lint, production build, Prettier, screen-reader, real-device, zoom, or performance result is claimed. The student must run these locally and report failures for correction. These unverified items remain unchecked in TODO. No deployment was performed.
 
 **Outstanding limitations:** An unfinished question's selected option and flipped face reset upon refresh (question and counters are restored); browser sessionStorage may be cleared when the browsing session ends. Explicit screen-reader and multi-browser testing, large-history performance checks, and full remaining TODO review are still needed before release.
+
+## Revised Phase 9: Student verification and regression fixes (2026-10-21)
+
+**Student-run checks:** 85/87 tests initially passed. `npm run lint` produced no errors and `npm run build` succeeded (Vite reported 64 transformed modules). Two failing tests reflected intentional Phase 9 changes: selected answer `5` now had accessible name `5 ✓ Selected`, and the direct-session-route test encountered saved session recovery. We changed the selected-answer test to match its expanded accessible name and cleared browser storage before the direct-route test. Student subsequently reported that all checks passed without errors. This final verification is **student-reported**, not an independent rerun in the assistant environment.
+
+## Revised Phase 10: Release and submission preparation (2026-10-21)
+
+**Student prompt:** Complete final project verification, GitHub repository preparation, Netlify configuration, 2–3-page report, AI conversation evidence, and release documentation, preserving Phases 1–9. Do not claim deployment before verified.
+
+**Changes:** Carried forward the two student-tested Phase 9 test corrections into the deliverable; added Netlify build configuration and an SPA route fallback; added `DEPLOYMENT_GUIDE.md`; refreshed README; prepared standalone report/evidence PDFs based on the assignment and recorded conversations. Existing features and state architecture were not redesigned. Original TODO checklist preserved, with release preparation differentiated from unverified public deployment.
+
+**Verification:** The student reported successful local test/lint/build/format checks on the prior Phase 9 project after regression fixes. `npm install` timed out in this environment; the Phase 10 distribution's test suite, production build, and public deployment have therefore **not** been independently verified. Local Phase 10 retesting and live URLs are still pending.
+
+Test Performed
+
+During final browser testing, a five-question practice session was completed with one answer marked incorrect and the remaining answers marked correct.
+
+After completing the session, the student selected Practice Past Mistakes and started a review session for the previously missed question.
+
+Observed Behavior
+
+The application generated similar questions based on the recorded mistake.
+
+Although the review session was configured for five questions, it ended after three correctly completed review questions.
+
+The mistake was considered mastered after three successful similar questions.
+
+Specification Review
+
+Section 6.4 of specification.md states that a mistake pattern may be considered mastered after three correctly answered similar questions. The mastery threshold is configurable.
+
+The specification does not explicitly require mistake-review sessions to end early when all relevant mistakes become mastered.
+
+Decision
+
+The existing mastery behavior was preserved because it follows the specification's default mastery threshold.
+
+Early review-session completion was identified as an implementation behavior rather than an explicitly specified requirement. No code changes were made during this review.
+
+Outcome
+
+Mistake tracking and similar-question generation were manually verified.
+
+Mastery progression was observed during testing.
+
+The early-ending behavior was documented for transparency.
+
+No additional modifications were introduced before deployment.
+
+Status: Manual testing observation documented. Existing functionality preserved.

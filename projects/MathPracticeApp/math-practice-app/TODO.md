@@ -872,7 +872,7 @@ Initial routes:
 - [ ] Resolve TypeScript errors.
 - [ ] Create the production build.
 - [ ] Test the production build locally.
-- [ ] Configure deployment routing for React Router.
+- [x] Configure deployment routing for React Router (Netlify fallback added; live test pending).
 
 ### 89. Deploy the Application
 
@@ -960,3 +960,17 @@ For the fastest path to a working demonstration, implement these tasks first:
 15. [ ] Add the session summary.
 
 This produces a usable prototype before adding routing, persistence, advanced statistics, and personalized mistake review.
+
+## Revised Phase 10: Submission status (2026-10-21)
+
+- [x] Review source tree, dependencies, and `.gitignore` for release preparation.
+- [x] Add Netlify build settings and React Router SPA fallback.
+- [x] Prepare GitHub/Netlify publishing instructions and final acceptance checklist.
+- [x] Prepare 2–3-page development report and selected AI evidence document.
+- [x] Add student-reported Phase 9 regression fixes to distributable tests.
+- [ ] Re-run all four checks on Phase 10 package locally.
+- [ ] Push final commit to GitHub and verify repository URL/history.
+- [ ] Deploy to Netlify and verify live application, route refresh, and browser behavior.
+- [ ] Submit public URLs, PDFs, and evidence to HuskyCT.
+
+**Note:** Original Phase 22 browser/device/privacy checklist above remains unchanged where final verification is pending.

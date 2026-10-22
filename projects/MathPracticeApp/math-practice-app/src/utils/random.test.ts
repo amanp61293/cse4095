@@ -3,7 +3,9 @@ import { createUniqueId, randomInt, shuffleArray } from './random';
 
 describe('general random utilities', () => {
   it('returns inclusive endpoints and rejects invalid bounds', () => {
-    vi.spyOn(Math, 'random').mockReturnValueOnce(0).mockReturnValueOnce(0.999999);
+    vi.spyOn(Math, 'random')
+      .mockReturnValueOnce(0)
+      .mockReturnValueOnce(0.999999);
     expect(randomInt(3, 8)).toBe(3);
     expect(randomInt(3, 8)).toBe(8);
     vi.restoreAllMocks();

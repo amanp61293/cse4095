@@ -1,20 +1,49 @@
-import type { DifficultyLevel, MathOperation, Question } from '../types/question';
+import type {
+  DifficultyLevel,
+  MathOperation,
+  Question,
+} from '../types/question';
 import { createUniqueId, randomInt } from '../utils/random';
 import { generateAnswerChoices } from './answerChoices';
 
-const OPERATIONS: readonly MathOperation[] = ['addition', 'subtraction', 'multiplication', 'division'];
+const OPERATIONS: readonly MathOperation[] = [
+  'addition',
+  'subtraction',
+  'multiplication',
+  'division',
+];
 const DIFFICULTIES: readonly DifficultyLevel[] = [1, 2, 3, 4];
 
-function makeQuestion(operation: MathOperation, difficulty: DifficultyLevel, firstOperand: number, secondOperand: number): Question {
-  const symbols: Record<MathOperation, string> = { addition: '+', subtraction: '−', multiplication: '×', division: '÷' };
-  const correctAnswer = operation === 'addition' ? firstOperand + secondOperand
-    : operation === 'subtraction' ? firstOperand - secondOperand
-    : operation === 'multiplication' ? firstOperand * secondOperand
-    : firstOperand / secondOperand;
+function makeQuestion(
+  operation: MathOperation,
+  difficulty: DifficultyLevel,
+  firstOperand: number,
+  secondOperand: number,
+): Question {
+  const symbols: Record<MathOperation, string> = {
+    addition: '+',
+    subtraction: '−',
+    multiplication: '×',
+    division: '÷',
+  };
+  const correctAnswer =
+    operation === 'addition'
+      ? firstOperand + secondOperand
+      : operation === 'subtraction'
+        ? firstOperand - secondOperand
+        : operation === 'multiplication'
+          ? firstOperand * secondOperand
+          : firstOperand / secondOperand;
   const question: Question = {
-    id: createUniqueId(), operation, difficulty, firstOperand, secondOperand,
+    id: createUniqueId(),
+    operation,
+    difficulty,
+    firstOperand,
+    secondOperand,
     displayText: `${firstOperand} ${symbols[operation]} ${secondOperand} = ?`,
-    correctAnswer, choices: [], source: 'regular',
+    correctAnswer,
+    choices: [],
+    source: 'regular',
   };
   question.choices = generateAnswerChoices(question);
   return question;
@@ -37,7 +66,12 @@ export function generateSubtraction(difficulty: DifficultyLevel): Question {
 export function generateMultiplication(difficulty: DifficultyLevel): Question {
   if (difficulty <= 2) {
     const maxFactor = difficulty === 1 ? 5 : 10;
-    return makeQuestion('multiplication', difficulty, randomInt(0, maxFactor), randomInt(0, maxFactor));
+    return makeQuestion(
+      'multiplication',
+      difficulty,
+      randomInt(0, maxFactor),
+      randomInt(0, maxFactor),
+    );
   }
   if (difficulty === 3) {
     // One digit by one digit OR one digit by two digits.
@@ -71,23 +105,42 @@ export function generateDivision(difficulty: DifficultyLevel): Question {
   return makeQuestion('division', difficulty, divisor * quotient, divisor);
 }
 
-export function generateQuestion(operation: MathOperation, difficulty: DifficultyLevel): Question {
+export function generateQuestion(
+  operation: MathOperation,
+  difficulty: DifficultyLevel,
+): Question {
   if (!OPERATIONS.includes(operation) || !DIFFICULTIES.includes(difficulty)) {
     throw new RangeError('Unknown operation or difficulty');
   }
-  const question = operation === 'addition' ? generateAddition(difficulty)
-    : operation === 'subtraction' ? generateSubtraction(difficulty)
-    : operation === 'multiplication' ? generateMultiplication(difficulty)
-    : generateDivision(difficulty);
-  if (!Number.isInteger(question.correctAnswer) || question.secondOperand === 0 && operation === 'division') {
+  const question =
+    operation === 'addition'
+      ? generateAddition(difficulty)
+      : operation === 'subtraction'
+        ? generateSubtraction(difficulty)
+        : operation === 'multiplication'
+          ? generateMultiplication(difficulty)
+          : generateDivision(difficulty);
+  if (
+    !Number.isInteger(question.correctAnswer) ||
+    (question.secondOperand === 0 && operation === 'division')
+  ) {
     throw new Error('Generated an invalid question');
   }
   return question;
 }
 
-export function generateMixedQuestion(operations: readonly MathOperation[], difficulty: DifficultyLevel): Question {
-  if (operations.length === 0 || operations.some((operation) => !OPERATIONS.includes(operation))) {
+export function generateMixedQuestion(
+  operations: readonly MathOperation[],
+  difficulty: DifficultyLevel,
+): Question {
+  if (
+    operations.length === 0 ||
+    operations.some((operation) => !OPERATIONS.includes(operation))
+  ) {
     throw new RangeError('Choose at least one valid operation');
   }
-  return generateQuestion(operations[randomInt(0, operations.length - 1)], difficulty);
+  return generateQuestion(
+    operations[randomInt(0, operations.length - 1)],
+    difficulty,
+  );
 }

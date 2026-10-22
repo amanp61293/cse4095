@@ -1,6 +1,6 @@
 # Math Practice App
 
-React + TypeScript + Vite arithmetic practice for ages 7–12. Revised Phase 6 includes playable multiple-choice question cards, self-reported scoring, finite and continuous practice sessions, and a session summary.
+React + TypeScript + Vite arithmetic practice for children ages 7–12, including question cards, sessions, browser-based statistics, mistake review, and settings.
 
 ## Run locally
 
@@ -33,13 +33,17 @@ For format warnings: `npm run format` followed by `npm run format:check`. Check 
 - `TODO.md`: instructor's original requirements checklist, retained and updated
 - `DEVELOPMENT_LOG.md`: implementation prompts, debugging and verification evidence
 
-## Current limitations
+## Data and privacy
 
-Sessions and results are not yet persisted. Refreshing a session or summary returns to setup or an empty state. Statistics and mistake-review features will be implemented in later stages. The card has an animation-disable prop and honors reduced-motion settings; the settings UI is not yet available.
+Practice attempts, settings, and mistake history are stored in the browser (localStorage); active-session recovery uses sessionStorage. No account or backend is required. Clearing site data removes saved progress. Self-reported **I Got It Right / I Got It Wrong** buttons determine recorded correctness as specified, even when the selected answer differs.
 
-## Build and deploy (later phase)
+## Production deployment
 
-`npm run build` generates `dist/`. A hosting platform may require an SPA rewrite for client-side routes.
+Run `npm run build` and `npm run preview` to inspect the production build locally. Netlify settings are in `netlify.toml` and `public/_redirects` handles SPA navigation. See [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) for GitHub publishing, Netlify deployment, live-site testing, and submission steps.
+
+## Known limitations
+
+The current question and scored counters can recover after refreshing an active session, but the selected answer and flipped card state reset. Browser-local data will not sync between devices or domains. No live deployment has been verified as part of this package.
 
 ## Phase 7: saved progress
 

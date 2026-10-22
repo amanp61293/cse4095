@@ -3,11 +3,34 @@ import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import App from '../app/App';
 
-const config = { operations: ['addition'] as const, difficulty: 1 as const, sessionLength: 5 as const, reviewMode: 'regular' as const };
-afterEach(() => { cleanup(); window.history.pushState({}, '', '/'); vi.restoreAllMocks(); });
+const config = {
+  operations: ['addition'] as const,
+  difficulty: 1 as const,
+  sessionLength: 5 as const,
+  reviewMode: 'regular' as const,
+};
+afterEach(() => {
+  cleanup();
+  window.history.pushState({}, '', '/');
+  vi.restoreAllMocks();
+});
 
 async function begin(length: 5 | 'continuous' = 5) {
-  window.history.pushState({ usr: { config: { ...config, operations: [...config.operations], sessionLength: length } }, key: 'test', idx: 0 }, '', '/practice/session');
+  window.history.pushState(
+    {
+      usr: {
+        config: {
+          ...config,
+          operations: [...config.operations],
+          sessionLength: length,
+        },
+      },
+      key: 'test',
+      idx: 0,
+    },
+    '',
+    '/practice/session',
+  );
   render(<App />);
   return userEvent.setup();
 }
@@ -19,9 +42,15 @@ describe('Phase 6 session flow', () => {
       const choice = screen.getAllByRole('button', { name: /^\d+$/ })[0];
       await user.click(choice);
       await user.click(screen.getByRole('button', { name: 'Flip Card' }));
-      await user.click(screen.getByRole('button', { name: i === 0 ? 'I Got It Wrong' : 'I Got It Right' }));
+      await user.click(
+        screen.getByRole('button', {
+          name: i === 0 ? 'I Got It Wrong' : 'I Got It Right',
+        }),
+      );
     }
-    expect(screen.getByRole('heading', { name: 'Session Summary' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: 'Session Summary' }),
+    ).toBeInTheDocument();
     expect(screen.getByText('80%')).toBeInTheDocument();
     expect(screen.getByText('Attempted').parentElement).toHaveTextContent('5');
     expect(screen.getByText('Correct').parentElement).toHaveTextContent('4');
@@ -38,7 +67,9 @@ describe('Phase 6 session flow', () => {
     await user.click(screen.getByRole('button', { name: 'I Got It Right' }));
     expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'End Session' }));
-    expect(screen.getByRole('heading', { name: 'Session Summary' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: 'Session Summary' }),
+    ).toBeInTheDocument();
     expect(screen.getByText('Attempted').parentElement).toHaveTextContent('1');
   });
 });

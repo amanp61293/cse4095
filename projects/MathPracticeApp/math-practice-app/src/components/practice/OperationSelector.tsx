@@ -17,21 +17,42 @@ export function OperationSelector({ selected, onChange }: Props) {
   return (
     <fieldset className="selector-section">
       <legend>1. Choose your operations</legend>
-      <p className="selector-help">Pick one or more types of math to practice.</p>
+      <p className="selector-help">
+        Pick one or more types of math to practice.
+      </p>
       <div className="option-grid">
         {OPERATIONS.map(({ value, label, symbol }) => (
-          <label className={`option-card ${selected.includes(value) ? 'selected' : ''}`} key={value}>
+          <label
+            className={`option-card ${selected.includes(value) ? 'selected' : ''}`}
+            key={value}
+          >
             <input
               type="checkbox"
               checked={selected.includes(value)}
-              onChange={(event) => onChange(event.target.checked ? [...selected, value] : selected.filter((item) => item !== value))}
+              onChange={(event) =>
+                onChange(
+                  event.target.checked
+                    ? [...selected, value]
+                    : selected.filter((item) => item !== value),
+                )
+              }
             />
-            <span className="option-symbol" aria-hidden="true">{symbol}</span>
+            <span className="option-symbol" aria-hidden="true">
+              {symbol}
+            </span>
             <span>{label}</span>
           </label>
         ))}
       </div>
-      <button type="button" className="text-button" onClick={() => onChange(allSelected ? [] : OPERATIONS.map((operation) => operation.value))}>
+      <button
+        type="button"
+        className="text-button"
+        onClick={() =>
+          onChange(
+            allSelected ? [] : OPERATIONS.map((operation) => operation.value),
+          )
+        }
+      >
         {allSelected ? 'Clear all operations' : 'Select all (Mixed operations)'}
       </button>
     </fieldset>

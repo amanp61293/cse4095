@@ -1,4 +1,8 @@
-import type { DifficultyLevel, MathOperation, QuestionSource } from './question';
+import type {
+  DifficultyLevel,
+  MathOperation,
+  QuestionSource,
+} from './question';
 
 export type SessionLength = 5 | 10 | 20 | 'continuous';
 

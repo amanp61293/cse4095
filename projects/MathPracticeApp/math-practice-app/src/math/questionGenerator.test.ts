@@ -1,9 +1,21 @@
 import { describe, expect, it } from 'vitest';
 import type { DifficultyLevel, MathOperation } from '../types/question';
-import { generateAddition, generateDivision, generateMixedQuestion, generateMultiplication, generateQuestion, generateSubtraction } from './questionGenerator';
+import {
+  generateAddition,
+  generateDivision,
+  generateMixedQuestion,
+  generateMultiplication,
+  generateQuestion,
+  generateSubtraction,
+} from './questionGenerator';
 
 const levels: DifficultyLevel[] = [1, 2, 3, 4];
-const operations: MathOperation[] = ['addition', 'subtraction', 'multiplication', 'division'];
+const operations: MathOperation[] = [
+  'addition',
+  'subtraction',
+  'multiplication',
+  'division',
+];
 
 function verify(operation: MathOperation, level: DifficultyLevel) {
   for (let i = 0; i < 300; i++) {
@@ -13,8 +25,12 @@ function verify(operation: MathOperation, level: DifficultyLevel) {
     expect(q.id).toBeTruthy();
     expect(q.choices).toHaveLength(4);
     expect(new Set(q.choices).size).toBe(4);
-    expect(q.choices.filter((choice) => choice === q.correctAnswer)).toHaveLength(1);
-    expect(q.choices.every((choice) => Number.isSafeInteger(choice) && choice >= 0)).toBe(true);
+    expect(
+      q.choices.filter((choice) => choice === q.correctAnswer),
+    ).toHaveLength(1);
+    expect(
+      q.choices.every((choice) => Number.isSafeInteger(choice) && choice >= 0),
+    ).toBe(true);
     expect(q.source).toBe('regular');
     expect(q.displayText).toContain('= ?');
     expect(Number.isInteger(q.correctAnswer)).toBe(true);
@@ -67,7 +83,8 @@ function verify(operation: MathOperation, level: DifficultyLevel) {
 describe('question generation at all levels', () => {
   for (const operation of operations) {
     for (const level of levels) {
-      it(`${operation} level ${level} respects its rules`, () => verify(operation, level));
+      it(`${operation} level ${level} respects its rules`, () =>
+        verify(operation, level));
     }
   }
   it('supports named operation generators', () => {
@@ -78,12 +95,17 @@ describe('question generation at all levels', () => {
   });
   it('chooses only selected operations in mixed mode', () => {
     const seen = new Set<string>();
-    for (let i = 0; i < 250; i++) seen.add(generateMixedQuestion(['addition', 'division'], 2).operation);
+    for (let i = 0; i < 250; i++)
+      seen.add(generateMixedQuestion(['addition', 'division'], 2).operation);
     expect(seen).toEqual(new Set(['addition', 'division']));
   });
   it('rejects invalid selections', () => {
     expect(() => generateMixedQuestion([], 1)).toThrow(RangeError);
-    expect(() => generateQuestion('modulo' as MathOperation, 1)).toThrow(RangeError);
-    expect(() => generateQuestion('addition', 9 as DifficultyLevel)).toThrow(RangeError);
+    expect(() => generateQuestion('modulo' as MathOperation, 1)).toThrow(
+      RangeError,
+    );
+    expect(() => generateQuestion('addition', 9 as DifficultyLevel)).toThrow(
+      RangeError,
+    );
   });
 });
