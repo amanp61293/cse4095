@@ -2,6 +2,13 @@
 
 This is my CSE 4095 Agentic Programming assignment. I built a browser-based Hangman game with a Python game engine, a Flask REST API, and an HTML/CSS/JavaScript interface. I used AI assistance incrementally, testing each part before moving to the next.
 
+# Hangman Web Game
+
+**Live Application:** https://hangman-web-game-gjar.onrender.com/
+
+# GitHub Repository Link:
+https://github.com/amanp61293/cse4095/tree/projects/projects/hangman
+
 ## Project status
 
 I have completed and locally verified Phases 1–6. Phase 7 is prepared, but I have **not yet confirmed a public Render deployment**. Phase 8, including the final report and screen recording, is still pending. See `PROJECT_OVERVIEW.md` for the development history across all eight phases and `DEVELOPMENT_LOG.md` for the work and testing evidence.

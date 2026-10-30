@@ -28,6 +28,10 @@ I have prepared the project and configuration, but **I have not yet verified a l
 
 I use one Gunicorn worker because my program keeps game objects in a Python dictionary. Separate processes would not share that in-memory game store, and games can be lost on server restarts.
 
+# Hangman Web Game
+
+**Live Application:** https://hangman-web-game-gjar.onrender.com/
+
 ## Verify the hosted game
 
 Once I have the HTTPS URL from Render, I will:
@@ -42,7 +46,7 @@ Once I have the HTTPS URL from Render, I will:
 For example, I can replace the placeholder below with the actual Render URL:
 
 ```powershell
-$base = "https://YOUR-SERVICE.onrender.com"
+$base = "https://hangman-web-game-gjar.onrender.com/"
 $game = Invoke-RestMethod -Method Post -Uri "$base/api/games" -ContentType "application/json" -Body '{"difficulty":"easy"}'
 $game | ConvertTo-Json -Depth 5
 Invoke-RestMethod -Method Get -Uri "$base/api/games/$($game.game_id)"
