@@ -1,45 +1,36 @@
-# Phase 6: Testing and Debugging Checklist
+# My Hangman Testing Checklist (Phase 6)
 
-Use this checklist in addition to `python -m pytest -v`. Do **not** mark unobserved results as passed.
+I used automated tests and manual browser testing. The checks below summarize what I reported verifying. For details and representative prompts, see `DEVELOPMENT_LOG.md`.
 
-## Automated tests
+## Automated testing
 
-1. Activate the existing `.venv` and run `python -m pytest -v` at the project root.
-2. Confirm **all** tests pass; record the exact test count and any failures in `DEVELOPMENT_LOG.md`.
-3. The new `tests/test_end_to_end.py` tests the full win/loss paths through Flask's API, restarting, invalid/duplicate guesses, unknown IDs, JSON validation, and serving browser assets.
+- [x] I ran `python -m pytest -v` and confirmed the expanded test suite passed locally.
+- [x] The tests cover game rules, word selection, Flask endpoints, malformed/duplicate guesses, active-word protection, and complete API-driven games.
+- [ ] Record the exact number of passing tests if I need it for my final report (not captured in this documentation).
 
-## Manual browser checks
+## Browser testing
 
-Start Flask with `python server.py` and visit `http://127.0.0.1:5000/`.
+- [x] I started games at Easy, Medium, and Hard difficulty.
+- [x] I checked that correct guesses update the masked word.
+- [x] I checked that wrong guesses reduce the remaining count and update the drawing.
+- [x] I checked winning/losing messages and the final word reveal.
+- [x] I started another game without reloading the page.
+- [ ] Record a separate narrow-screen/mobile test result if I perform one; I have not documented that result.
 
-- [ ] Easy: start a game, guess correct and incorrect letters; check mask, guessed letters, remaining attempts, and drawing.
-- [ ] Medium: start a game and verify state updates.
-- [ ] Hard: start a game and verify state updates.
-- [ ] Guess with a physical keyboard and the on-screen letter buttons.
-- [ ] Confirm used letter buttons become disabled.
-- [ ] Finish a game by winning; check the final message, word reveal, and disabled guesses.
-- [ ] Finish a game by losing six attempts; check the full drawing, final message, and word reveal.
-- [ ] Click New Game without refreshing, then verify previous guesses and the drawing reset.
-- [ ] Verify layout at a narrow browser width and confirm buttons remain usable.
+## Chrome Developer Tools
 
-## Required Chrome Developer Tools evidence
+- [x] I opened the Network panel and inspected an API request and JSON response while playing.
+- [x] I confirmed that this request/response inspection worked locally.
+- [ ] Save a clear recording of the request and response for the final 2–3-minute demonstration (Phase 8).
 
-1. Open the running site in Chrome. Press `F12` (or `Ctrl+Shift+I`).
-2. Open the **Network** tab and select **Fetch/XHR**.
-3. Start a new game, then click any letter.
-4. Click the request to `/api/games/<game_id>/guess`.
-5. Under **Headers**, verify its method is `POST` and the request URL matches that game's ID.
-6. Under **Payload**, verify the JSON contains a single-letter `letter` value.
-7. Under **Response**, verify `pattern`, `guessed_letters`, `incorrect_letters`, `remaining_guesses`, and `status` reflect the displayed game.
-8. While `status` is `playing`, verify there is **no** `word` field or other answer reveal.
-9. Capture a screenshot of the request/response for your final demonstration or notes. Do not include secrets.
+For the recording, I will open Chrome Developer Tools (`F12`), select **Network → Fetch/XHR**, click a letter, and show a `POST /api/games/<game_id>/guess` request. I will show its single-letter JSON payload and updated state response and explain that active-game responses do not reveal the answer.
 
-## Evidence to record
+## Deployment-related tests still pending
 
-Write down the test command and result, the browser(s) tested, one API request and its response, any issues found and how they were fixed. Keep screenshots locally for the 2–3 minute demonstration recording in Phase 8.
+- [ ] Open the publicly deployed game with my local server stopped.
+- [ ] Finish a complete game on the public URL and start another.
+- [ ] Verify the three API endpoints and inspect an HTTPS request on the deployed site.
 
-## Known design limitations
+## Known limitations
 
-- Games are kept in server memory, so restarting the Flask process clears them.
-- The initial word lists were created for this student implementation because the original word-list text files were not supplied.
-- A Flask test client does **not** prove real browser behavior. Complete the manual checks above.
+I store games in server memory, so restarting the server clears them. The word lists are replacement lists because the original word-list text files were not supplied. I did not implement the out-of-scope terminal client, bots, or leaderboard.

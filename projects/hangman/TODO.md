@@ -1,6 +1,6 @@
 # TODO — Web-Based Hangman Game (CSE 4095)
 
-This implementation plan adapts the supplied Hangman specification to the reduced scope required by the assignment. Implement **one phase at a time**, test each phase before marking it complete, and commit verified changes to GitHub.
+I adapted the supplied Hangman specification to the reduced scope required by my assignment. Implement **one phase at a time**, test each phase before marking it complete, and commit verified changes to GitHub.
 
 ## Development rules
 - Keep the Python game engine independent of Flask and the browser interface.
@@ -11,17 +11,17 @@ This implementation plan adapts the supplied Hangman specification to the reduce
 - Do not implement the terminal client, automated bots, bot evaluation, scoring, leaderboard, or replay tools. These are outside the assignment scope.
 
 ## Phase 1 — Project setup and planning
-- [ ] Create the Hangman project folder and initialize Git.
-- [ ] Create a GitHub repository and connect it to the local project.
-- [ ] Add `Specification.md` (original reference specification) and this revised `TODO.md`.
-- [ ] Create `game.py`, `word_manager.py`, `server.py` (empty placeholders initially).
-- [ ] Create `static/index.html`, `static/style.css`, `static/app.js` (placeholders).
-- [ ] Create the `words/` and `tests/` folders.
-- [ ] Add `.gitignore`, `requirements.txt`, `README.md`, and `DEVELOPMENT_LOG.md`.
-- [ ] Create a Python virtual environment and install Flask, pytest, and Gunicorn (Gunicorn will be used on Render).
-- [ ] Verify the environment and record the setup in `DEVELOPMENT_LOG.md`.
+- [x] Create the Hangman project folder inside my existing Git repository.
+- [x] Work within my existing cloned GitHub repository and verify its remote and branch.
+- [x] Add `Specification.md` (original reference specification) and this revised `TODO.md`.
+- [x] Create `game.py`, `word_manager.py`, `server.py` (empty placeholders initially).
+- [x] Create `static/index.html`, `static/style.css`, `static/app.js` (placeholders).
+- [x] Create the `words/` and `tests/` folders.
+- [x] Add `.gitignore`, `requirements.txt`, `README.md`, and `DEVELOPMENT_LOG.md`.
+- [x] Create a Python virtual environment and install Flask, pytest, and Gunicorn (Gunicorn will be used on Render).
+- [x] Verify the environment and record the setup in `DEVELOPMENT_LOG.md`.
 
-**Done when:** the project structure exists, dependencies install, and the initial commit is pushed to GitHub. No game logic yet.
+**Verified:** project files and dependencies were set up locally; my repository shows the project commits. I corrected an accidental nested `git init` during setup.
 
 ## Phase 2 — Core Hangman game engine
 - [x] Implement the `HangmanGame` class in `game.py` without Flask dependencies.
@@ -59,20 +59,20 @@ This implementation plan adapts the supplied Hangman specification to the reduce
 - [x] Use JavaScript `fetch()` to communicate with Flask; keep all game decisions on the server.
 - [x] Check usability on desktop and mobile sizes.
 
-**Done when:** a user can start, finish, and restart games entirely in the browser. Browser implementation and automated route checks completed; local manual browser verification still needed before declaring this phase fully verified.
+**Done when:** a user can start, finish, and restart games entirely in the browser. I confirmed manual browser functionality and the tests locally.
 
 ## Phase 6 — Testing and debugging
 - [x] Test starting games on all three difficulties (previous manual checks and automated cases).
-- [x] Add automated tests for correct, incorrect, duplicate, invalid, winning, and losing guesses (local rerun pending).
-- [x] Add tests for new games after completion and invalid API requests (local rerun pending).
-- [x] Add automated assertions that hidden words are not sent in active-game API responses (local rerun pending).
+- [x] Add automated tests for correct, incorrect, duplicate, invalid, winning, and losing guesses (verified locally).
+- [x] Add tests for new games after completion and invalid API requests (verified locally).
+- [x] Add automated assertions that hidden words are not sent in active-game API responses (verified locally).
 - [x] Verify basic browser gameplay and updates (previously confirmed by student).
 - [x] Inspect at least one request and JSON response in Chrome Developer Tools (student confirmed).
 - [x] Run the expanded suite locally (student confirmed passing; exact test count not supplied).
 
 **Done when:** automated tests and manual end-to-end checks pass locally.
 
-## Phase 7 — GitHub and cloud deployment
+## Phase 7 — GitHub and cloud deployment (in progress)
 - [x] Finalize deployment dependencies and startup settings for Render (requirements and deployment guide prepared).
 - [ ] Push verified code to GitHub.
 - [ ] Deploy the Flask application to Render with a public HTTPS URL.

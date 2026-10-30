@@ -1,90 +1,80 @@
 # Hangman Web Game
 
-CSE 4095 project: Python/Flask Hangman server and HTML/CSS/JavaScript browser client.
+This is my CSE 4095 Agentic Programming assignment. I built a browser-based Hangman game with a Python game engine, a Flask REST API, and an HTML/CSS/JavaScript interface. I used AI assistance incrementally, testing each part before moving to the next.
 
-## Status
-Phases 1–6 have been developed and locally verified by the student. Phase 7 is prepared for live Render deployment; public deployment remains to be verified.
+## Project status
 
-## Local setup (Windows PowerShell)
+I have completed and locally verified Phases 1–6. Phase 7 is prepared, but I have **not yet confirmed a public Render deployment**. Phase 8, including the final report and screen recording, is still pending. See `PROJECT_OVERVIEW.md` for the development history across all eight phases and `DEVELOPMENT_LOG.md` for the work and testing evidence.
+
+## What the application does
+
+I can select Easy, Medium, or Hard, start a game, and guess letters using the on-screen alphabet or my keyboard. The page shows my guesses, remaining incorrect attempts, the masked word, and a six-part Hangman drawing. It shows a win/loss message and the full word when a game ends. I can start another game without reloading the page.
+
+My Python server makes all gameplay decisions. Browser JavaScript sends HTTP requests and updates the display from the JSON response; it does **not** contain the hidden word while a game is active.
+
+## Files
+
+| File or folder | What I use it for |
+| --- | --- |
+| `game.py` | Core Hangman rules, guess validation, win/loss detection |
+| `word_manager.py`, `words/` | Random words for the three difficulty levels |
+| `server.py` | Flask application and REST API |
+| `static/` | Browser interface: HTML, CSS, JavaScript |
+| `tests/` | Game engine, word manager, API, browser-route, and integration tests |
+| `Specification.md` | Original reference specification provided with the assignment |
+| `TODO.md` | My reduced-scope phase checklist |
+| `PROJECT_OVERVIEW.md` | Summary of work across all phases |
+| `DEVELOPMENT_LOG.md` | AI prompts, implementation decisions, verification, and challenges |
+| `TESTING_CHECKLIST.md` | Manual and automated testing procedures |
+| `DEPLOYMENT_GUIDE.md` | GitHub/Render deployment instructions and verification |
+
+## Run locally
+
+I use Python and Windows PowerShell. From the folder containing `server.py`:
+
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
-python -m pip show Flask pytest gunicorn
+python server.py
 ```
 
-If PowerShell prevents activation, run `.venv\Scripts\python.exe -m pip install -r requirements.txt` instead.
+I then open `http://127.0.0.1:5000/` in my browser. If PowerShell blocks the activation script, I can use `.venv\Scripts\python.exe` to run Python commands without activating the environment.
 
-## Phase 2: Run core engine tests
-From the project root, with the virtual environment active:
-```powershell
-python -m pytest tests/test_game.py -v
-```
+## Run automated tests
 
-The game engine in `game.py` is independent of Flask. It accepts one letter per guess, allows six wrong guesses, and does not include the hidden word in its state until the game ends. Duplicate or malformed guesses are rejected.
-
-## Existing Git repository
-Use your already-cloned repository and its established branches. **Do not run `git init` inside an existing clone.** Move or copy this `hangman` folder into the intended location in that repository and commit changes using your existing workflow.
-
-## Phase 3: Word management
-`word_manager.py` provides `load_words(difficulty)` and `choose_word(difficulty)` for `easy`, `medium`, or `hard`. Word lists live in `words/` and contain lowercase English words, one per line. Blank lines and repeated words are handled; invalid words raise a clear error.
-
-The instructor's word-list files were not supplied, so the Phase 3 package includes separate curated replacement lists rather than the instructor's originals.
-
-Run all current tests from the project root:
 ```powershell
 python -m pytest -v
 ```
 
-## Phase 4: Flask REST API
-Run locally from the project root:
-```powershell
-python server.py
-```
-Open `http://127.0.0.1:5000/` for the playable browser interface. The REST API is available under `/api/games`.
+I verified the expanded tests locally through Phase 6. I did not record an exact final pass count in this document because I do not have the terminal output here. I also verified gameplay for all difficulties, drawing updates, guesses, game completion, restarting, and an API request/JSON response in Developer Tools.
 
-| Method | Endpoint | Description |
+## REST API
+
+| Method | Path | Purpose |
 | --- | --- | --- |
-| POST | `/api/games` | Create a game with JSON `{"difficulty":"easy"}` |
-| GET | `/api/games/<game_id>` | Retrieve current state |
-| POST | `/api/games/<game_id>/guess` | Submit JSON `{"letter":"e"}` |
+| POST | `/api/games` | Create a game with `{"difficulty":"easy"}` (or medium/hard) |
+| GET | `/api/games/<game_id>` | Read the current game state |
+| POST | `/api/games/<game_id>/guess` | Guess a letter with `{"letter":"e"}` |
 
-Successful game creation returns HTTP 201. Valid guesses and reads return HTTP 200. Invalid input or guesses after game over return HTTP 400; unknown IDs return HTTP 404. Errors are JSON with an `error` field. Game creation and guess responses include a `game_id`.
+To check the API, I start `python server.py` in one terminal and run this in another:
 
-Example in a **second** PowerShell terminal (replace the ID after creating a game):
 ```powershell
 $game = Invoke-RestMethod -Method Post -Uri http://127.0.0.1:5000/api/games -ContentType 'application/json' -Body '{"difficulty":"easy"}'
-$game
+$game | ConvertTo-Json -Depth 5
 Invoke-RestMethod -Method Get -Uri "http://127.0.0.1:5000/api/games/$($game.game_id)"
 Invoke-RestMethod -Method Post -Uri "http://127.0.0.1:5000/api/games/$($game.game_id)/guess" -ContentType 'application/json' -Body '{"letter":"e"}'
 ```
 
-Run all automated tests:
-```powershell
-python -m pytest -v
-```
+The server validates requests, uses unique game IDs, and keeps games separate. It returns an error for malformed requests and unknown games. An active-game response does not include the secret word.
 
-**Limitations:** Game state is stored only in memory and will be reset on server restart. Use one worker for this design in production. Flask's development server is for local use only. No database or leaderboard is included.
+## Scope and limitations
 
-## Phase 5: Browser interface
-Open `http://127.0.0.1:5000/` after starting the server. Select Easy, Medium, or Hard, click **New game**, and guess letters using the on-screen buttons or physical keyboard. The Hangman figure has six parts, one per incorrect guess. The UI uses `fetch()` requests to the Flask API; it never reads the hidden word during an active game. A win or loss reveals the word, and **New game** starts again without reloading the page.
+The original specification also describes a terminal client, bots, scoring, evaluation, and leaderboards, but **the assignment explicitly excludes those parts**. I did not build them. The original word-list `.txt` files were not part of the materials I received, so I used replacement lists. Games are held in memory and reset if the server restarts; that is why my Render setup uses one Gunicorn worker.
 
-Run `python -m pytest -v`. Manual checks: play on all difficulties, win and lose, check mobile viewport, restart without refreshing, and inspect Network > Fetch/XHR in Chrome Developer Tools.
+## Deployment and submission
 
-## Phase 7: Render deployment
-See `DEPLOYMENT_GUIDE.md` for detailed GitHub and Render setup, including monorepository root-directory settings, deployment commands, and public verification.
+For Render setup and verification, I use `DEPLOYMENT_GUIDE.md`. Once I have a working public HTTPS URL, I will add it here. The required final submission also includes my GitHub repository URL, a 1–2-page PDF report with 2–3 representative AI prompts, and a 2–3-minute screen recording showing a completed game, restart, and a network request/JSON response.
 
-The assignment scope excludes bots, terminal clients, evaluation, and leaderboards.
-
-### Phase 6 verification
-
-Run the full automated suite:
-
-```powershell
-python -m pytest -v
-```
-
-Then follow `TESTING_CHECKLIST.md` for browser checks and Chrome Developer Tools inspection of a `POST /api/games/<game_id>/guess` request and JSON response. Record the observed results in `DEVELOPMENT_LOG.md`.
-
-## Current deployment status
-The student confirmed Phase 6 tests and the Chrome Developer Tools network inspection succeeded locally. The production deployment is not yet verified.
+**GitHub URL:** To add after confirming the final repository link.  
+**Public application URL:** Not yet verified.

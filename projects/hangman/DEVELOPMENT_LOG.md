@@ -1,82 +1,67 @@
-# Development Log
+# My Hangman Development Log
+
+I built this project in stages using AI-assisted prompts and then verified the results locally. The original specification and instructor transcript were references, not code I copied. These prompts are **representative summaries of the requests I used in our development process**, not a verbatim exported Cursor conversation.
 
 ## Phase 1: Project setup and planning
-- Adapted the provided original specification and TODO to the assignment's browser-only scope.
-- Prepared directories for `static/`, `words/`, and `tests/` and placeholder module files.
-- Added Python dependency list and Git ignore rules.
-- **Pending local verification:** virtual environment creation, dependency installation, Git initialization, GitHub repository creation, first push.
 
-### Representative AI prompt
-"Revise the instructor's Hangman TODO into a phased implementation plan for only the Python game engine, Flask REST API, browser interface, testing, and cloud deployment. Do not implement the application yet."
+I simplified the original 14-phase TODO to the eight phases in my assignment, leaving out the terminal client, bots, evaluation, scoring, and leaderboards. I created the folder structure and configured my Python virtual environment. I also worked within an existing GitHub repository. I accidentally initialized a separate Git repository in the Hangman subfolder, recognized the problem when Git could not find the expected remote or `projects` branch, and removed that new `.git` directory without deleting my project files.
 
-### Test status
-No application code or automated tests yet. Initial files are scaffolding only.
+**Representative prompt:** “Revise the instructor's Hangman TODO into a phased plan for the browser and Flask server only. Do not write the whole application yet.”
+
+**Verification:** I confirmed that my Python environment and dependencies worked. I later confirmed GitHub contained Hangman commits on the `projects` branch.
 
 ## Phase 2: Core game engine
-- Implemented `HangmanGame` in `game.py` as plain Python, without Flask or UI dependencies.
-- Stores the answer privately; tracks guessed and incorrect letters, remaining guesses, and `playing` / `won` / `lost` status.
-- Case-insensitive single-letter ASCII guesses, duplicate protection, and game-over protection.
-- Client-safe `to_state()` reveals `word` only when the game is finished. Returned lists are copies so callers cannot change internal state.
-- Added `tests/test_game.py` covering initial state, correct/wrong guesses, repeated or invalid guesses, wins/losses, and privacy.
 
-### Representative AI prompt
-"Implement only Phase 2 of my browser-based Hangman assignment: a beginner-friendly Python HangmanGame class in game.py, independent of Flask. Track guesses and six incorrect attempts, reject bad or duplicate guesses, detect wins and losses, and return a state dictionary that hides the answer until the game ends. Add focused pytest tests without starting Phase 3."
+I implemented `HangmanGame` in `game.py`, independent of Flask. It validates a single letter, handles duplicate guesses, tracks six wrong attempts, detects game completion, and hides the answer while playing. I added `tests/test_game.py`.
 
-### Testing
-Run `python -m pytest tests/test_game.py -v` in the project environment. The phase ZIP was validated with the automated tests in the build environment.
+**Representative prompt:** “Implement just the core Hangman engine in Python and write focused tests. Keep Flask and the browser out of this phase.”
 
-### Note about Git
-The local Python setup was reported successful by the student. The status of the existing cloned repository and any Phase 1 push should be checked locally; the generated ZIP does not contain a `.git` folder.
+**Verification:** I ran the Phase 2 tests locally and confirmed they passed.
 
 ## Phase 3: Word management
-- Added `word_manager.py` with `load_words()` and `choose_word()`; supports easy, medium, hard.
-- Loads words relative to the module location so it works regardless of current working directory.
-- Normalizes to lowercase, skips empty lines, removes duplicates, and rejects non-ASCII or non-alphabetic words.
-- Uses `random.choice()` for word selection. Invalid difficulty and missing/empty files fail clearly.
-- Added curated word lists in `words/` because the instructor's original three text files were **not attached**. These are substitutes, not copies of the original word lists.
-- Added isolated tests in `tests/test_words.py`, without modifying the tested Phase 2 game engine.
 
-### Representative AI prompt
-"Implement only Phase 3: add clean word lists for easy, medium, and hard, plus a beginner-friendly word_manager.py that loads, validates, deduplicates and randomly chooses words. Keep the existing game engine untouched and add pytest tests. Document that the instructor's word lists were not provided."
+I created `word_manager.py` and Easy, Medium, and Hard word files. The loader validates words, ignores duplicate entries, and selects a random word for the requested difficulty. The instructor's actual word-list text files were not attached, so I used replacement word lists and documented the difference. I added `tests/test_words.py`.
 
-### Testing
-Run `python -m pytest -v` locally. After verification, commit through the existing cloned Git repository. No new `git init` is needed.
+**Representative prompt:** “Add word loading and random selection for all three difficulties, with validation and tests. Keep the existing game engine unchanged.”
 
+**Verification:** I ran the expanded test suite locally and confirmed that it passed.
 
-## Phase 4 — Flask server and REST API
+## Phase 4: Flask server and REST API
 
-**AI-assisted implementation prompt (representative):** "Implement only Phase 4 using our existing `HangmanGame` and word manager. Add a simple Flask REST API to create games, retrieve their state, and guess one letter. Use unique game IDs, JSON validation and consistent errors, keep the hidden word private, and add automated tests. Do not implement the browser yet."
+I connected the Python engine and word manager to a Flask server. The API supports creating games, reading their state, and submitting guesses. The server creates unique IDs, stores separate game states, validates JSON, and never exposes the secret word during active gameplay. I added API tests.
 
-**Implementation:** Added `server.py` with Flask endpoints `POST /api/games`, `GET /api/games/<game_id>`, and `POST /api/games/<game_id>/guess`. Each game has a UUID-based ID and is stored in a Python dictionary. The existing game engine remains independent of Flask. Responses contain only `to_state()` values, so the word is hidden until a win or loss. The API rejects malformed JSON, invalid difficulties or letters, duplicate guesses, unknown game IDs, and guessing after game over.
+**Representative prompt:** “Implement only the Flask REST API with the three required endpoints, input validation, safe JSON state, and tests.”
 
-**Tests:** Added `tests/test_api.py` for all three difficulties, active-state privacy, win/loss, isolation between games, errors, and restart behavior. Local verification pending: Flask was unavailable in the packaging environment, so API tests could not be executed there. Run `python -m pytest -v` locally and record the result before marking Phase 4 fully complete or committing.
+**Verification:** I used PowerShell `Invoke-RestMethod` to create a game and submit a correct letter guess. I saw the masked pattern update without losing an attempt, and I confirmed the automated tests and the presence of the game ID. The root URL returned 404 at this point because the webpage had not been added yet; that was expected, not an API failure.
 
-**Design note:** In-memory state is intentionally simple for the assignment, but will not persist across restarts or synchronize across multiple worker processes. Plan to deploy with one worker.
+## Phase 5: Browser interface
 
+I added `static/index.html`, `static/style.css`, and `static/app.js` for the playable interface. I can select a difficulty, start a game, guess through on-screen buttons or my keyboard, and view the pattern, wrong-guess count, drawing, and results. The JavaScript uses `fetch()` and does not run a second game engine. I added tests for serving the webpage and assets.
 
-## Phase 5 — Browser interface (implementation)
-**Prompt summary:** Implement only the browser client using plain HTML, CSS, and JavaScript, preserving the existing Python game engine and REST API. Include difficulty selection, new game, keyboard/button guesses, masked pattern, guessed letters, six-part Hangman, remaining guesses, end messages, and mobile-friendly layout. Test the homepage and existing API; update TODO and README.
+**Representative prompt:** “Build only the browser interface for the existing Flask API. Add the Hangman drawing and keyboard controls, but keep the game rules on the server.”
 
-**Implementation:** Added a responsive browser UI in `static/index.html`, `static/style.css`, and `static/app.js`. JavaScript uses `fetch()` to create games and submit guesses, then updates the page from server JSON. It never decides whether a guess is correct or stores the secret word. Added `/` route to `server.py` to serve the HTML page; Flask serves `/static/...` automatically.
+**Verification:** I tested all three difficulties, the drawing, guesses, correct/incorrect counter behavior, wins/losses, and restarting without refreshing. I confirmed the automated tests passed.
 
-**Testing:** Added `tests/test_browser.py` for homepage and static asset delivery. Run `python -m pytest -v` and manually test all UI flows before marking Phase 5 verified. Inspect at least one request in Chrome Developer Tools during Phase 6.
+## Phase 6: Testing and debugging
 
-**Design choice:** No frontend framework; basic HTML/CSS/JavaScript matches the assignment and limits dependencies. All game decisions remain on the server.
+I added `tests/test_end_to_end.py` for complete game flows and API error cases. The tests cover wins/losses, invalid and duplicate input, missing IDs, restart behavior, and the rule that active games do not reveal the answer. I also reviewed manual browser behavior and used Chrome Developer Tools to inspect a guess request and JSON response.
 
-## Phase 6 — Testing and debugging
+**Representative prompt:** “Add integration tests and a browser/Developer Tools checklist without changing the working gameplay. Do not claim unverified tests passed.”
 
-**Representative prompt:** "Focus on Phase 6 only. Keep the existing Hangman gameplay behavior, Flask API, and browser design unchanged. Add integration tests covering complete games, rejected guesses, errors, and protection of the hidden word. Prepare explicit manual browser and Chrome Developer Tools checks, and update the development log without claiming tests we have not run."
+**Verification:** I confirmed that the expanded automated suite and Developer Tools check both passed on my computer. I did not save an exact test count in this record. No further code fix was reported as necessary.
 
-**Implementation:** Added `tests/test_end_to_end.py` using Flask's test client for complete win/loss flows, restarting, invalid/duplicate guesses, invalid JSON, missing game IDs, hidden-word protection and serving browser assets. Added `TESTING_CHECKLIST.md` for manual gameplay verification and the required DevTools HTTP/JSON demonstration. The gameplay logic and frontend are unchanged.
+## Phase 7: Deployment preparation (not yet fully verified)
 
-**Results:** The student already confirmed all three difficulties, correct guessing, drawing, incorrect guesses, end messages, restarting, and previous automated tests in earlier phases. The new Phase 6 tests must be run locally before recording a new pass count; Flask is unavailable in the ZIP-packaging runtime. The Chrome Developer Tools inspection still requires a manual check. Record actual results and any fixes here after the local run.
+I prepared the Render deployment instructions, including the correct repository subfolder, dependency install command, and Gunicorn start command. Because my current game store is in memory, I will use one Gunicorn worker. See `DEPLOYMENT_GUIDE.md`.
 
-## Phase 6 local verification update
-The student confirmed that the expanded automated tests passed and inspected an HTTP request and JSON response in Chrome Developer Tools. The exact number of tests and screenshots were not supplied. No Phase 6 code changes were reported as necessary.
+**Representative prompt:** “Prepare the project for Render deployment from my existing GitHub repository. Explain the build and start settings and what to verify after deployment.”
 
-## Phase 7 — GitHub and cloud deployment preparation
-**Representative AI prompt:** "Prepare Phase 7 only for deploying the existing Flask Hangman application from my GitHub projects branch to Render. Preserve all working game behavior and automated tests. Document how to configure a subfolder root directory, install dependencies, run Gunicorn with one worker, and verify the deployed homepage and REST API. Do not mark the service deployed before checking its real URL."
+**Verification remaining:** I still need to confirm the deployed HTTPS URL, API, and complete hosted gameplay. I have not marked this phase complete.
 
-**Changes:** Kept `Flask`, `pytest`, and `gunicorn` in `requirements.txt`; the existing `server:app` entry point needs no change. Added `DEPLOYMENT_GUIDE.md` including the correct Render build/start commands, repository branch and root-directory considerations, verification steps, and known in-memory-storage limitations. Corrected outdated README language. No gameplay code changed.
+## Phase 8: Submission materials (pending)
 
-**Verification:** Python source compilation passed in the packaging environment. Flask, Gunicorn, and the full automated test suite were not available to execute there. The student should run `python -m pytest -v` after copying files and verify the Render URL before completing Phase 7.
+I will prepare the required 1–2-page PDF report, include 2–3 representative AI prompts, and record the 2–3-minute video showing the hosted webpage, a game ending, a restart, and an API request/JSON response in Developer Tools. I will also submit my GitHub URL and Render URL through HuskyCT.
+
+## What I learned so far
+
+I saw how separating the game engine from Flask made the code easier to test. I also learned how the browser and server communicate using HTTP and JSON, why the server must control the hidden word, and why testing only the webpage is not enough. The Git repository issue and the expected pre-frontend 404 were useful troubleshooting experiences. I will add my deployment experience and final reflection only after I finish Phase 7.
