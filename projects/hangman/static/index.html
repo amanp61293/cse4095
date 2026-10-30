@@ -1,5 +1,47 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Hangman (Coming Soon)</title></head>
-<body><h1>Hangman Web Game</h1><p>Phase 1 starter. Interface will be implemented in Phase 5.</p></body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hangman | Word Challenge</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/app.js" defer></script>
+</head>
+<body>
+  <main class="page">
+    <header class="site-header">
+      <div class="brand"><span class="brand-icon" aria-hidden="true">H</span><div><div class="eyebrow">THE CLASSIC WORD GAME</div><h1>Hangman<span class="accent">.</span></h1></div></div>
+      <span class="header-caption">One letter at a time.</span>
+    </header>
+
+    <div class="game-layout">
+      <section class="visual-card" aria-label="Hangman progress">
+        <div class="card-top"><span class="section-label">THE DRAWING</span><span class="pill" id="difficulty-label">EASY MODE</span></div>
+        <svg class="hangman-illustration" viewBox="0 0 300 300" role="img" aria-label="Hangman drawing showing errors">
+          <g class="scaffold" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="7">
+            <path d="M55 269 H243 M102 269 V32 H195 V64" />
+          </g>
+          <g class="body-part" data-part="1"><circle cx="195" cy="93" r="29"/></g>
+          <g class="body-part" data-part="2"><path d="M195 122 V191"/></g>
+          <g class="body-part" data-part="3"><path d="M195 144 L157 176"/></g>
+          <g class="body-part" data-part="4"><path d="M195 144 L233 176"/></g>
+          <g class="body-part" data-part="5"><path d="M195 191 L161 238"/></g>
+          <g class="body-part" data-part="6"><path d="M195 191 L229 238"/></g>
+        </svg>
+        <div class="attempts"><span class="attempt-count" id="remaining">6</span><div><strong>Incorrect guesses left</strong><div class="muted">You have six chances.</div></div></div>
+        <div class="progress-dots" id="progress-dots" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+      </section>
+
+      <section class="play-card" aria-label="Play Hangman">
+        <div class="settings"><label for="difficulty">DIFFICULTY</label><div class="control-row"><select id="difficulty"><option value="easy">Easy</option><option value="medium">Medium</option><option value="hard">Hard</option></select><button id="new-game" class="new-game" type="button"><span aria-hidden="true">↻</span> New game</button></div></div>
+        <div class="rule"></div>
+        <div class="word-area"><p class="section-label">GUESS THE WORD</p><div class="word-pattern" id="pattern" aria-label="Hidden word">Press New game</div><p id="message" class="message" aria-live="polite">Choose a difficulty and start playing.</p></div>
+        <div class="rule"></div>
+        <div class="keyboard-section"><div class="keyboard-heading"><span class="section-label">CHOOSE A LETTER</span><span class="muted small">Or use your keyboard</span></div><div id="keyboard" class="keyboard" role="group" aria-label="Letter buttons"></div></div>
+        <div class="guesses"><div><span class="section-label">LETTERS TRIED</span><p id="guessed" class="guess-values">None yet</p></div><div><span class="section-label">INCORRECT</span><p id="incorrect" class="guess-values">None yet</p></div></div>
+      </section>
+    </div>
+    <footer>Built with Python, Flask & JavaScript <span aria-hidden="true">·</span> The server keeps the secret word.</footer>
+  </main>
+</body>
 </html>

@@ -3,7 +3,7 @@
 CSE 4095 project: Python/Flask Hangman server and HTML/CSS/JavaScript browser client.
 
 ## Status
-Phases 2–4 implemented: standalone game engine, word management, and Flask REST API. The browser UI comes in Phase 5.
+Phases 2–5 implemented: game engine, word management, Flask REST API, and browser-based client. Phase 5 needs local browser verification.
 
 ## Local setup (Windows PowerShell)
 ```powershell
@@ -41,7 +41,7 @@ Run locally from the project root:
 ```powershell
 python server.py
 ```
-The API is available at `http://127.0.0.1:5000`. This phase does not include a playable browser UI.
+Open `http://127.0.0.1:5000/` for the playable browser interface. The REST API is available under `/api/games`.
 
 | Method | Endpoint | Description |
 | --- | --- | --- |
@@ -66,7 +66,12 @@ python -m pytest -v
 
 **Limitations:** Game state is stored only in memory and will be reset on server restart. Use one worker for this design in production. Flask's development server is for local use only. No database, browser game, or leaderboard is included.
 
+## Phase 5: Browser interface
+Open `http://127.0.0.1:5000/` after starting the server. Select Easy, Medium, or Hard, click **New game**, and guess letters using the on-screen buttons or physical keyboard. The Hangman figure has six parts, one per incorrect guess. The UI uses `fetch()` requests to the Flask API; it never reads the hidden word during an active game. A win or loss reveals the word, and **New game** starts again without reloading the page.
+
+Run `python -m pytest -v`. Manual checks: play on all difficulties, win and lose, check mobile viewport, restart without refreshing, and inspect Network > Fetch/XHR in Chrome Developer Tools.
+
 ## Next phase
-Phase 5 will implement the browser client using JavaScript `fetch()` against this API.
+Phase 6 focuses on end-to-end testing and debugging.
 
 The assignment scope excludes bots, terminal clients, evaluation, and leaderboards.

@@ -52,3 +52,13 @@ Run `python -m pytest -v` locally. After verification, commit through the existi
 **Tests:** Added `tests/test_api.py` for all three difficulties, active-state privacy, win/loss, isolation between games, errors, and restart behavior. Local verification pending: Flask was unavailable in the packaging environment, so API tests could not be executed there. Run `python -m pytest -v` locally and record the result before marking Phase 4 fully complete or committing.
 
 **Design note:** In-memory state is intentionally simple for the assignment, but will not persist across restarts or synchronize across multiple worker processes. Plan to deploy with one worker.
+
+
+## Phase 5 — Browser interface (implementation)
+**Prompt summary:** Implement only the browser client using plain HTML, CSS, and JavaScript, preserving the existing Python game engine and REST API. Include difficulty selection, new game, keyboard/button guesses, masked pattern, guessed letters, six-part Hangman, remaining guesses, end messages, and mobile-friendly layout. Test the homepage and existing API; update TODO and README.
+
+**Implementation:** Added a responsive browser UI in `static/index.html`, `static/style.css`, and `static/app.js`. JavaScript uses `fetch()` to create games and submit guesses, then updates the page from server JSON. It never decides whether a guess is correct or stores the secret word. Added `/` route to `server.py` to serve the HTML page; Flask serves `/static/...` automatically.
+
+**Testing:** Added `tests/test_browser.py` for homepage and static asset delivery. Run `python -m pytest -v` and manually test all UI flows before marking Phase 5 verified. Inspect at least one request in Chrome Developer Tools during Phase 6.
+
+**Design choice:** No frontend framework; basic HTML/CSS/JavaScript matches the assignment and limits dependencies. All game decisions remain on the server.

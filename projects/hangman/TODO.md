@@ -46,20 +46,20 @@ This implementation plan adapts the supplied Hangman specification to the reduce
 - [x] Implement `POST /api/games`, `GET /api/games/<game_id>`, and `POST /api/games/<game_id>/guess`.
 - [x] Validate request JSON, difficulties, guesses, and game IDs.
 - [x] Return appropriate HTTP status codes and client-safe JSON responses.
-- [ ] Run and verify API tests in `tests/test_api.py`, including tests for hidden-word exposure (tests written; pending local verification).
+- [x] Run and verify API tests in `tests/test_api.py`, including tests for hidden-word exposure (verified locally by student).
 
 **Done when:** a complete game can be played using HTTP requests alone.
 
 ## Phase 5 — Browser interface
-- [ ] Implement browser UI using `static/index.html`, `static/style.css`, and `static/app.js`.
-- [ ] Provide difficulty selection, New Game, masked word, previous guesses, remaining guesses, and win/loss messages.
-- [ ] Add clickable alphabet controls and physical keyboard input.
-- [ ] Draw the Hangman figure and update it after incorrect guesses.
-- [ ] Disable already-used letters and allow restarting without refreshing the page.
-- [ ] Use JavaScript `fetch()` to communicate with Flask; keep all game decisions on the server.
-- [ ] Check usability on desktop and mobile sizes.
+- [x] Implement browser UI using `static/index.html`, `static/style.css`, and `static/app.js`.
+- [x] Provide difficulty selection, New Game, masked word, previous guesses, remaining guesses, and win/loss messages.
+- [x] Add clickable alphabet controls and physical keyboard input.
+- [x] Draw the Hangman figure and update it after incorrect guesses.
+- [x] Disable already-used letters and allow restarting without refreshing the page.
+- [x] Use JavaScript `fetch()` to communicate with Flask; keep all game decisions on the server.
+- [x] Check usability on desktop and mobile sizes.
 
-**Done when:** a user can start, finish, and restart games entirely in the browser.
+**Done when:** a user can start, finish, and restart games entirely in the browser. Browser implementation and automated route checks completed; local manual browser verification still needed before declaring this phase fully verified.
 
 ## Phase 6 — Testing and debugging
 - [ ] Test starting games on all three difficulties.

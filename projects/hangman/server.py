@@ -2,7 +2,7 @@
 
 from uuid import uuid4
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_from_directory
 
 from game import GameOverError, HangmanGame, InvalidGuessError
 from word_manager import choose_word
@@ -24,6 +24,12 @@ def read_json_object():
     if not isinstance(data, dict):
         return None
     return data
+
+
+@app.get("/")
+def home():
+    """Serve the browser client."""
+    return send_from_directory("static", "index.html")
 
 
 @app.post("/api/games")
