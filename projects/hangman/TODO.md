@@ -24,19 +24,19 @@ This implementation plan adapts the supplied Hangman specification to the reduce
 **Done when:** the project structure exists, dependencies install, and the initial commit is pushed to GitHub. No game logic yet.
 
 ## Phase 2 — Core Hangman game engine
-- [ ] Implement the `HangmanGame` class in `game.py` without Flask dependencies.
-- [ ] Track hidden word, guessed letters, incorrect letters, six allowed incorrect guesses, and status.
-- [ ] Validate single alphabetic guesses, handle duplicates, and block guesses after game over.
-- [ ] Produce masked word patterns and detect wins/losses.
-- [ ] Return a client-safe game-state dictionary. Reveal the answer only after the game ends.
-- [ ] Add and run tests in `tests/test_game.py`.
+- [x] Implement the `HangmanGame` class in `game.py` without Flask dependencies.
+- [x] Track hidden word, guessed letters, incorrect letters, six allowed incorrect guesses, and status.
+- [x] Validate single alphabetic guesses, handle duplicates, and block guesses after game over.
+- [x] Produce masked word patterns and detect wins/losses.
+- [x] Return a client-safe game-state dictionary. Reveal the answer only after the game ends.
+- [x] Add and run tests in `tests/test_game.py`.
 
 **Done when:** all core rules pass tests without running a server.
 
 ## Phase 3 — Word management
-- [ ] Add `words/easy.txt`, `words/medium.txt`, and `words/hard.txt`.
-- [ ] Implement word loading, validation, duplicate handling, and random selection by difficulty.
-- [ ] Reject invalid difficulties and test the word manager in `tests/test_words.py`.
+- [x] Add `words/easy.txt`, `words/medium.txt`, and `words/hard.txt`.
+- [x] Implement word loading, validation, duplicate handling, and random selection by difficulty.
+- [x] Reject invalid difficulties and test the word manager in `tests/test_words.py`.
 
 **Done when:** each difficulty reliably produces a valid random word.
 
