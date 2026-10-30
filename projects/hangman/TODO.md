@@ -41,12 +41,12 @@ This implementation plan adapts the supplied Hangman specification to the reduce
 **Done when:** each difficulty reliably produces a valid random word.
 
 ## Phase 4 — Flask server and REST API
-- [ ] Implement a Flask application in `server.py`.
-- [ ] Store separate game instances in memory and generate unique game IDs.
-- [ ] Implement `POST /api/games`, `GET /api/games/<game_id>`, and `POST /api/games/<game_id>/guess`.
-- [ ] Validate request JSON, difficulties, guesses, and game IDs.
-- [ ] Return appropriate HTTP status codes and client-safe JSON responses.
-- [ ] Add API tests in `tests/test_api.py`, including tests for hidden-word exposure.
+- [x] Implement a Flask application in `server.py`.
+- [x] Store separate game instances in memory and generate unique game IDs.
+- [x] Implement `POST /api/games`, `GET /api/games/<game_id>`, and `POST /api/games/<game_id>/guess`.
+- [x] Validate request JSON, difficulties, guesses, and game IDs.
+- [x] Return appropriate HTTP status codes and client-safe JSON responses.
+- [ ] Run and verify API tests in `tests/test_api.py`, including tests for hidden-word exposure (tests written; pending local verification).
 
 **Done when:** a complete game can be played using HTTP requests alone.
 

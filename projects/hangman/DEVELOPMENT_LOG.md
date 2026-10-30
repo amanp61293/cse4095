@@ -41,3 +41,14 @@ The local Python setup was reported successful by the student. The status of the
 
 ### Testing
 Run `python -m pytest -v` locally. After verification, commit through the existing cloned Git repository. No new `git init` is needed.
+
+
+## Phase 4 — Flask server and REST API
+
+**AI-assisted implementation prompt (representative):** "Implement only Phase 4 using our existing `HangmanGame` and word manager. Add a simple Flask REST API to create games, retrieve their state, and guess one letter. Use unique game IDs, JSON validation and consistent errors, keep the hidden word private, and add automated tests. Do not implement the browser yet."
+
+**Implementation:** Added `server.py` with Flask endpoints `POST /api/games`, `GET /api/games/<game_id>`, and `POST /api/games/<game_id>/guess`. Each game has a UUID-based ID and is stored in a Python dictionary. The existing game engine remains independent of Flask. Responses contain only `to_state()` values, so the word is hidden until a win or loss. The API rejects malformed JSON, invalid difficulties or letters, duplicate guesses, unknown game IDs, and guessing after game over.
+
+**Tests:** Added `tests/test_api.py` for all three difficulties, active-state privacy, win/loss, isolation between games, errors, and restart behavior. Local verification pending: Flask was unavailable in the packaging environment, so API tests could not be executed there. Run `python -m pytest -v` locally and record the result before marking Phase 4 fully complete or committing.
+
+**Design note:** In-memory state is intentionally simple for the assignment, but will not persist across restarts or synchronize across multiple worker processes. Plan to deploy with one worker.
