@@ -67,13 +67,13 @@ This implementation plan adapts the supplied Hangman specification to the reduce
 - [x] Add tests for new games after completion and invalid API requests (local rerun pending).
 - [x] Add automated assertions that hidden words are not sent in active-game API responses (local rerun pending).
 - [x] Verify basic browser gameplay and updates (previously confirmed by student).
-- [ ] Inspect at least one request and JSON response in Chrome Developer Tools (follow `TESTING_CHECKLIST.md`).
-- [ ] Run the expanded suite locally and record exact results/any fixes in `DEVELOPMENT_LOG.md`.
+- [x] Inspect at least one request and JSON response in Chrome Developer Tools (student confirmed).
+- [x] Run the expanded suite locally (student confirmed passing; exact test count not supplied).
 
 **Done when:** automated tests and manual end-to-end checks pass locally.
 
 ## Phase 7 — GitHub and cloud deployment
-- [ ] Finalize deployment dependencies and startup settings for Render.
+- [x] Finalize deployment dependencies and startup settings for Render (requirements and deployment guide prepared).
 - [ ] Push verified code to GitHub.
 - [ ] Deploy the Flask application to Render with a public HTTPS URL.
 - [ ] Verify the homepage, required API endpoints, and full browser gameplay on Render.

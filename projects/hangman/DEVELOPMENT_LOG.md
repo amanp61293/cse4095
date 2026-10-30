@@ -70,3 +70,13 @@ Run `python -m pytest -v` locally. After verification, commit through the existi
 **Implementation:** Added `tests/test_end_to_end.py` using Flask's test client for complete win/loss flows, restarting, invalid/duplicate guesses, invalid JSON, missing game IDs, hidden-word protection and serving browser assets. Added `TESTING_CHECKLIST.md` for manual gameplay verification and the required DevTools HTTP/JSON demonstration. The gameplay logic and frontend are unchanged.
 
 **Results:** The student already confirmed all three difficulties, correct guessing, drawing, incorrect guesses, end messages, restarting, and previous automated tests in earlier phases. The new Phase 6 tests must be run locally before recording a new pass count; Flask is unavailable in the ZIP-packaging runtime. The Chrome Developer Tools inspection still requires a manual check. Record actual results and any fixes here after the local run.
+
+## Phase 6 local verification update
+The student confirmed that the expanded automated tests passed and inspected an HTTP request and JSON response in Chrome Developer Tools. The exact number of tests and screenshots were not supplied. No Phase 6 code changes were reported as necessary.
+
+## Phase 7 — GitHub and cloud deployment preparation
+**Representative AI prompt:** "Prepare Phase 7 only for deploying the existing Flask Hangman application from my GitHub projects branch to Render. Preserve all working game behavior and automated tests. Document how to configure a subfolder root directory, install dependencies, run Gunicorn with one worker, and verify the deployed homepage and REST API. Do not mark the service deployed before checking its real URL."
+
+**Changes:** Kept `Flask`, `pytest`, and `gunicorn` in `requirements.txt`; the existing `server:app` entry point needs no change. Added `DEPLOYMENT_GUIDE.md` including the correct Render build/start commands, repository branch and root-directory considerations, verification steps, and known in-memory-storage limitations. Corrected outdated README language. No gameplay code changed.
+
+**Verification:** Python source compilation passed in the packaging environment. Flask, Gunicorn, and the full automated test suite were not available to execute there. The student should run `python -m pytest -v` after copying files and verify the Render URL before completing Phase 7.

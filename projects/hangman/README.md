@@ -3,7 +3,7 @@
 CSE 4095 project: Python/Flask Hangman server and HTML/CSS/JavaScript browser client.
 
 ## Status
-Phases 2–5 implemented: game engine, word management, Flask REST API, and browser-based client. Phase 5 needs local browser verification.
+Phases 1–6 have been developed and locally verified by the student. Phase 7 is prepared for live Render deployment; public deployment remains to be verified.
 
 ## Local setup (Windows PowerShell)
 ```powershell
@@ -64,15 +64,15 @@ Run all automated tests:
 python -m pytest -v
 ```
 
-**Limitations:** Game state is stored only in memory and will be reset on server restart. Use one worker for this design in production. Flask's development server is for local use only. No database, browser game, or leaderboard is included.
+**Limitations:** Game state is stored only in memory and will be reset on server restart. Use one worker for this design in production. Flask's development server is for local use only. No database or leaderboard is included.
 
 ## Phase 5: Browser interface
 Open `http://127.0.0.1:5000/` after starting the server. Select Easy, Medium, or Hard, click **New game**, and guess letters using the on-screen buttons or physical keyboard. The Hangman figure has six parts, one per incorrect guess. The UI uses `fetch()` requests to the Flask API; it never reads the hidden word during an active game. A win or loss reveals the word, and **New game** starts again without reloading the page.
 
 Run `python -m pytest -v`. Manual checks: play on all difficulties, win and lose, check mobile viewport, restart without refreshing, and inspect Network > Fetch/XHR in Chrome Developer Tools.
 
-## Next phase
-Phase 6 focuses on end-to-end testing and debugging.
+## Phase 7: Render deployment
+See `DEPLOYMENT_GUIDE.md` for detailed GitHub and Render setup, including monorepository root-directory settings, deployment commands, and public verification.
 
 The assignment scope excludes bots, terminal clients, evaluation, and leaderboards.
 
@@ -85,3 +85,6 @@ python -m pytest -v
 ```
 
 Then follow `TESTING_CHECKLIST.md` for browser checks and Chrome Developer Tools inspection of a `POST /api/games/<game_id>/guess` request and JSON response. Record the observed results in `DEVELOPMENT_LOG.md`.
+
+## Current deployment status
+The student confirmed Phase 6 tests and the Chrome Developer Tools network inspection succeeded locally. The production deployment is not yet verified.
