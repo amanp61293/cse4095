@@ -75,3 +75,13 @@ Run `python -m pytest -v`. Manual checks: play on all difficulties, win and lose
 Phase 6 focuses on end-to-end testing and debugging.
 
 The assignment scope excludes bots, terminal clients, evaluation, and leaderboards.
+
+### Phase 6 verification
+
+Run the full automated suite:
+
+```powershell
+python -m pytest -v
+```
+
+Then follow `TESTING_CHECKLIST.md` for browser checks and Chrome Developer Tools inspection of a `POST /api/games/<game_id>/guess` request and JSON response. Record the observed results in `DEVELOPMENT_LOG.md`.

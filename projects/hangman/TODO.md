@@ -62,13 +62,13 @@ This implementation plan adapts the supplied Hangman specification to the reduce
 **Done when:** a user can start, finish, and restart games entirely in the browser. Browser implementation and automated route checks completed; local manual browser verification still needed before declaring this phase fully verified.
 
 ## Phase 6 — Testing and debugging
-- [ ] Test starting games on all three difficulties.
-- [ ] Test correct, incorrect, duplicate, invalid, winning, and losing guesses.
-- [ ] Test new games after completion and invalid API requests.
-- [ ] Verify hidden words are not sent in active-game API responses.
-- [ ] Verify browser updates after each request.
-- [ ] Inspect at least one request and JSON response in Chrome Developer Tools.
-- [ ] Resolve bugs and document test results.
+- [x] Test starting games on all three difficulties (previous manual checks and automated cases).
+- [x] Add automated tests for correct, incorrect, duplicate, invalid, winning, and losing guesses (local rerun pending).
+- [x] Add tests for new games after completion and invalid API requests (local rerun pending).
+- [x] Add automated assertions that hidden words are not sent in active-game API responses (local rerun pending).
+- [x] Verify basic browser gameplay and updates (previously confirmed by student).
+- [ ] Inspect at least one request and JSON response in Chrome Developer Tools (follow `TESTING_CHECKLIST.md`).
+- [ ] Run the expanded suite locally and record exact results/any fixes in `DEVELOPMENT_LOG.md`.
 
 **Done when:** automated tests and manual end-to-end checks pass locally.
 

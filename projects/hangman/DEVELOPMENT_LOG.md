@@ -62,3 +62,11 @@ Run `python -m pytest -v` locally. After verification, commit through the existi
 **Testing:** Added `tests/test_browser.py` for homepage and static asset delivery. Run `python -m pytest -v` and manually test all UI flows before marking Phase 5 verified. Inspect at least one request in Chrome Developer Tools during Phase 6.
 
 **Design choice:** No frontend framework; basic HTML/CSS/JavaScript matches the assignment and limits dependencies. All game decisions remain on the server.
+
+## Phase 6 — Testing and debugging
+
+**Representative prompt:** "Focus on Phase 6 only. Keep the existing Hangman gameplay behavior, Flask API, and browser design unchanged. Add integration tests covering complete games, rejected guesses, errors, and protection of the hidden word. Prepare explicit manual browser and Chrome Developer Tools checks, and update the development log without claiming tests we have not run."
+
+**Implementation:** Added `tests/test_end_to_end.py` using Flask's test client for complete win/loss flows, restarting, invalid/duplicate guesses, invalid JSON, missing game IDs, hidden-word protection and serving browser assets. Added `TESTING_CHECKLIST.md` for manual gameplay verification and the required DevTools HTTP/JSON demonstration. The gameplay logic and frontend are unchanged.
+
+**Results:** The student already confirmed all three difficulties, correct guessing, drawing, incorrect guesses, end messages, restarting, and previous automated tests in earlier phases. The new Phase 6 tests must be run locally before recording a new pass count; Flask is unavailable in the ZIP-packaging runtime. The Chrome Developer Tools inspection still requires a manual check. Record actual results and any fixes here after the local run.
