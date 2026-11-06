@@ -219,16 +219,18 @@ This roadmap breaks the implementation into small, testable phases ordered from 
 
 # Phase 15 — Deployment
 
-- [x] Push the project to GitHub.
-- [x] Create the Cloudflare Pages site.
+- [ ] Push the project to GitHub. (Needs user confirmation; not verified here.)
+- [ ] Create the Cloudflare Pages site. (Needs user confirmation; not verified here.)
 - [ ] Connect Cloudflare Pages to the GitHub repository.
 - [ ] Configure production environment variables.
-- [x] Deploy the application.
-- [x] Configure SPA routing.
+- [ ] Deploy the application. (Not verified here.)
+- [x] Configure SPA routing. (`public/_redirects` has been added; production behavior still requires testing.)
 - [ ] Verify production login.
 - [ ] Verify QR codes point to the production URL.
 - [ ] Test student submissions in production.
 - [ ] Test instructor results in production.
+
+See `DEPLOYMENT.md` for the exact GitHub/Cloudflare steps and production verification checklist. Earlier checked statuses elsewhere in TODO.md are retained as received, not independently re-certified by this phase.
 
 ---
 
