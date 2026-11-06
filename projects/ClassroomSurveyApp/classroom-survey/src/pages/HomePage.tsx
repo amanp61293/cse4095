@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 export default function HomePage() {
   return (
     <main className="min-h-screen bg-slate-50 px-5 py-10 text-slate-900 sm:py-20">
@@ -12,10 +14,7 @@ export default function HomePage() {
         <h1 className="text-4xl font-bold tracking-tight sm:text-6xl">Classroom Survey</h1>
         <p className="mt-5 max-w-lg text-lg leading-relaxed text-slate-600 sm:text-xl">Quick in-class understanding checks.</p>
         <p className="mt-3 max-w-md text-base text-slate-500">Instructors prepare surveys. Students respond using a QR code, without needing an account.</p>
-        <span className="mt-9 inline-flex min-h-12 items-center justify-center rounded-xl bg-slate-300 px-7 font-semibold text-slate-700" aria-label="Instructor login will be added in a later phase">
-          Instructor Login · Coming soon
-        </span>
-        <p className="mt-3 text-sm text-slate-500">Phase 1 setup complete. Instructor login will be available in a later phase.</p>
+        <Link to="/login" className="mt-9 inline-flex min-h-12 items-center justify-center rounded-xl bg-blue-700 px-7 font-semibold text-white hover:bg-blue-800">Instructor Login</Link>
       </section>
     </main>
   )

@@ -38,3 +38,7 @@ This baseline was created from the supplied specifications because no existing V
 Phase 2 includes the five-table migration, RLS policies, secure anonymous submission RPC, and SQL verification scripts. **No live Supabase database has been provisioned or migrated automatically.** Follow [`supabase/PHASE2_SETUP.md`](supabase/PHASE2_SETUP.md) to create a new project, run the migration in Supabase SQL Editor, and test it. The React app has not been extended beyond its Phase 1 landing page.
 
 **Note:** The original TODO marks Phase 2 schema tasks complete, but a real database setup and permission tests must still be performed in your Supabase project. Keep all later-phase TODO statuses untouched until you review them.
+
+## Phase 3: Instructor login
+
+Implemented `/login`, a protected `/dashboard` authentication shell, Supabase Auth context, session restoration, logout, and login redirects. See [`supabase/PHASE3_AUTH_SETUP.md`](supabase/PHASE3_AUTH_SETUP.md) for dashboard configuration and manual verification. No survey dashboard features have been implemented. The uploaded edits to `supabase/tests/phase2_readonly_checks.sql` were retained.
