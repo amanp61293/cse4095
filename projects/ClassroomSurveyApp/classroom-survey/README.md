@@ -42,3 +42,29 @@ Phase 2 includes the five-table migration, RLS policies, secure anonymous submis
 ## Phase 3: Instructor login
 
 Implemented `/login`, a protected `/dashboard` authentication shell, Supabase Auth context, session restoration, logout, and login redirects. See [`supabase/PHASE3_AUTH_SETUP.md`](supabase/PHASE3_AUTH_SETUP.md) for dashboard configuration and manual verification. No survey dashboard features have been implemented. The uploaded edits to `supabase/tests/phase2_readonly_checks.sql` were retained.
+
+## Phase 4: Instructor dashboard
+
+The protected `/dashboard` now lists surveys from Supabase by newest creation date and displays title, status, description (when present), and creation date. Search and status filtering run locally on the fetched survey list. Refresh reloads from Supabase. In this phase **Archive** and **Delete** are implemented as authenticated database mutations with confirmation, loading feedback, error handling, and list refresh. Active surveys cannot be archived/deleted through the dashboard. Delete is permanent and cascades to questions, choices, responses, and answers; prefer Archive when responses should be retained.
+
+**Not implemented yet:** New Survey and Edit (Phase 5), Activate/Close and public presentation (Phase 6), Results (Phase 9), Duplicate (Phase 12). These controls are visible and disabled rather than linking to nonexistent functionality. Existing Supabase RLS policies require an instructor account to load or mutate surveys. See `supabase/PHASE4_DASHBOARD_TESTING.md`.
+
+## Phases 4 and 5: Dashboard and survey editor
+
+With the Phase 2 migration applied, a confirmed instructor account, and `.env` configured,
+run `npm install`, `npm run typecheck`, `npm run lint`, `npm run build`, and `npm run dev`.
+Sign in at `/login`, then use `/dashboard` to list, search, and filter surveys.
+Select **New Survey** to create a draft, or **Edit** on an existing draft.
+You can add, remove, and reorder questions and multiple-choice choices; true/false
+choices are fixed. Press **Save Draft** and refresh to verify persistence.
+
+Only drafts are editable. Archive and Delete require confirmation; deleting
+also deletes responses due to the existing database's cascade constraints.
+Activation, closing, presentation, result viewing, and duplication controls
+are placeholders for later phases and are intentionally disabled.
+
+**Storage note:** The editor saves through several Supabase requests, not one
+transaction. If a request fails midway, correct the issue, reload the draft,
+and retry. Do not use the editor for a survey that is active or collecting
+responses. Database enforcement for concurrent state changes and atomic editing
+would require a later dedicated RPC/permission-hardening migration.
