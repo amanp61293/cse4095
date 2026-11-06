@@ -75,3 +75,10 @@ would require a later dedicated RPC/permission-hardening migration.
 Run `supabase/migrations/20261106000200_phase6_8_activation.sql` in Supabase SQL Editor **after** the Phase 2 schema migration, then run `supabase/tests/phase6_8_readonly_checks.sql`. Instructor activation and closing use authenticated RPCs; student submissions use the original secure Phase 2 RPC and a persistent browser token. The public student route is `/s/:slug`. View the QR presentation at `/surveys/:id/present`.
 
 See [PHASE6_8_TESTING.md](PHASE6_8_TESTING.md) for setup and PowerShell testing.
+
+
+## Phases 9–14 (local results, history, CSV and tests)
+
+The authenticated dashboard now links to results for every survey status, supports title/status/created-date filtering and duplication to a new draft (without student responses). The results page shows response counts, answer totals, percentages, missing answers, Recharts bars, numeric tables and CSV export. The CSV includes survey metadata and escapes potential spreadsheet formulas.
+
+Run `npm run test`, `npm run typecheck`, `npm run lint`, `npm run format:check`, `npm run build`. No new SQL migration is necessary; original Phase 2 and Phase 6–8 migrations are retained. See `PHASE9_14_TESTING.md` for the SQL security checks and the manual end-to-end checklist. Production deployment is outside this phase.

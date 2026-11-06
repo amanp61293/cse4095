@@ -6,6 +6,7 @@ import DashboardPage from './pages/DashboardPage'
 import SurveyEditorPage from './pages/SurveyEditorPage'
 import StudentSurveyPage from './pages/StudentSurveyPage'
 import PresentSurveyPage from './pages/PresentSurveyPage'
+import SurveyResultsPage from './pages/SurveyResultsPage'
 
 export default function App() {
   return (
@@ -18,6 +19,7 @@ export default function App() {
         <Route path="/surveys/new" element={<SurveyEditorPage />} />
         <Route path="/surveys/:id/edit" element={<SurveyEditorPage />} />
         <Route path="/surveys/:id/present" element={<PresentSurveyPage />} />
+        <Route path="/surveys/:id/results" element={<SurveyResultsPage />} />
       </Route>
       <Route path="*" element={<main className="p-8">Page not found.</main>} />
     </Routes>

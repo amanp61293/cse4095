@@ -155,6 +155,7 @@ export async function saveDraft(draft: SurveyDraft, existingId?: string): Promis
     const { error: deleteQuestionError } = await client.from('questions').delete().eq('survey_id', surveyId).in('id', removedQuestions)
     if (deleteQuestionError) throw deleteQuestionError
   }
+  if (!surveyId) throw new Error('Survey save did not return an ID.')
   return surveyId
 }
 

@@ -164,7 +164,7 @@ This roadmap breaks the implementation into small, testable phases ordered from 
 # Phase 11 — CSV Export
 
 - [x] Add Export CSV button.
-- [ ] Export survey metadata.
+- [x] Export survey metadata.
 - [x] Export one row per response.
 - [x] Include submission timestamp.
 - [x] Include each question and answer.

@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
 import { supabase } from '../lib/supabase'
 import { activateSurvey, closeSurvey } from '../lib/activation'
+import { duplicateSurvey } from '../lib/surveys'
 
 type SurveyStatus = 'draft' | 'active' | 'closed' | 'archived'
 type Survey = {
@@ -48,6 +49,8 @@ export default function DashboardPage() {
   const [refreshing, setRefreshing] = useState(false)
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
+  const [startDate, setStartDate] = useState('')
+  const [endDate, setEndDate] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [notice, setNotice] = useState<string | null>(null)
   const [pendingId, setPendingId] = useState<string | null>(null)
@@ -77,8 +80,24 @@ export default function DashboardPage() {
 
   const visibleSurveys = useMemo(() => surveys.filter((survey) =>
     (statusFilter === 'all' || survey.status === statusFilter) &&
-    survey.title.toLocaleLowerCase().includes(search.trim().toLocaleLowerCase()),
-  ), [surveys, search, statusFilter])
+    survey.title.toLocaleLowerCase().includes(search.trim().toLocaleLowerCase()) &&
+    (!startDate || survey.created_at.slice(0, 10) >= startDate) &&
+    (!endDate || survey.created_at.slice(0, 10) <= endDate),
+  ), [surveys, search, statusFilter, startDate, endDate])
+
+  async function handleDuplicate(survey: Survey) {
+    if (!window.confirm(`Create a draft copy of "${survey.title}"? Student responses will not be copied.`)) return
+    setPendingId(survey.id)
+    setError(null)
+    setNotice(null)
+    try {
+      const newId = await duplicateSurvey(survey.id)
+      navigate(`/surveys/${newId}/edit`)
+    } catch {
+      setError('Could not duplicate the survey. Check your connection and try again. If a partial draft was created, review it before retrying.')
+      await loadSurveys()
+    } finally { setPendingId(null) }
+  }
 
   async function handleArchive(survey: Survey) {
     if (survey.status === 'active') return
@@ -202,6 +221,9 @@ export default function DashboardPage() {
                 {Object.entries(statusLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
               </select>
             </div>
+            <div><label htmlFor="start-date" className="mb-2 block text-sm font-semibold">From date</label><input id="start-date" type="date" value={startDate} max={endDate || undefined} onChange={(e) => setStartDate(e.target.value)} className="min-h-11 rounded-lg border border-slate-300 px-3" /></div>
+            <div><label htmlFor="end-date" className="mb-2 block text-sm font-semibold">To date</label><input id="end-date" type="date" value={endDate} min={startDate || undefined} onChange={(e) => setEndDate(e.target.value)} className="min-h-11 rounded-lg border border-slate-300 px-3" /></div>
+            <button type="button" onClick={() => { setSearch(''); setStatusFilter('all'); setStartDate(''); setEndDate('') }} className={actionClass}>Clear filters</button>
             <button type="button" onClick={() => { setNotice(null); void loadSurveys() }} disabled={loading || refreshing || pendingId !== null} className={actionClass}>{refreshing ? 'Refreshing...' : 'Refresh'}</button>
           </div>
           {error && <p role="alert" className="mt-4 rounded-lg bg-red-50 p-3 text-sm text-red-800">{error}</p>}
@@ -230,11 +252,11 @@ export default function DashboardPage() {
                     <p className="mt-3 text-sm text-slate-600">Created: <time dateTime={survey.created_at}>{formatCreatedAt(survey.created_at)}</time></p>
                     <div className="mt-5 flex flex-wrap gap-2" aria-label={`Actions for ${survey.title}`}>
                       {survey.status === 'draft' ? <Link className={actionClass} to={`/surveys/${survey.id}/edit`}>Edit</Link> : <button type="button" className={disabledActionClass} disabled title="Only draft surveys can be edited">Edit</button>}
-                      <button type="button" disabled title="Duplication is scheduled for Phase 12" className={disabledActionClass}>Duplicate</button>
+                      <button type="button" disabled={busy} onClick={() => void handleDuplicate(survey)} className={actionClass}>Duplicate</button>
                       {survey.status === 'draft' || survey.status === 'closed' ? <button type="button" disabled={busy} onClick={() => void handleActivate(survey)} className={actionClass}>Activate</button> : null}
                       {survey.status === 'active' && <Link className={actionClass} to={`/surveys/${survey.id}/present`}>Present QR</Link>}
                       {survey.status === 'active' && <button type="button" disabled={busy} onClick={() => void handleClose(survey)} className={actionClass}>Close</button>}
-                      <button type="button" disabled title="Results are scheduled for Phase 9" className={disabledActionClass}>Results</button>
+                      <Link className={actionClass} to={`/surveys/${survey.id}/results`}>Results</Link>
                       {survey.status !== 'archived' && <button type="button" disabled={busy || survey.status === 'active'} title={survey.status === 'active' ? 'Close the survey before archiving' : 'Preserve the survey and its responses'} onClick={() => void handleArchive(survey)} className={actionClass}>{pendingId === survey.id ? 'Working...' : 'Archive'}</button>}
                       <button type="button" disabled={busy || survey.status === 'active'} title={survey.status === 'active' ? 'Close the survey before deleting' : 'Permanently delete this survey and all its responses'} onClick={() => void handleDelete(survey)} className={`${actionClass} text-red-700`}>Delete</button>
                     </div>
@@ -244,7 +266,7 @@ export default function DashboardPage() {
             </>
           )}
         </section>
-        <p className="mt-4 text-sm text-slate-600">Survey creation, editing, activation, presentation and closing are available. Duplication and results are reserved for later phases.</p>
+        <p className="mt-4 text-sm text-slate-600">Browse surveys, view current or historical results, duplicate drafts, and export responses as CSV.</p>
       </div>
     </main>
   )
