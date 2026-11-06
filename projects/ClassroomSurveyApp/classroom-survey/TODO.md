@@ -111,7 +111,7 @@ This roadmap breaks the implementation into small, testable phases ordered from 
 
 # Phase 7 — Student Survey Page
 
-- [x] Create the public route `/s/:surveyId`.
+- [x] Create the public route `/s/:slug`.
 - [x] Load the requested active survey.
 - [x] Show an error if the survey does not exist.
 - [x] Show a message if the survey is closed.

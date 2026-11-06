@@ -78,7 +78,7 @@ export default function SurveyEditorPage() {
     <div className="mx-auto max-w-3xl">
       <Link className="text-sm font-semibold text-blue-700 underline" to="/dashboard">Back to dashboard</Link>
       <h1 className="mt-5 text-3xl font-bold">{editing ? 'Edit draft survey' : 'Create survey'}</h1>
-      <p className="mt-2 text-slate-600">Surveys remain in Draft status until activation is added in Phase 6.</p>
+      <p className="mt-2 text-slate-600">Save as a draft, then activate the survey from the dashboard.</p>
       <form className="mt-7 space-y-6" onSubmit={(event) => void submit(event)} noValidate>
         <section className="space-y-4 rounded-xl border border-slate-200 bg-white p-5">
           <div><label htmlFor="title" className="mb-2 block font-semibold">Survey title *</label><input id="title" className={field} maxLength={180} value={draft.title} onChange={(event) => update({ title: event.target.value })} required /></div>

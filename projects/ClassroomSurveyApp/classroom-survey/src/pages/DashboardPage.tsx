@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
 import { supabase } from '../lib/supabase'
+import { activateSurvey, closeSurvey } from '../lib/activation'
 
 type SurveyStatus = 'draft' | 'active' | 'closed' | 'archived'
 type Survey = {
@@ -129,6 +130,34 @@ export default function DashboardPage() {
     }
   }
 
+  async function handleActivate(survey: Survey) {
+    if (!window.confirm(`Activate "${survey.title}"? Any currently active survey will be closed.`)) return
+    setPendingId(survey.id)
+    setError(null)
+    setNotice(null)
+    try {
+      await activateSurvey(survey.id)
+      await loadSurveys()
+      navigate(`/surveys/${survey.id}/present`)
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : 'Unable to activate the survey.')
+    } finally { setPendingId(null) }
+  }
+
+  async function handleClose(survey: Survey) {
+    if (!window.confirm(`Close "${survey.title}"? Students will no longer be able to submit.`)) return
+    setPendingId(survey.id)
+    setError(null)
+    setNotice(null)
+    try {
+      await closeSurvey(survey.id)
+      await loadSurveys()
+      setNotice(`Closed "${survey.title}".`)
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : 'Unable to close the survey.')
+    } finally { setPendingId(null) }
+  }
+
   async function handleLogout() {
     setError(null)
     setSigningOut(true)
@@ -202,11 +231,12 @@ export default function DashboardPage() {
                     <div className="mt-5 flex flex-wrap gap-2" aria-label={`Actions for ${survey.title}`}>
                       {survey.status === 'draft' ? <Link className={actionClass} to={`/surveys/${survey.id}/edit`}>Edit</Link> : <button type="button" className={disabledActionClass} disabled title="Only draft surveys can be edited">Edit</button>}
                       <button type="button" disabled title="Duplication is scheduled for Phase 12" className={disabledActionClass}>Duplicate</button>
-                      <button type="button" disabled title="Activation is scheduled for Phase 6" className={disabledActionClass}>Activate</button>
-                      <button type="button" disabled title="Closing surveys is scheduled for Phase 6" className={disabledActionClass}>Close</button>
+                      {survey.status === 'draft' || survey.status === 'closed' ? <button type="button" disabled={busy} onClick={() => void handleActivate(survey)} className={actionClass}>Activate</button> : null}
+                      {survey.status === 'active' && <Link className={actionClass} to={`/surveys/${survey.id}/present`}>Present QR</Link>}
+                      {survey.status === 'active' && <button type="button" disabled={busy} onClick={() => void handleClose(survey)} className={actionClass}>Close</button>}
                       <button type="button" disabled title="Results are scheduled for Phase 9" className={disabledActionClass}>Results</button>
-                      {survey.status !== 'archived' && <button type="button" disabled={busy || survey.status === 'active'} title={survey.status === 'active' ? 'Close the survey before archiving (Phase 6)' : 'Preserve the survey and its responses'} onClick={() => void handleArchive(survey)} className={actionClass}>{pendingId === survey.id ? 'Working...' : 'Archive'}</button>}
-                      <button type="button" disabled={busy || survey.status === 'active'} title={survey.status === 'active' ? 'Close the survey before deleting (Phase 6)' : 'Permanently delete this survey and all its responses'} onClick={() => void handleDelete(survey)} className={`${actionClass} text-red-700`}>Delete</button>
+                      {survey.status !== 'archived' && <button type="button" disabled={busy || survey.status === 'active'} title={survey.status === 'active' ? 'Close the survey before archiving' : 'Preserve the survey and its responses'} onClick={() => void handleArchive(survey)} className={actionClass}>{pendingId === survey.id ? 'Working...' : 'Archive'}</button>}
+                      <button type="button" disabled={busy || survey.status === 'active'} title={survey.status === 'active' ? 'Close the survey before deleting' : 'Permanently delete this survey and all its responses'} onClick={() => void handleDelete(survey)} className={`${actionClass} text-red-700`}>Delete</button>
                     </div>
                   </article>
                 })}
@@ -214,7 +244,7 @@ export default function DashboardPage() {
             </>
           )}
         </section>
-        <p className="mt-4 text-sm text-slate-600">Survey creation, draft editing, archiving, and deleting are available. Activation, presentation, duplication, and results are reserved for later phases.</p>
+        <p className="mt-4 text-sm text-slate-600">Survey creation, editing, activation, presentation and closing are available. Duplication and results are reserved for later phases.</p>
       </div>
     </main>
   )

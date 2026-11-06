@@ -68,3 +68,10 @@ transaction. If a request fails midway, correct the issue, reload the draft,
 and retry. Do not use the editor for a survey that is active or collecting
 responses. Database enforcement for concurrent state changes and atomic editing
 would require a later dedicated RPC/permission-hardening migration.
+
+
+## Phases 6–8 (activation, QR codes, and student participation)
+
+Run `supabase/migrations/20261106000200_phase6_8_activation.sql` in Supabase SQL Editor **after** the Phase 2 schema migration, then run `supabase/tests/phase6_8_readonly_checks.sql`. Instructor activation and closing use authenticated RPCs; student submissions use the original secure Phase 2 RPC and a persistent browser token. The public student route is `/s/:slug`. View the QR presentation at `/surveys/:id/present`.
+
+See [PHASE6_8_TESTING.md](PHASE6_8_TESTING.md) for setup and PowerShell testing.
