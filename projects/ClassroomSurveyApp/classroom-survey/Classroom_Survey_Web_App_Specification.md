@@ -6,7 +6,7 @@
 
 **Status:** Initial Specification
 
----
+------------------------------------------------------------------------
 
 # 1. Overview
 
@@ -27,21 +27,21 @@ dashboard.
 The application should be inexpensive to operate and use only free
 hosting and database services.
 
----
+------------------------------------------------------------------------
 
 # 2. Goals
 
-- Extremely easy for students to use
-- Extremely easy for instructors to prepare surveys
-- Mobile friendly
-- Fast enough for an entire classroom
-- No student login required
-- Permanent storage of survey responses
-- Easy visualization of results
-- Free hosting
-- Open source
+-   Extremely easy for students to use
+-   Extremely easy for instructors to prepare surveys
+-   Mobile friendly
+-   Fast enough for an entire classroom
+-   No student login required
+-   Permanent storage of survey responses
+-   Easy visualization of results
+-   Free hosting
+-   Open source
 
----
+------------------------------------------------------------------------
 
 # 3. Target Users
 
@@ -49,56 +49,56 @@ hosting and database services.
 
 The instructor can:
 
-- Login securely
-- Create, edit, duplicate, delete, and archive surveys
-- Activate and close surveys
-- Display QR codes
-- View live and historical responses
-- Export results
+-   Login securely
+-   Create, edit, duplicate, delete, and archive surveys
+-   Activate and close surveys
+-   Display QR codes
+-   View live and historical responses
+-   Export results
 
 ## Student
 
 Students can:
 
-- Scan a QR code
-- Complete a survey
-- Submit responses
-- Receive confirmation
+-   Scan a QR code
+-   Complete a survey
+-   Submit responses
+-   Receive confirmation
 
 No student account is required.
 
----
+------------------------------------------------------------------------
 
 # 4. Functional Requirements
 
 ## Survey Management
 
-- Create, edit, duplicate, archive, and delete surveys.
-- Each survey contains a title, optional description, and one or more
-  questions.
+-   Create, edit, duplicate, archive, and delete surveys.
+-   Each survey contains a title, optional description, and one or more
+    questions.
 
 ## Supported Question Types
 
 Version 1 supports:
 
-- Multiple Choice
-- True / False
+-   Multiple Choice
+-   True / False
 
 Future versions may add:
 
-- Checkbox
-- Short Answer
-- Rating Scale
-- Numeric Response
+-   Checkbox
+-   Short Answer
+-   Rating Scale
+-   Numeric Response
 
 ## Survey Lifecycle
 
 Each survey is one of:
 
-- Draft
-- Active
-- Closed
-- Archived
+-   Draft
+-   Active
+-   Closed
+-   Archived
 
 Only one survey may be Active at any time.
 
@@ -106,9 +106,9 @@ Only one survey may be Active at any time.
 
 When activated, the application automatically generates:
 
-- Public survey URL
-- QR Code
-- Downloadable PNG
+-   Public survey URL
+-   QR Code
+-   Downloadable PNG
 
 ## Student Survey
 
@@ -119,107 +119,107 @@ tablets, or laptops.
 
 Displays:
 
-- Response counts
-- Percentages
-- Charts
-- Historical results
+-   Response counts
+-   Percentages
+-   Charts
+-   Historical results
 
 ## CSV Export
 
 Export all survey results as CSV.
 
----
+------------------------------------------------------------------------
 
 # 5. Nonfunctional Requirements
 
-- Responsive mobile interface
-- Support at least 200 simultaneous students
-- Average page load under 2 seconds
-- Secure instructor authentication
-- Free cloud hosting
+-   Responsive mobile interface
+-   Support at least 200 simultaneous students
+-   Average page load under 2 seconds
+-   Secure instructor authentication
+-   Free cloud hosting
 
----
+------------------------------------------------------------------------
 
 # 6. Database Schema
 
 ## surveys
 
-- id
-- title
-- description
-- status
-- created_at
+-   id
+-   title
+-   description
+-   status
+-   created_at
 
 ## questions
 
-- id
-- survey_id
-- question_text
-- question_type
-- position
+-   id
+-   survey_id
+-   question_text
+-   question_type
+-   position
 
 ## choices
 
-- id
-- question_id
-- choice_text
-- position
+-   id
+-   question_id
+-   choice_text
+-   position
 
 ## responses
 
-- id
-- survey_id
-- submitted_at
-- anonymous_token
+-   id
+-   survey_id
+-   submitted_at
+-   anonymous_token
 
 ## answers
 
-- id
-- response_id
-- question_id
-- choice_id
-- text_answer
+-   id
+-   response_id
+-   question_id
+-   choice_id
+-   text_answer
 
----
+------------------------------------------------------------------------
 
 # 7. Technology Stack
 
 Frontend
 
-- React
-- TypeScript
-- Vite
-- Tailwind CSS
+-   React
+-   TypeScript
+-   Vite
+-   Tailwind CSS
 
 Backend
 
-- Supabase
+-   Supabase
 
 Database
 
-- PostgreSQL
+-   PostgreSQL
 
 Charts
 
-- Recharts
+-   Recharts
 
 QR Code
 
-- qrcode npm package
+-   qrcode npm package
 
 Hosting
 
-- Cloudflare Pages
+-   Cloudflare Pages
 
 Version Control
 
-- GitHub
+-   GitHub
 
----
+------------------------------------------------------------------------
 
 # 8. Project Structure
 
-```text
+``` text
 classroom-survey/
 ├── src/
 │   ├── components/
@@ -232,30 +232,30 @@ classroom-survey/
 └── TODO.md
 ```
 
----
+------------------------------------------------------------------------
 
 # 9. MVP
 
-- Instructor authentication
-- Survey creation/editing
-- Multiple-choice questions
-- True/False questions
-- QR code generation
-- Student submission page
-- PostgreSQL storage
-- Results dashboard
-- Historical browsing
-- CSV export
+-   Instructor authentication
+-   Survey creation/editing
+-   Multiple-choice questions
+-   True/False questions
+-   QR code generation
+-   Student submission page
+-   PostgreSQL storage
+-   Results dashboard
+-   Historical browsing
+-   CSV export
 
----
+------------------------------------------------------------------------
 
 # 10. Future Enhancements
 
-- Live updating charts
-- AI-generated questions
-- LMS integration
-- Question bank
-- Student authentication
-- Attendance tracking
-- Analytics
-- Multiple instructors
+-   Live updating charts
+-   AI-generated questions
+-   LMS integration
+-   Question bank
+-   Student authentication
+-   Attendance tracking
+-   Analytics
+-   Multiple instructors

@@ -96,7 +96,10 @@ Load the instructor dashboard.
 Supabase query:
 
 ```ts
-supabase.from('surveys').select('*').order('created_at', { ascending: false })
+supabase
+  .from("surveys")
+  .select("*")
+  .order("created_at", { ascending: false })
 ```
 
 ---
